@@ -13,7 +13,7 @@ import java.io.IOException;
 
 public class SendGrid {
 
-    private static final String VERSION = "2.2.2";
+    private static final String VERSION = "3.0.0";
     private static final String USER_AGENT = "sendgrid/" + VERSION + ";java";
 
     private static final String MAIL_ENDPOINT = "/api/mail.send.json";

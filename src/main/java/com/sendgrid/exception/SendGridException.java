@@ -1,4 +1,4 @@
-package com.sendgrid;
+package com.sendgrid.exception;
 
 public class SendGridException extends Exception {
     public SendGridException(Exception e) {

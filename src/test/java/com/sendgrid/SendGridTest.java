@@ -1,5 +1,10 @@
 package com.sendgrid;
 
+import com.sendgrid.model.Email;
+import org.json.JSONObject;
+import org.junit.Test;
+import org.skyscreamer.jsonassert.JSONAssert;
+
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
@@ -7,15 +12,10 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.skyscreamer.jsonassert.JSONAssert;
-
-import org.json.JSONObject;
-import org.junit.Test;
-
 import static org.junit.Assert.*;
 
 public class SendGridTest {
-    SendGrid.Email email;
+    Email email;
 
     private static final String USERNAME = "USERNAME";
     private static final String PASSWORD = "PASSWORD";
@@ -63,7 +63,7 @@ public class SendGridTest {
 
     @Test
     public void testAddTo() {
-        email = new SendGrid.Email();
+        email = new Email();
 
         String address = "email@example.com";
         String address2 = "email2@example.com";
@@ -77,7 +77,7 @@ public class SendGridTest {
 
     @Test
     public void testAddToWithAFrom() {
-        email = new SendGrid.Email();
+        email = new Email();
 
         String address = "email@example.com";
         String fromaddress = "from@mailinator.com";
@@ -93,7 +93,7 @@ public class SendGridTest {
 
     @Test
     public void testAddToName() {
-        email = new SendGrid.Email();
+        email = new Email();
 
         String name = "John";
         email.addToName(name);
@@ -105,7 +105,7 @@ public class SendGridTest {
 
     @Test
     public void testAddCc() {
-        email = new SendGrid.Email();
+        email = new Email();
 
         String address = "email@example.com";
         email.addCc(address);
@@ -117,7 +117,7 @@ public class SendGridTest {
 
     @Test
     public void testSetFrom() {
-        email = new SendGrid.Email();
+        email = new Email();
 
         String address = "email@example.com";
         email.setFrom(address);
@@ -127,7 +127,7 @@ public class SendGridTest {
 
     @Test
     public void testSetFromName() {
-        email = new SendGrid.Email();
+        email = new Email();
 
         String fromname = "Uncle Bob";
         email.setFromName(fromname);
@@ -137,7 +137,7 @@ public class SendGridTest {
 
     @Test
     public void testSetReplyTo() {
-        email = new SendGrid.Email();
+        email = new Email();
 
         String address = "email@example.com";
         email.setReplyTo(address);
@@ -147,7 +147,7 @@ public class SendGridTest {
 
     @Test
     public void testAddBcc() {
-        email = new SendGrid.Email();
+        email = new Email();
 
         String address = "email@example.com";
         email.addBcc(address);
@@ -159,7 +159,7 @@ public class SendGridTest {
 
     @Test
     public void testSetSubject() {
-        email = new SendGrid.Email();
+        email = new Email();
 
         String subject = "This is a subject";
         email.setSubject(subject);
@@ -169,7 +169,7 @@ public class SendGridTest {
 
     @Test
     public void testSetText() {
-        email = new SendGrid.Email();
+        email = new Email();
 
         String text = "This is some email text.";
         email.setText(text);
@@ -179,7 +179,7 @@ public class SendGridTest {
 
     @Test
     public void testSetHtml() {
-        email = new SendGrid.Email();
+        email = new Email();
 
         String html = "This is some email text.";
         email.setHtml(html);
@@ -189,7 +189,7 @@ public class SendGridTest {
 
     @Test
     public void testAddHeader() {
-        email = new SendGrid.Email();
+        email = new Email();
 
         email.addHeader("key", "value");
         email.addHeader("other", "other-value");
@@ -203,7 +203,7 @@ public class SendGridTest {
 
     @Test
     public void testSetTemplateId() {
-        email = new SendGrid.Email();
+        email = new Email();
         email.setTemplateId("abc-123");
 
         String filters = email.getSMTPAPI().jsonString();
@@ -218,7 +218,7 @@ public class SendGridTest {
 
     @Test
     public void testSmtpapiToHeader() {
-        email = new SendGrid.Email();
+        email = new Email();
 
         String[] expected = {"example@email.com"};
 

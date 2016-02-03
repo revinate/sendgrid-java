@@ -2,8 +2,8 @@
 
 This Java module allows you to quickly and easily send emails through SendGrid using Java.
 
-[![BuildStatus](https://travis-ci.org/sendgrid/sendgrid-java.svg?branch=master)](https://travis-ci.org/sendgrid/sendgrid-java)
-[![BuildStatus](https://maven-badges.herokuapp.com/maven-central/com.sendgrid/sendgrid-java/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.sendgrid/sendgrid-java)
+[![BuildStatus](https://travis-ci.org/revinate/sendgrid-java.svg?branch=master)](https://travis-ci.org/revinate/sendgrid-java)
+[![BuildStatus](https://maven-badges.herokuapp.com/maven-central/com.revinate/sendgrid-java/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.revinate/sendgrid-java)
 
 ### Warning
 
@@ -41,9 +41,7 @@ $ javac -classpath sendgrid-2.2.1-jar.jar:. SendGridExample.java && java -classp
 
 ## Installation
 
-Choose your installation method - Maven w/ Gradle (recommended), Maven or Jar file.
-
-### via Maven w/ Gradle
+### Maven w/ Gradle
 
 Add the following to your build.gradle file in the root of your project.
 
@@ -64,22 +62,6 @@ Then import the library - in the file appropriate to your Java project.
 
 ```java
 import com.sendgrid.SendGrid;
-```
-
-### via Maven
-
-```
-mvn install
-```
-
-### via jar file
-
-You can just drop the jar file in. It's a fat jar - it has all the dependencies built in.
-
-[sendgrid-java.jar](https://sendgrid-open-source.s3.amazonaws.com/sendgrid-java/sendgrid-java.jar)
-
-```java
-import com.sendgrid.*;
 ```
 
 ## Usage
@@ -363,14 +345,6 @@ email.setSendAt(1409348513);
 email.setTemplateId("abc123-def456");
 ```
 
-## Contributing
-
-1. Fork it
-2. Create your feature branch (`git checkout -b my-new-feature`)
-3. Commit your changes (`git commit -am 'Added some feature'`)
-4. Push to the branch (`git push origin my-new-feature`)
-5. Create new Pull Request
-
 ## Running Tests
 
 The existing tests in the `src/test` directory can be run using gradle with the following command:
@@ -384,12 +358,6 @@ $ ./gradlew test -i
 ```bash
 $ ./gradlew build
 ```
-
-## Example App
-
-We have an example app using this library. This can be helpful to get a grasp on implementing it in your own app.
-
-[github.com/scottmotte/sendgrid-java-example](http://github.com/scottmotte/sendgrid-java-example)
 
 ## License
 

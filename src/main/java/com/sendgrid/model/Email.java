@@ -30,16 +30,16 @@ public class Email {
     private static final String UTF_8 = "UTF-8";
 
     private SMTPAPI smtpapi;
-    private ArrayList<String> to;
-    private ArrayList<String> toname;
-    private ArrayList<String> cc;
+    private List<String> to;
+    private List<String> toname;
+    private List<String> cc;
     private String from;
     private String fromname;
     private String replyto;
     private String subject;
     private String text;
     private String html;
-    private ArrayList<String> bcc;
+    private List<String> bcc;
     private Map<String, InputStream> attachments;
     private Map<String, String> contents;
     private Map<String, String> headers;
@@ -236,8 +236,8 @@ public class Email {
         return this.smtpapi.getSections();
     }
 
-    public Email addFilter(String filter_name, String parameter_name, String parameter_value) {
-        this.smtpapi.addFilter(filter_name, parameter_name, parameter_value);
+    public Email addFilter(String filterName, String parameterName, String parameterValue) {
+        this.smtpapi.addFilter(filterName, parameterName, parameterValue);
         return this;
     }
 
@@ -275,7 +275,7 @@ public class Email {
         return this;
     }
 
-    public Email addAttachment(String name, File file) throws IOException, FileNotFoundException {
+    public Email addAttachment(String name, File file) throws IOException {
         return this.addAttachment(name, new FileInputStream(file));
     }
 
@@ -283,12 +283,12 @@ public class Email {
         return this.addAttachment(name, new ByteArrayInputStream(file.getBytes()));
     }
 
-    public Email addAttachment(String name, InputStream file) throws IOException {
+    public Email addAttachment(String name, InputStream file) {
         this.attachments.put(name, file);
         return this;
     }
 
-    public Map getAttachments() {
+    public Map<String, InputStream> getAttachments() {
         return this.attachments;
     }
 
@@ -297,7 +297,7 @@ public class Email {
         return this;
     }
 
-    public Map getContentIds() {
+    public Map<String, String> getContentIds() {
         return this.contents;
     }
 
@@ -306,7 +306,7 @@ public class Email {
         return this;
     }
 
-    public Map getHeaders() {
+    public Map<String, String> getHeaders() {
         return this.headers;
     }
 
@@ -329,57 +329,71 @@ public class Email {
 
         // If SMTPAPI Header is used, To is still required. #workaround.
         if (tos.length == 0) {
-            builder.addTextBody(String.format(PARAM_TO, 0), getFrom(), ContentType.create(TEXT_PLAIN, UTF_8));
+            builder.addTextBody(PARAM_TO, getFrom(), ContentType.create(TEXT_PLAIN, UTF_8));
         }
-        for (int i = 0, len = tos.length; i < len; i++)
-            builder.addTextBody(PARAM_TO, tos[i], ContentType.create("text/plain", "UTF-8"));
-        for (int i = 0, len = tonames.length; i < len; i++)
-            builder.addTextBody(PARAM_TONAME, tonames[i], ContentType.create("text/plain", "UTF-8"));
-        for (int i = 0, len = ccs.length; i < len; i++)
-            builder.addTextBody(PARAM_CC, ccs[i], ContentType.create("text/plain", "UTF-8"));
-        for (int i = 0, len = bccs.length; i < len; i++)
-            builder.addTextBody(PARAM_BCC, bccs[i], ContentType.create(TEXT_PLAIN, UTF_8));
+
+        for (String to : tos) {
+            builder.addTextBody(PARAM_TO, to, ContentType.create(TEXT_PLAIN, UTF_8));
+        }
+
+        for (String toname : tonames) {
+            builder.addTextBody(PARAM_TONAME, toname, ContentType.create(TEXT_PLAIN, UTF_8));
+        }
+
+        for (String cc : ccs) {
+            builder.addTextBody(PARAM_CC, cc, ContentType.create(TEXT_PLAIN, UTF_8));
+        }
+
+        for (String bcc : bccs) {
+            builder.addTextBody(PARAM_BCC, bcc, ContentType.create(TEXT_PLAIN, UTF_8));
+        }
+
         // Files
         if (getAttachments().size() > 0) {
-            Iterator it = getAttachments().entrySet().iterator();
-            while (it.hasNext()) {
-                Map.Entry entry = (Map.Entry) it.next();
-                builder.addBinaryBody(String.format(PARAM_FILES, entry.getKey()), (InputStream) entry.getValue());
+            for (Map.Entry<String, InputStream> entry : getAttachments().entrySet()) {
+                builder.addBinaryBody(String.format(PARAM_FILES, entry.getKey()), entry.getValue());
             }
         }
 
         if (getContentIds().size() > 0) {
-            Iterator it = getContentIds().entrySet().iterator();
-            while (it.hasNext()) {
-                Map.Entry entry = (Map.Entry) it.next();
-                builder.addTextBody(String.format(PARAM_CONTENTS, entry.getKey()), (String) entry.getValue());
+            for (Map.Entry<String, String> entry : getContentIds().entrySet()) {
+                builder.addTextBody(String.format(PARAM_CONTENTS, entry.getKey()), entry.getValue());
             }
         }
 
-        if (getHeaders().size() > 0)
-            builder.addTextBody(PARAM_HEADERS, new JSONObject(getHeaders()).toString(), ContentType.create(TEXT_PLAIN, UTF_8));
+        if (getHeaders().size() > 0) {
+            builder.addTextBody(PARAM_HEADERS, new JSONObject(getHeaders()).toString(),
+                    ContentType.create(TEXT_PLAIN, UTF_8));
+        }
 
-        if (getFrom() != null && !getFrom().isEmpty())
+        if (getFrom() != null && !getFrom().isEmpty()) {
             builder.addTextBody(PARAM_FROM, getFrom(), ContentType.create(TEXT_PLAIN, UTF_8));
+        }
 
-        if (getFromName() != null && !getFromName().isEmpty())
+        if (getFromName() != null && !getFromName().isEmpty()) {
             builder.addTextBody(PARAM_FROMNAME, getFromName(), ContentType.create(TEXT_PLAIN, UTF_8));
+        }
 
-        if (getReplyTo() != null && !getReplyTo().isEmpty())
+        if (getReplyTo() != null && !getReplyTo().isEmpty()) {
             builder.addTextBody(PARAM_REPLYTO, getReplyTo(), ContentType.create(TEXT_PLAIN, UTF_8));
+        }
 
-        if (getSubject() != null && !getSubject().isEmpty())
+        if (getSubject() != null && !getSubject().isEmpty()) {
             builder.addTextBody(PARAM_SUBJECT, getSubject(), ContentType.create(TEXT_PLAIN, UTF_8));
+        }
 
-        if (getHtml() != null && !getHtml().isEmpty())
+        if (getHtml() != null && !getHtml().isEmpty()) {
             builder.addTextBody(PARAM_HTML, getHtml(), ContentType.create(TEXT_PLAIN, UTF_8));
+        }
 
-        if (getText() != null && !getText().isEmpty())
+        if (getText() != null && !getText().isEmpty()) {
             builder.addTextBody(PARAM_TEXT, getText(), ContentType.create(TEXT_PLAIN, UTF_8));
+        }
 
         String tmpString = smtpapi.jsonString();
-        if (!tmpString.equals("{}"))
+        if (!tmpString.equals("{}")) {
             builder.addTextBody(PARAM_XSMTPAPI, tmpString, ContentType.create(TEXT_PLAIN, UTF_8));
+        }
 
         return builder.build();
     }

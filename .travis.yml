@@ -1,5 +1,5 @@
 language: java
-script: ./gradlew clean build
+script: ./gradlew build
 
 sudo: false
 

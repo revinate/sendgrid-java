@@ -16,9 +16,9 @@ apply plugin: 'maven'
 apply plugin: 'signing'
 
 allprojects {
-  apply plugin: 'java'
-  sourceCompatibility = 1.6
-  targetCompatibility = 1.6
+    apply plugin: 'java'
+    sourceCompatibility = 1.6
+    targetCompatibility = 1.6
 }
 
 group = 'com.sendgrid'
@@ -26,103 +26,103 @@ version = '3.0.0'
 ext.packaging = 'jar'
 
 if (!hasProperty("sonatypeUsername")) {
-  ext.sonatypeUsername = null
-  ext.sonatypePassword = null
+    ext.sonatypeUsername = null
+    ext.sonatypePassword = null
 }
 
 task wrapper(type: Wrapper) {
-  gradleVersion = '2.10'
+    gradleVersion = '2.10'
 }
 
 dependencies {
-  compile 'com.sendgrid:smtpapi-java:1.2.0'
-  compile 'org.apache.httpcomponents:httpcore:4.3.2'
-  compile 'org.apache.httpcomponents:httpclient:4.3.4'
-  compile 'org.apache.httpcomponents:httpmime:4.3.4'
-  compile 'org.json:json:20140107'
-  compile 'com.fasterxml.jackson.core:jackson-core:2.4.6'
-  compile 'com.fasterxml.jackson.core:jackson-annotations:2.4.6'
-  compile 'com.fasterxml.jackson.core:jackson-databind:2.4.6'
-  testCompile group: 'junit', name: 'junit', version: '4.12'
-  testCompile group: 'org.skyscreamer', name: 'jsonassert', version: '1.2.3'
+    compile 'com.sendgrid:smtpapi-java:1.2.0'
+    compile 'org.apache.httpcomponents:httpcore:4.3.2'
+    compile 'org.apache.httpcomponents:httpclient:4.3.4'
+    compile 'org.apache.httpcomponents:httpmime:4.3.4'
+    compile 'org.json:json:20140107'
+    compile 'com.fasterxml.jackson.core:jackson-core:2.4.6'
+    compile 'com.fasterxml.jackson.core:jackson-annotations:2.4.6'
+    compile 'com.fasterxml.jackson.core:jackson-databind:2.4.6'
+    testCompile 'junit:junit:4.12'
+    testCompile 'org.skyscreamer:jsonassert:1.2.3'
 }
 
 repositories {
-  mavenCentral()
+    mavenCentral()
 }
 
 allprojects {
-  gradle.projectsEvaluated {
-    tasks.withType(JavaCompile) {
-      options.compilerArgs << "-Xlint:unchecked" << "-Xlint:deprecation"
-      }
-  }
+    gradle.projectsEvaluated {
+        tasks.withType(JavaCompile) {
+            options.compilerArgs << "-Xlint:unchecked" << "-Xlint:deprecation"
+        }
+    }
 }
 
 task javadocJar(type: Jar, dependsOn: javadoc) {
-  classifier = 'javadoc'
-  from 'build/docs/javadoc'
+    classifier = 'javadoc'
+    from 'build/docs/javadoc'
 }
 
 task sourcesJar(type: Jar) {
-  classifier = 'sources'
-  from sourceSets.main.allSource
+    classifier = 'sources'
+    from sourceSets.main.allSource
 }
 
 signing {
-  required { gradle.taskGraph.hasTask("uploadArchives") }
-  sign configurations.archives
+    required { gradle.taskGraph.hasTask("uploadArchives") }
+    sign configurations.archives
 }
 
 uploadArchives {
-  repositories {
-    mavenDeployer {
-      beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
-      repository(url: "https://oss.sonatype.org/service/local/staging/deploy/maven2/") {
-        authentication(userName: sonatypeUsername, password: sonatypePassword)
-      }
+    repositories {
+        mavenDeployer {
+            beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
+            repository(url: "https://oss.sonatype.org/service/local/staging/deploy/maven2/") {
+                authentication(userName: sonatypeUsername, password: sonatypePassword)
+            }
 
-      pom.project {
-        name 'sendgrid-java'
-        packaging 'jar'
-        description 'SendGrid Java helper library'
-        url 'https://github.com/sendgrid/sendgrid-java'
+            pom.project {
+                name 'sendgrid-java'
+                packaging 'jar'
+                description 'SendGrid Java helper library'
+                url 'https://github.com/sendgrid/sendgrid-java'
 
-        scm {
-          url 'scm:git@github.com:sendgrid/sendgrid-java.git'
-          connection 'scm:git@github.com:sendgrid/sendgrid-java.git'
-          developerConnection 'scm:git@github.com:sendgrid/sendgrid-java.git'
+                scm {
+                    url 'scm:git@github.com:sendgrid/sendgrid-java.git'
+                    connection 'scm:git@github.com:sendgrid/sendgrid-java.git'
+                    developerConnection 'scm:git@github.com:sendgrid/sendgrid-java.git'
+                }
+
+                licenses {
+                    license {
+                        name 'MIT License'
+                        url 'http://opensource.org/licenses/MIT'
+                        distribution 'repo'
+                    }
+                }
+
+                developers {
+                    developer {
+                        id 'scottmotte'
+                        name 'Scott Motte'
+                    }
+                    developer {
+                        id 'elbou8'
+                        name 'Yamil Asusta'
+                    }
+                    developer {
+                        id 'eddiezane'
+                        name 'Eddie Zaneski'
+                    }
+                }
+            }
         }
-
-        licenses {
-          license {
-            name 'MIT License'
-            url 'http://opensource.org/licenses/MIT'
-            distribution 'repo'
-          }
-        }
-
-        developers {
-          developer {
-            id 'scottmotte'
-            name 'Scott Motte'
-          }
-          developer {
-            id 'elbou8'
-            name 'Yamil Asusta'
-          }
-          developer {
-            id 'eddiezane'
-            name 'Eddie Zaneski'
-          }
-        }
-      }
     }
-  }
 }
 
 artifacts {
-  archives jar
-  archives javadocJar
-  archives sourcesJar
+    archives jar
+    archives javadocJar
+    archives sourcesJar
 }

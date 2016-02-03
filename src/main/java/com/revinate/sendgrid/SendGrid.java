@@ -1,11 +1,11 @@
-package com.sendgrid;
+package com.revinate.sendgrid;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
-import com.sendgrid.exception.SendGridException;
-import com.sendgrid.model.*;
+import com.revinate.sendgrid.exception.SendGridException;
+import com.revinate.sendgrid.model.*;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;

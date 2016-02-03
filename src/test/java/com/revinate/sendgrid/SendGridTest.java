@@ -1,6 +1,6 @@
-package com.sendgrid;
+package com.revinate.sendgrid;
 
-import com.sendgrid.model.Email;
+import com.revinate.sendgrid.model.Email;
 import org.json.JSONObject;
 import org.junit.Test;
 import org.skyscreamer.jsonassert.JSONAssert;

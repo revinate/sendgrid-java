@@ -1,7 +1,7 @@
-package com.sendgrid.model;
+package com.revinate.sendgrid.model;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.sendgrid.SendGrid;
+import com.revinate.sendgrid.SendGrid;
 import org.apache.http.HttpEntity;
 import org.apache.http.client.entity.EntityBuilder;
 

@@ -1,4 +1,4 @@
-package com.sendgrid.model;
+package com.revinate.sendgrid.model;
 
 public class Response {
 

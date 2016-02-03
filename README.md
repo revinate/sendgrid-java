@@ -1,4 +1,4 @@
-# SendGrid-Java
+# SendGrid Java
 
 This Java module allows you to quickly and easily send emails through SendGrid using Java.
 
@@ -11,20 +11,22 @@ Version ``2.x.x``, behaves differently in the ``addTo`` method. In the past this
 
 ```java
 // SendGridExample.java
-import com.sendgrid.*;
+import com.revinate.sendgrid.SendGrid;
+import com.revinate.sendgrid.model.*;
+import com.revinate.sendgrid.exception.*;
 
 public class SendGridExample {
   public static void main(String[] args) {
     SendGrid sendgrid = new SendGrid('YOUR_SENDGRID_API_KEY');
 
-    SendGrid.Email email = new SendGrid.Email();
+    Email email = new Email();
     email.addTo("example@example.com");
     email.setFrom("other@example.com");
     email.setSubject("Hello World");
     email.setText("My first email with SendGrid Java!");
 
     try {
-      SendGrid.Response response = sendgrid.send(email);
+      Response response = sendgrid.send(email);
       System.out.println(response.getMessage());
     }
     catch (SendGridException e) {
@@ -32,11 +34,6 @@ public class SendGridExample {
     }
   }
 }
-```
-Compile and run this example with
-
-```bash
-$ javac -classpath sendgrid-2.2.1-jar.jar:. SendGridExample.java && java -classpath sendgrid-2.2.1-jar.jar:. SendGridExample
 ```
 
 ## Installation
@@ -48,20 +45,14 @@ Add the following to your build.gradle file in the root of your project.
 ```groovy
 ...
 dependencies {
-  ...
-  compile 'com.sendgrid:sendgrid-java:2.2.1'
+    ...
+    compile 'com.revinate:sendgrid-java:3.0.0'
 }
 
 repositories {
-  mavenCentral()
+    mavenCentral()
 }
 ...
-```
-
-Then import the library - in the file appropriate to your Java project.
-
-```java
-import com.sendgrid.SendGrid;
 ```
 
 ## Usage
@@ -69,7 +60,7 @@ import com.sendgrid.SendGrid;
 To begin using this library, initialize the SendGrid object with your SendGrid API Key. To configure API keys, visit https://sendgrid.com/beta/settings/api_keys.
 
 ```java
-import com.sendgrid.SendGrid;
+import com.revinate.sendgrid.SendGrid;
 SendGrid sendgrid = new SendGrid('YOUR_SENDGRID_API_KEY');
 ```
 

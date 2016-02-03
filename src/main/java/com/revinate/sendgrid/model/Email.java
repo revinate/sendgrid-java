@@ -1,6 +1,6 @@
-package com.sendgrid.model;
+package com.revinate.sendgrid.model;
 
-import com.sendgrid.smtpapi.SMTPAPI;
+import com.revinate.sendgrid.smtpapi.SMTPAPI;
 import org.apache.http.HttpEntity;
 import org.apache.http.entity.ContentType;
 import org.apache.http.entity.mime.MultipartEntityBuilder;

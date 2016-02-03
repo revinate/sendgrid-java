@@ -21,7 +21,7 @@ allprojects {
     targetCompatibility = 1.6
 }
 
-group = 'com.sendgrid'
+group = 'com.revinate'
 version = '3.0.0'
 ext.packaging = 'jar'
 
@@ -35,7 +35,7 @@ task wrapper(type: Wrapper) {
 }
 
 dependencies {
-    compile 'com.sendgrid:smtpapi-java:1.2.0'
+    compile 'com.revinate:sendgrid-smtpapi-java:1.2.1'
     compile 'org.apache.httpcomponents:httpcore:4.3.2'
     compile 'org.apache.httpcomponents:httpclient:4.3.4'
     compile 'org.apache.httpcomponents:httpmime:4.3.4'
@@ -78,20 +78,22 @@ uploadArchives {
     repositories {
         mavenDeployer {
             beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
+
             repository(url: "https://oss.sonatype.org/service/local/staging/deploy/maven2/") {
                 authentication(userName: sonatypeUsername, password: sonatypePassword)
             }
 
             pom.project {
-                name 'sendgrid-java'
+                artifactId 'sendgrid-java'
                 packaging 'jar'
+                name 'SendGrid for Java'
                 description 'SendGrid Java helper library'
-                url 'https://github.com/sendgrid/sendgrid-java'
+                url 'https://github.com/revinate/sendgrid-java'
 
                 scm {
-                    url 'scm:git@github.com:sendgrid/sendgrid-java.git'
-                    connection 'scm:git@github.com:sendgrid/sendgrid-java.git'
-                    developerConnection 'scm:git@github.com:sendgrid/sendgrid-java.git'
+                    url 'https://github.com/revinate/sendgrid-java'
+                    connection 'scm:git:git://github.com/revinate/sendgrid-java.git'
+                    developerConnection 'scm:git:ssh://git@github.com:revinate/sendgrid-java.git'
                 }
 
                 licenses {
@@ -104,16 +106,8 @@ uploadArchives {
 
                 developers {
                     developer {
-                        id 'scottmotte'
-                        name 'Scott Motte'
-                    }
-                    developer {
-                        id 'elbou8'
-                        name 'Yamil Asusta'
-                    }
-                    developer {
-                        id 'eddiezane'
-                        name 'Eddie Zaneski'
+                        id 'revinate'
+                        name 'Revinate, Inc'
                     }
                 }
             }

@@ -8,6 +8,7 @@ import com.sendgrid.exception.SendGridException;
 import com.sendgrid.model.*;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
+import org.apache.http.client.methods.HttpDelete;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.CloseableHttpClient;
@@ -87,10 +88,40 @@ public class SendGrid {
         }
     }
 
+    public List<Subuser> getSubusers() throws SendGridException {
+        try {
+            HttpResponse response = get(SUBUSERS_ENDPOINT);
+            String content = EntityUtils.toString(response.getEntity());
+            Subuser[] subusers = OBJECT_MAPPER.readValue(content, Subuser[].class);
+            return Arrays.asList(subusers);
+        } catch (IOException e) {
+            throw new SendGridException(e);
+        }
+    }
+
+    public Subuser getSubuser(String id) throws SendGridException {
+        try {
+            HttpResponse response = get(SUBUSERS_ENDPOINT + "/" + id);
+            String content = EntityUtils.toString(response.getEntity());
+            return OBJECT_MAPPER.readValue(content, Subuser.class);
+        } catch (IOException e) {
+            throw new SendGridException(e);
+        }
+    }
+
     public Subuser createSubuser(Subuser subuser) throws SendGridException {
         try {
-            HttpEntity entity = post(subuser.toHttpEntity(), SUBUSERS_ENDPOINT).getEntity();
-            return OBJECT_MAPPER.readValue(EntityUtils.toString(entity), Subuser.class);
+            HttpResponse response = post(subuser.toHttpEntity(), SUBUSERS_ENDPOINT);
+            String content = EntityUtils.toString(response.getEntity());
+            return OBJECT_MAPPER.readValue(content, Subuser.class);
+        } catch (IOException e) {
+            throw new SendGridException(e);
+        }
+    }
+
+    public void deleteSubuser(String id) throws SendGridException {
+        try {
+            delete(SUBUSERS_ENDPOINT + "/" + id);
         } catch (IOException e) {
             throw new SendGridException(e);
         }
@@ -98,35 +129,102 @@ public class SendGrid {
 
     public List<Ip> getIps() throws SendGridException {
         try {
-            HttpEntity entity = get(IPS_ENDPOINT).getEntity();
-            Ip[] ips = OBJECT_MAPPER.readValue(EntityUtils.toString(entity), Ip[].class);
+            HttpResponse response = get(IPS_ENDPOINT);
+            String content = EntityUtils.toString(response.getEntity());
+            Ip[] ips = OBJECT_MAPPER.readValue(content, Ip[].class);
             return Arrays.asList(ips);
         } catch (IOException e) {
             throw new SendGridException(e);
         }
     }
 
-    public List<IpPool> getIpPools() throws SendGridException {
+    public Ip getIp(String id) throws SendGridException {
         try {
-            HttpEntity entity = get(IP_POOLS_ENDPOINT).getEntity();
-            IpPool[] ipPools = OBJECT_MAPPER.readValue(EntityUtils.toString(entity), IpPool[].class);
+            HttpResponse response = get(IPS_ENDPOINT + "/" + id);
+            String content = EntityUtils.toString(response.getEntity());
+            return OBJECT_MAPPER.readValue(content, Ip.class);
+        } catch (IOException e) {
+            throw new SendGridException(e);
+        }
+    }
+
+    public List<IpPool> getIpPools() throws SendGridException {
+        return getIpPools(null);
+    }
+
+    public List<IpPool> getIpPools(String subuserName) throws SendGridException {
+        try {
+            HttpResponse response = get(IP_POOLS_ENDPOINT, subuserName);
+            String content = EntityUtils.toString(response.getEntity());
+            IpPool[] ipPools = OBJECT_MAPPER.readValue(content, IpPool[].class);
             return Arrays.asList(ipPools);
         } catch (IOException e) {
             throw new SendGridException(e);
         }
     }
 
+    public IpPool getIpPool(String id) throws SendGridException {
+        return getIpPool(id, null);
+    }
+
+    public IpPool getIpPool(String id, String subuserName) throws SendGridException {
+        try {
+            HttpResponse response = get(IP_POOLS_ENDPOINT + "/" + id, subuserName);
+            String content = EntityUtils.toString(response.getEntity());
+            return OBJECT_MAPPER.readValue(content, IpPool.class);
+        } catch (IOException e) {
+            throw new SendGridException(e);
+        }
+    }
+
+    public IpPool createIpPool(IpPool ipPool) throws SendGridException {
+        try {
+            HttpResponse response = post(ipPool.toHttpEntity(), SUBUSERS_ENDPOINT);
+            String content = EntityUtils.toString(response.getEntity());
+            return OBJECT_MAPPER.readValue(content, IpPool.class);
+        } catch (IOException e) {
+            throw new SendGridException(e);
+        }
+    }
+
     private HttpResponse get(String endpoint) throws IOException {
+        return get(endpoint, null);
+    }
+
+    private HttpResponse get(String endpoint, String subuserName) throws IOException {
         HttpGet httpGet = new HttpGet(this.url + endpoint);
         httpGet.setHeader("Authorization", getAuthHeaderValue());
+        if (subuserName != null) {
+            httpGet.setHeader("On-Behalf-Of", subuserName);
+        }
         return this.client.execute(httpGet);
     }
 
     private HttpResponse post(HttpEntity entity, String endpoint) throws IOException {
+        return post(entity, endpoint, null);
+    }
+
+    private HttpResponse post(HttpEntity entity, String endpoint, String subuserName) throws IOException {
         HttpPost httpPost = new HttpPost(this.url + endpoint);
         httpPost.setEntity(entity);
         httpPost.setHeader("Authorization", getAuthHeaderValue());
+        if (subuserName != null) {
+            httpPost.setHeader("On-Behalf-Of", subuserName);
+        }
         return this.client.execute(httpPost);
+    }
+
+    private HttpResponse delete(String endpoint) throws IOException {
+        return delete(endpoint, null);
+    }
+
+    private HttpResponse delete(String endpoint, String subuserName) throws IOException {
+        HttpDelete httpDelete = new HttpDelete(this.url + endpoint);
+        httpDelete.setHeader("Authorization", getAuthHeaderValue());
+        if (subuserName != null) {
+            httpDelete.setHeader("On-Behalf-Of", subuserName);
+        }
+        return this.client.execute(httpDelete);
     }
 
     private String getAuthHeaderValue() {

@@ -18,4 +18,13 @@ public class SendGridResource {
     public HttpEntity toHttpEntity() {
         return EntityBuilder.create().setText(toJson()).build();
     }
+
+    @Override
+    public String toString() {
+        try {
+            return SendGrid.OBJECT_MAPPER.writeValueAsString(this);
+        } catch (JsonProcessingException e) {
+            return super.toString();
+        }
+    }
 }

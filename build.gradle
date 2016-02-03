@@ -12,13 +12,8 @@
  */
 
 apply plugin: 'java'
-apply plugin: 'fatjar'
 apply plugin: 'maven'
 apply plugin: 'signing'
-
-group         = 'com.sendgrid'
-version       = '3.0.0'
-ext.packaging = 'jar'
 
 allprojects {
   apply plugin: 'java'
@@ -26,22 +21,17 @@ allprojects {
   targetCompatibility = 1.6
 }
 
+group = 'com.sendgrid'
+version = '3.0.0'
+ext.packaging = 'jar'
+
 if (!hasProperty("sonatypeUsername")) {
   ext.sonatypeUsername = null
   ext.sonatypePassword = null
 }
 
 task wrapper(type: Wrapper) {
-  gradleVersion = '1.8'
-}
-
-buildscript {
-  dependencies {
-    classpath 'eu.appsatori:gradle-fatjar-plugin:0.1.2' // adds fatJar task
-  }
-  repositories {
-    mavenCentral()
-  }
+  gradleVersion = '2.10'
 }
 
 dependencies {
@@ -69,44 +59,14 @@ allprojects {
   }
 }
 
-// adds 'with-dependencies' to the fatJar name
-fatJar {
-  classifier 'jar'
-  baseName "sendgrid"
-  manifest {
-    attributes("Implementation-Title": "SendGrid", "Implementation-Version": version)
-  }
-}
-
-// copy fatJar to base project directory so they will be in git (and on github for download)
-build << {
-  copy {
-    println "Copying ${fatJar.archiveName} to $projectDir/repo/com/sendgrid/$version"
-    from("$buildDir/libs/${fatJar.archiveName}")
-    into("$projectDir/repo/com/sendgrid/$version")
-  }
-  copy {
-    println "Copying ${fatJar.archiveName} to $projectDir/repo/com/sendgrid"
-    from("$buildDir/libs/${fatJar.archiveName}")
-    into("$projectDir/repo/com/sendgrid")
-  }
-  tasks.renameSendGridVersionJarToSendGridJar.execute()
-}
-
-task renameSendGridVersionJarToSendGridJar {
-  doLast {
-    file("$projectDir/repo/com/sendgrid/${fatJar.archiveName}").renameTo(file("$projectDir/repo/com/sendgrid/sendgrid-jar.jar"))
-  }
-}
-
 task javadocJar(type: Jar, dependsOn: javadoc) {
   classifier = 'javadoc'
   from 'build/docs/javadoc'
 }
 
 task sourcesJar(type: Jar) {
-  from sourceSets.main.allSource
   classifier = 'sources'
+  from sourceSets.main.allSource
 }
 
 signing {
@@ -162,7 +122,6 @@ uploadArchives {
 }
 
 artifacts {
-  archives fatJar
   archives jar
   archives javadocJar
   archives sourcesJar

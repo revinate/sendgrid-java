@@ -263,6 +263,15 @@ public class Email {
         return this.smtpapi.getSendAt();
     }
 
+    public Email setIpPool(String ipPool) {
+        this.smtpapi.setIpPool(ipPool);
+        return this;
+    }
+
+    public String getIpPool() {
+        return this.smtpapi.getIpPool();
+    }
+
     /**
      * Convenience method to set the template
      *

@@ -1,14 +1,24 @@
 package com.revinate.sendgrid.model;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import java.util.ArrayList;
 import java.util.List;
 
 public class Subuser extends SendGridResource {
 
     private Integer id;
+    @JsonProperty("user_id")
+    private Integer userId;
     private String username;
     private String email;
     private String password;
+    @JsonProperty("signup_session_token")
+    private String signupSessionToken;
+    @JsonProperty("authorization_token")
+    private String authorizationToken;
+    @JsonProperty("credit_allocation")
+    private CreditAllocation creditAllocation;
     private List<String> ips;
 
     public Integer getId() {
@@ -17,6 +27,14 @@ public class Subuser extends SendGridResource {
 
     public void setId(Integer id) {
         this.id = id;
+    }
+
+    public Integer getUserId() {
+        return userId;
+    }
+
+    public void setUserId(Integer userId) {
+        this.userId = userId;
     }
 
     public String getUsername() {
@@ -43,10 +61,31 @@ public class Subuser extends SendGridResource {
         this.password = password;
     }
 
+    public String getSignupSessionToken() {
+        return signupSessionToken;
+    }
+
+    public void setSignupSessionToken(String signupSessionToken) {
+        this.signupSessionToken = signupSessionToken;
+    }
+
+    public String getAuthorizationToken() {
+        return authorizationToken;
+    }
+
+    public void setAuthorizationToken(String authorizationToken) {
+        this.authorizationToken = authorizationToken;
+    }
+
+    public CreditAllocation getCreditAllocation() {
+        return creditAllocation;
+    }
+
+    public void setCreditAllocation(CreditAllocation creditAllocation) {
+        this.creditAllocation = creditAllocation;
+    }
+
     public List<String> getIps() {
-        if (ips == null) {
-            ips = new ArrayList<String>();
-        }
         return ips;
     }
 
@@ -55,6 +94,9 @@ public class Subuser extends SendGridResource {
     }
 
     public void addIp(String ip) {
-        getIps().add(ip);
+        if (ips == null) {
+            ips = new ArrayList<String>();
+        }
+        ips.add(ip);
     }
 }

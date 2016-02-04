@@ -24,6 +24,15 @@ public class SendGridApiClient {
         return this;
     }
 
+    public HttpResponse postV2(HttpEntity entity, String url, String username, String password) throws IOException {
+        HttpPost httpPost = new HttpPost(url);
+        httpPost.setEntity(entity);
+        if (username == null) {
+            httpPost.setHeader("Authorization", "Bearer " + password);
+        }
+        return this.client.execute(httpPost);
+    }
+
     public HttpResponse get(String url, String username, String password) throws IOException {
         return get(url, username, password, null);
     }
@@ -44,6 +53,7 @@ public class SendGridApiClient {
     public HttpResponse post(HttpEntity entity, String url, String username, String password, String subuserName) throws IOException {
         HttpPost httpPost = new HttpPost(url);
         httpPost.setEntity(entity);
+        httpPost.setHeader("Content-Type", "application/json");
         httpPost.setHeader("Authorization", getAuthHeaderValue(username, password));
         if (subuserName != null) {
             httpPost.setHeader("On-Behalf-Of", subuserName);

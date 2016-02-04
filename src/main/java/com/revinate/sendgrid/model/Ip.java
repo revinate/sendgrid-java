@@ -16,6 +16,11 @@ public class Ip extends SendGridResource {
     private Boolean warmup;
     private Boolean whitelabeled;
 
+    @Override
+    public String getPathId() {
+        return ip;
+    }
+
     public String getIp() {
         return ip;
     }

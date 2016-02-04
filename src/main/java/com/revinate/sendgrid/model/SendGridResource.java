@@ -1,11 +1,15 @@
 package com.revinate.sendgrid.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.revinate.sendgrid.SendGrid;
 import org.apache.http.HttpEntity;
 import org.apache.http.client.entity.EntityBuilder;
 
-public class SendGridResource {
+public abstract class SendGridResource {
+
+    @JsonIgnore
+    public abstract String getPathId();
 
     public String toJson() {
         try {

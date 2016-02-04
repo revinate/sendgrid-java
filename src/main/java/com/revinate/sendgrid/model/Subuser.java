@@ -21,6 +21,11 @@ public class Subuser extends SendGridResource {
     private CreditAllocation creditAllocation;
     private List<String> ips;
 
+    @Override
+    public String getPathId() {
+        return username;
+    }
+
     public Integer getId() {
         return id;
     }

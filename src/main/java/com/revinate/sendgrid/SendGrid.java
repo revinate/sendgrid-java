@@ -6,14 +6,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.revinate.sendgrid.exception.SendGridException;
 import com.revinate.sendgrid.model.*;
-import org.apache.commons.codec.binary.Base64;
-import org.apache.http.HttpEntity;
+import com.revinate.sendgrid.net.SendGridApiClient;
 import org.apache.http.HttpResponse;
-import org.apache.http.client.methods.HttpDelete;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.util.EntityUtils;
 
 import java.io.IOException;
@@ -30,15 +24,19 @@ public class SendGrid {
     private static final String VERSION = "3.0.0";
     private static final String USER_AGENT = "sendgrid/" + VERSION + ";java";
 
-    private static final String MAIL_ENDPOINT = "/api/mail.send.json";
-    private static final String SUBUSERS_ENDPOINT = "/v3/subusers";
-    private static final String IPS_ENDPOINT = "/v3/ips";
-    private static final String IP_POOLS_ENDPOINT = "/v3/ips/pools";
+    private static final String V2_API = "api";
+    private static final String V2_API_2 = "apiv2";
+    private static final String V3_API = "v3";
+
+    private static final String MAIL_ENDPOINT = "mail.send.json";
+    private static final String SUBUSERS_ENDPOINT = "subusers";
+    private static final String IPS_ENDPOINT = "ips";
+    private static final String IP_POOLS_ENDPOINT = "ips/pools";
 
     private String username;
     private String password;
     private String url;
-    private CloseableHttpClient client;
+    private SendGridApiClient client;
 
     /**
      * Constructor for using a username and password
@@ -50,7 +48,7 @@ public class SendGrid {
         this.username = username;
         this.password = password;
         this.url = "https://api.sendgrid.com";
-        this.client = HttpClientBuilder.create().setUserAgent(USER_AGENT).build();
+        this.client = new SendGridApiClient(USER_AGENT);
     }
 
     /**
@@ -59,10 +57,7 @@ public class SendGrid {
      * @param apiKey SendGrid api key
      */
     public SendGrid(String apiKey) {
-        this.password = apiKey;
-        this.username = null;
-        this.url = "https://api.sendgrid.com";
-        this.client = HttpClientBuilder.create().setUserAgent(USER_AGENT).build();
+        this(null, apiKey);
     }
 
     public SendGrid setUrl(String url) {
@@ -74,14 +69,15 @@ public class SendGrid {
         return VERSION;
     }
 
-    public SendGrid setClient(CloseableHttpClient client) {
+    public SendGrid setClient(SendGridApiClient client) {
         this.client = client;
         return this;
     }
 
     public Response send(Email email) throws SendGridException {
         try {
-            HttpResponse response = post(email.toHttpEntity(this.username, this.password), MAIL_ENDPOINT);
+            HttpResponse response = client.post(email.toHttpEntity(username, password),
+                    getResourceUrl(V2_API, MAIL_ENDPOINT), username, password);
             return new Response(response.getStatusLine().getStatusCode(), EntityUtils.toString(response.getEntity()));
         } catch (IOException e) {
             throw new SendGridException(e);
@@ -90,7 +86,7 @@ public class SendGrid {
 
     public List<Subuser> getSubusers() throws SendGridException {
         try {
-            HttpResponse response = get(SUBUSERS_ENDPOINT);
+            HttpResponse response = client.get(getResourceUrl(V3_API, SUBUSERS_ENDPOINT), username, password);
             String content = EntityUtils.toString(response.getEntity());
             Subuser[] subusers = OBJECT_MAPPER.readValue(content, Subuser[].class);
             return Arrays.asList(subusers);
@@ -101,7 +97,7 @@ public class SendGrid {
 
     public Subuser getSubuser(String id) throws SendGridException {
         try {
-            HttpResponse response = get(SUBUSERS_ENDPOINT + "/" + id);
+            HttpResponse response = client.get(getResourceUrl(V3_API, SUBUSERS_ENDPOINT, id), username, password);
             String content = EntityUtils.toString(response.getEntity());
             return OBJECT_MAPPER.readValue(content, Subuser.class);
         } catch (IOException e) {
@@ -111,7 +107,8 @@ public class SendGrid {
 
     public Subuser createSubuser(Subuser subuser) throws SendGridException {
         try {
-            HttpResponse response = post(subuser.toHttpEntity(), SUBUSERS_ENDPOINT);
+            HttpResponse response = client.post(subuser.toHttpEntity(),
+                    getResourceUrl(V3_API, SUBUSERS_ENDPOINT), username, password);
             String content = EntityUtils.toString(response.getEntity());
             return OBJECT_MAPPER.readValue(content, Subuser.class);
         } catch (IOException e) {
@@ -121,7 +118,7 @@ public class SendGrid {
 
     public void deleteSubuser(String id) throws SendGridException {
         try {
-            delete(SUBUSERS_ENDPOINT + "/" + id);
+            client.delete(getResourceUrl(V3_API, SUBUSERS_ENDPOINT, id), username, password);
         } catch (IOException e) {
             throw new SendGridException(e);
         }
@@ -129,7 +126,7 @@ public class SendGrid {
 
     public List<Ip> getIps() throws SendGridException {
         try {
-            HttpResponse response = get(IPS_ENDPOINT);
+            HttpResponse response = client.get(getResourceUrl(V3_API, IPS_ENDPOINT), username, password);
             String content = EntityUtils.toString(response.getEntity());
             Ip[] ips = OBJECT_MAPPER.readValue(content, Ip[].class);
             return Arrays.asList(ips);
@@ -140,7 +137,7 @@ public class SendGrid {
 
     public Ip getIp(String id) throws SendGridException {
         try {
-            HttpResponse response = get(IPS_ENDPOINT + "/" + id);
+            HttpResponse response = client.get(getResourceUrl(V3_API, IPS_ENDPOINT, id), username, password);
             String content = EntityUtils.toString(response.getEntity());
             return OBJECT_MAPPER.readValue(content, Ip.class);
         } catch (IOException e) {
@@ -154,7 +151,7 @@ public class SendGrid {
 
     public List<IpPool> getIpPools(String subuserName) throws SendGridException {
         try {
-            HttpResponse response = get(IP_POOLS_ENDPOINT, subuserName);
+            HttpResponse response = client.get(getResourceUrl(V3_API, IP_POOLS_ENDPOINT), username, password, subuserName);
             String content = EntityUtils.toString(response.getEntity());
             IpPool[] ipPools = OBJECT_MAPPER.readValue(content, IpPool[].class);
             return Arrays.asList(ipPools);
@@ -169,7 +166,7 @@ public class SendGrid {
 
     public IpPool getIpPool(String id, String subuserName) throws SendGridException {
         try {
-            HttpResponse response = get(IP_POOLS_ENDPOINT + "/" + id, subuserName);
+            HttpResponse response = client.get(getResourceUrl(V3_API, IP_POOLS_ENDPOINT, id), username, password, subuserName);
             String content = EntityUtils.toString(response.getEntity());
             return OBJECT_MAPPER.readValue(content, IpPool.class);
         } catch (IOException e) {
@@ -178,8 +175,13 @@ public class SendGrid {
     }
 
     public IpPool createIpPool(IpPool ipPool) throws SendGridException {
+        return createIpPool(ipPool, null);
+    }
+
+    public IpPool createIpPool(IpPool ipPool, String subuserName) throws SendGridException {
         try {
-            HttpResponse response = post(ipPool.toHttpEntity(), SUBUSERS_ENDPOINT);
+            HttpResponse response = client.post(ipPool.toHttpEntity(),
+                    getResourceUrl(V3_API, IP_POOLS_ENDPOINT), username, password, subuserName);
             String content = EntityUtils.toString(response.getEntity());
             return OBJECT_MAPPER.readValue(content, IpPool.class);
         } catch (IOException e) {
@@ -187,52 +189,20 @@ public class SendGrid {
         }
     }
 
-    private HttpResponse get(String endpoint) throws IOException {
-        return get(endpoint, null);
+    private String getResourceUrl(String api, String endpoint) {
+        return getResourceUrl(api, endpoint, (String) null);
     }
 
-    private HttpResponse get(String endpoint, String subuserName) throws IOException {
-        HttpGet httpGet = new HttpGet(this.url + endpoint);
-        httpGet.setHeader("Authorization", getAuthHeaderValue());
-        if (subuserName != null) {
-            httpGet.setHeader("On-Behalf-Of", subuserName);
-        }
-        return this.client.execute(httpGet);
+    private String getResourceUrl(String api, String endpoint, SendGridResource resource) {
+        return getResourceUrl(api, endpoint, resource.getPathId());
     }
 
-    private HttpResponse post(HttpEntity entity, String endpoint) throws IOException {
-        return post(entity, endpoint, null);
-    }
-
-    private HttpResponse post(HttpEntity entity, String endpoint, String subuserName) throws IOException {
-        HttpPost httpPost = new HttpPost(this.url + endpoint);
-        httpPost.setEntity(entity);
-        httpPost.setHeader("Authorization", getAuthHeaderValue());
-        if (subuserName != null) {
-            httpPost.setHeader("On-Behalf-Of", subuserName);
-        }
-        return this.client.execute(httpPost);
-    }
-
-    private HttpResponse delete(String endpoint) throws IOException {
-        return delete(endpoint, null);
-    }
-
-    private HttpResponse delete(String endpoint, String subuserName) throws IOException {
-        HttpDelete httpDelete = new HttpDelete(this.url + endpoint);
-        httpDelete.setHeader("Authorization", getAuthHeaderValue());
-        if (subuserName != null) {
-            httpDelete.setHeader("On-Behalf-Of", subuserName);
-        }
-        return this.client.execute(httpDelete);
-    }
-
-    private String getAuthHeaderValue() {
-        if (this.username == null) {
-            return "Bearer " + this.password;
+    private String getResourceUrl(String api, String endpoint, String id) {
+        String resourceUrl = url + "/" + api + "/" + endpoint;
+        if (id == null) {
+            return resourceUrl;
         } else {
-            return "Basic " +  Base64.encodeBase64String(
-                    (this.username + ":" + this.password).getBytes());
+            return resourceUrl + "/" + id;
         }
     }
 }

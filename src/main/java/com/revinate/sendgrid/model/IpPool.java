@@ -11,6 +11,11 @@ public class IpPool extends SendGridResource {
     private String poolName;
     private List<Ip> ips;
 
+    @Override
+    public String getPathId() {
+        return name;
+    }
+
     public String getName() {
         return name;
     }

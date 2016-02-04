@@ -5,9 +5,7 @@ This Java module allows you to quickly and easily send emails through SendGrid u
 [![BuildStatus](https://travis-ci.org/revinate/sendgrid-java.svg?branch=master)](https://travis-ci.org/revinate/sendgrid-java)
 [![BuildStatus](https://maven-badges.herokuapp.com/maven-central/com.revinate/sendgrid-java/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.revinate/sendgrid-java)
 
-### Warning
-
-Version ``2.x.x``, behaves differently in the ``addTo`` method. In the past this method defaulted to using the ``SMTPAPI`` header. Now you must explicitly call the ``addSmtpApiTo`` method. More on the ``SMTPAPI`` section.
+## Example
 
 ```java
 // SendGridExample.java
@@ -16,23 +14,22 @@ import com.revinate.sendgrid.model.*;
 import com.revinate.sendgrid.exception.*;
 
 public class SendGridExample {
-  public static void main(String[] args) {
-    SendGrid sendgrid = new SendGrid('YOUR_SENDGRID_API_KEY');
+    public static void main(String[] args) {
+        SendGrid sendgrid = new SendGrid('YOUR_SENDGRID_API_KEY');
 
-    Email email = new Email();
-    email.addTo("example@example.com");
-    email.setFrom("other@example.com");
-    email.setSubject("Hello World");
-    email.setText("My first email with SendGrid Java!");
+        Email email = new Email();
+        email.addTo("example@example.com");
+        email.setFrom("other@example.com");
+        email.setSubject("Hello World");
+        email.setText("My first email with SendGrid Java!");
 
-    try {
-      Response response = sendgrid.send(email);
-      System.out.println(response.getMessage());
+        try {
+            Response response = sendgrid.send(email);
+            System.out.println(response.getMessage());
+        } catch (SendGridException e) {
+            System.err.println(e);
+        }
     }
-    catch (SendGridException e) {
-      System.err.println(e);
-    }
-  }
 }
 ```
 
@@ -57,7 +54,8 @@ repositories {
 
 ## Usage
 
-To begin using this library, initialize the SendGrid object with your SendGrid API Key. To configure API keys, visit https://sendgrid.com/beta/settings/api_keys.
+To begin using this library, initialize the SendGrid object with your SendGrid API Key.
+To configure API keys, visit https://sendgrid.com/beta/settings/api_keys.
 
 ```java
 import com.revinate.sendgrid.SendGrid;
@@ -215,7 +213,8 @@ sendgrid.setClient(http);
 
 ## [X-SMTPAPI](http://sendgrid.com/docs/API_Reference/SMTP_API/index.html)
 
-The mail object extends the SMTPAPI object which is found in [SMTPAPI-Java](https://github.com/sendgrid/smtpapi-java).
+The mail object extends the SMTPAPI object which is found in
+[sendgrid-smtpapi-Java](https://github.com/revinate/sendgrid-smtpapi-java).
 
 ```java
 email.getSMTPAPI();

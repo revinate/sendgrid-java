@@ -78,7 +78,7 @@ public class SendGridApiClient {
         if (username == null) {
             return "Bearer " + password;
         } else {
-            return "Basic " +  Base64.encodeBase64String(
+            return "Basic " + Base64.encodeBase64String(
                     (username + ":" + password).getBytes());
         }
     }

@@ -6,31 +6,35 @@ import com.revinate.sendgrid.net.auth.Credential;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.HttpClientBuilder;
 
 import java.io.IOException;
+
+import static com.revinate.sendgrid.SendGrid.USER_AGENT;
 
 public class SendGridHttpClient {
 
     private final HttpClient client;
-    private HttpResponseReader responseReader;
+    private final SendGridResponseFactory responseFactory;
 
-    public SendGridHttpClient(HttpClient client) {
-        this.client = client;
+    public SendGridHttpClient() {
+        this(HttpClientBuilder.create().setUserAgent(USER_AGENT).build(), new SendGridResponseFactory());
     }
 
-    public String get(String url, Credential credential) throws SendGridException {
+    public SendGridHttpClient(HttpClient client, SendGridResponseFactory responseFactory) {
+        this.client = client;
+        this.responseFactory = responseFactory;
+    }
+
+    public SendGridResponse get(String url, Credential credential) throws SendGridException {
         HttpGet request = new HttpGet(url);
         request.setHeaders(credential.toHttpHeaders());
 
         try {
             HttpResponse response = client.execute(request);
-            return responseReader.readContent(response.getEntity());
+            return responseFactory.create(response);
         } catch (IOException e) {
             throw new HttpException(e);
         }
-    }
-
-    void setResponseReader(HttpResponseReader responseReader) {
-        this.responseReader = responseReader;
     }
 }

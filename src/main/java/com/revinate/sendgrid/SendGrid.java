@@ -21,8 +21,8 @@ public class SendGrid {
             .configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false)
             .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 
-    private static final String VERSION = "3.0.0";
-    private static final String USER_AGENT = "sendgrid/" + VERSION + ";java";
+    public static final String VERSION = "3.0.0";
+    public static final String USER_AGENT = "sendgrid/" + VERSION + ";java";
 
     private static final String V2_API = "api";
     private static final String V2_API_2 = "apiv2";

@@ -2,7 +2,6 @@ package com.revinate.sendgrid.net;
 
 import com.revinate.sendgrid.net.auth.ApiKeyCredential;
 import org.apache.http.Header;
-import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
@@ -19,8 +18,7 @@ import java.util.Arrays;
 
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.notNullValue;
-import static org.hamcrest.Matchers.hasProperty;
-import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.verify;
@@ -36,25 +34,25 @@ public class SendGridHttpClientTest {
     HttpResponse httpResponse;
 
     @Mock
-    HttpResponseReader responseReader;
+    SendGridResponseFactory responseFactory;
 
     SendGridHttpClient client;
 
     @Before
     public void setUp() throws Exception {
-        client = new SendGridHttpClient(httpClient);
-        client.setResponseReader(responseReader);
+        client = new SendGridHttpClient(httpClient, responseFactory);
     }
 
     @Test
     public void get_shouldAttachCredentialToHeader() throws Exception {
+        SendGridResponse mockResponse = new SendGridResponse("response");
+
         when(httpClient.execute(any(HttpGet.class))).thenReturn(httpResponse);
-        HttpEntity entity = httpResponse.getEntity();
-        when(responseReader.readContent(entity)).thenReturn("response");
+        when(responseFactory.create(httpResponse)).thenReturn(mockResponse);
 
-        String response = client.get("http://sendgrid", new ApiKeyCredential("changeme"));
+        SendGridResponse response = client.get("http://sendgrid", new ApiKeyCredential("changeme"));
 
-        assertThat(response, containsString("response"));
+        assertThat(response, sameInstance(mockResponse));
 
         ArgumentCaptor<HttpGet> captor = ArgumentCaptor.forClass(HttpGet.class);
         verify(httpClient).execute(captor.capture());

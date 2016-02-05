@@ -13,11 +13,12 @@ public class UsernamePasswordCredential implements Credential {
         this.password = password;
     }
 
-    public Header toHttpHeader() {
-        return new BasicHeader("Authorization", "Basic " + base64Credential());
-    }
-
     private String base64Credential() {
         return Base64.encodeBase64String((username + ":" + password).getBytes());
+    }
+
+    @Override
+    public Header[] toHttpHeaders() {
+        return new Header[]{new BasicHeader("Authorization", "Basic " + base64Credential())};
     }
 }

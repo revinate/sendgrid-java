@@ -20,7 +20,7 @@ public class SendGridHttpClient {
 
     public String get(String url, Credential credential) throws SendGridException {
         HttpGet request = new HttpGet(url);
-        request.setHeader(credential.toHttpHeader());
+        request.setHeaders(credential.toHttpHeaders());
 
         try {
             HttpResponse response = client.execute(request);

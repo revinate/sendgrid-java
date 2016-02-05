@@ -1,10 +1,8 @@
 package com.revinate.sendgrid.exception;
 
-import com.sun.xml.internal.ws.client.SenderException;
-
 import java.io.IOException;
 
-public class HttpException extends SenderException {
+public class HttpException extends SendGridException {
     public HttpException(IOException e) {
         super("IO exception reaching SendGrid", e);
     }

@@ -5,6 +5,7 @@ import com.revinate.sendgrid.exception.SendGridException;
 import com.revinate.sendgrid.net.auth.Credential;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
+import org.apache.http.client.ResponseHandler;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.HttpClientBuilder;
 
@@ -31,8 +32,12 @@ public class SendGridHttpClient {
         request.setHeaders(credential.toHttpHeaders());
 
         try {
-            HttpResponse response = client.execute(request);
-            return responseFactory.create(response);
+            return client.execute(request, new ResponseHandler<SendGridResponse>() {
+                @Override
+                public SendGridResponse handleResponse(HttpResponse response) throws IOException {
+                    return responseFactory.create(response);
+                }
+            });
         } catch (IOException e) {
             throw new ApiConnectionException("IOException while making API request to SendGrid.", e);
         }

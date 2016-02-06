@@ -36,9 +36,9 @@ task wrapper(type: Wrapper) {
 
 dependencies {
     compile 'com.revinate:sendgrid-smtpapi-java:1.2.1'
-    compile 'org.apache.httpcomponents:httpcore:4.3.2'
-    compile 'org.apache.httpcomponents:httpclient:4.3.4'
-    compile 'org.apache.httpcomponents:httpmime:4.3.4'
+    compile 'org.apache.httpcomponents:httpcore:4.4.4'
+    compile 'org.apache.httpcomponents:httpclient:4.5.1'
+    compile 'org.apache.httpcomponents:httpmime:4.5.1'
     compile 'org.json:json:20140107'
     compile 'com.fasterxml.jackson.core:jackson-core:2.4.6'
     compile 'com.fasterxml.jackson.core:jackson-annotations:2.4.6'

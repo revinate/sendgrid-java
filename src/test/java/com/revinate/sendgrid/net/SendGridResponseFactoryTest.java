@@ -1,5 +1,6 @@
 package com.revinate.sendgrid.net;
 
+import com.revinate.sendgrid.exception.ApiException;
 import org.apache.http.HttpResponse;
 import org.junit.Before;
 import org.junit.Test;
@@ -39,5 +40,18 @@ public class SendGridResponseFactoryTest {
         assertThat(actual.isSuccessful(), is(true));
         assertThat(actual.getResponseBody(), is("body"));
         assertThat(actual.getException(), nullValue());
+    }
+
+    @Test
+    public void create_shouldHandleEmptyResponse() throws Exception {
+        when(httpResponse.getStatusLine().getStatusCode()).thenReturn(204);
+        when(httpResponse.getEntity()).thenReturn(null);
+
+        SendGridResponse actual = factory.create(httpResponse);
+
+        assertThat(actual, notNullValue());
+        assertThat(actual.isSuccessful(), is(false));
+        assertThat(actual.getResponseBody(), nullValue());
+        assertThat(actual.getException(), instanceOf(ApiException.class));
     }
 }

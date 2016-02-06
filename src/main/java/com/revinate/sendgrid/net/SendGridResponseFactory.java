@@ -20,7 +20,11 @@ public class SendGridResponseFactory {
     }
 
     public SendGridResponse create(HttpResponse response) throws IOException {
-        String responseBody = reader.readContent(response.getEntity());
+        HttpEntity entity = response.getEntity();
+        if (entity == null) {
+            return new SendGridResponse(new ApiException("no response body"));
+        }
+        String responseBody = reader.readContent(entity);
         int statusCode = response.getStatusLine().getStatusCode();
         if (statusCode < 200 || statusCode >= 300) {
             return new SendGridResponse(createException(statusCode, responseBody));

@@ -91,4 +91,10 @@ public class SendGridHttpClientTest {
 
         client.get("http://sendgrid", new ApiKeyCredential("changeme"));
     }
+
+    @Test
+    public void close_shouldCloseUnderlyingClient() throws Exception {
+        client.close();
+        verify(httpClient).close();
+    }
 }

@@ -1,11 +1,15 @@
 package com.revinate.sendgrid.net;
 
 import com.revinate.sendgrid.exception.*;
+import com.revinate.sendgrid.net.auth.ApiKeyCredential;
 import com.revinate.sendgrid.net.auth.Credential;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpResponseException;
 import org.apache.http.client.ResponseHandler;
+import org.apache.http.client.entity.EntityBuilder;
 import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 
@@ -43,7 +47,18 @@ public class SendGridHttpClient implements Closeable {
     public String get(String url, Credential credential) throws SendGridException {
         HttpGet request = new HttpGet(url);
         request.setHeaders(credential.toHttpHeaders());
+        return request(request);
+    }
 
+    public String post(String url, String requestBody, String contentType, Credential credential) throws SendGridException {
+        HttpPost request = new HttpPost(url);
+        request.setEntity(EntityBuilder.create().setText(requestBody).build());
+        request.setHeaders(credential.toHttpHeaders());
+        request.addHeader("Content-Type", contentType);
+        return request(request);
+    }
+
+    private String request(HttpUriRequest request) throws SendGridException {
         try {
             return client.execute(request, responseHandler);
         } catch (HttpResponseException e) {

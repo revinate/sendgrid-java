@@ -34,7 +34,7 @@ public class SendGridResponseFactoryTest {
         when(httpResponse.getStatusLine().getStatusCode()).thenReturn(200);
         when(reader.readContent(httpResponse.getEntity())).thenReturn("body");
 
-        SendGridResponse actual = factory.create(httpResponse);
+        SendGridResponse actual = factory.handleResponse(httpResponse);
 
         assertThat(actual, notNullValue());
         assertThat(actual.isSuccessful(), is(true));
@@ -47,7 +47,7 @@ public class SendGridResponseFactoryTest {
         when(httpResponse.getStatusLine().getStatusCode()).thenReturn(204);
         when(httpResponse.getEntity()).thenReturn(null);
 
-        SendGridResponse actual = factory.create(httpResponse);
+        SendGridResponse actual = factory.handleResponse(httpResponse);
 
         assertThat(actual, notNullValue());
         assertThat(actual.isSuccessful(), is(false));

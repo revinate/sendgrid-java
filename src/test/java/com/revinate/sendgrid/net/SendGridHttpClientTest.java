@@ -3,7 +3,6 @@ package com.revinate.sendgrid.net;
 import com.revinate.sendgrid.net.auth.ApiKeyCredential;
 import org.apache.http.Header;
 import org.apache.http.client.HttpClient;
-import org.apache.http.client.ResponseHandler;
 import org.apache.http.client.methods.HttpGet;
 import org.hamcrest.Matchers;
 import org.junit.Before;
@@ -43,17 +42,20 @@ public class SendGridHttpClientTest {
     public void get_shouldAttachCredentialToHeader() throws Exception {
         SendGridResponse mockResponse = new SendGridResponse("response");
 
-        when(httpClient.execute(any(HttpGet.class), any(ResponseHandler.class))).thenReturn(mockResponse);
+        when(httpClient.execute(any(HttpGet.class), any(SendGridResponseFactory.class))).thenReturn(mockResponse);
 
         SendGridResponse response = client.get("http://sendgrid", new ApiKeyCredential("changeme"));
 
         assertThat(response, sameInstance(mockResponse));
 
         ArgumentCaptor<HttpGet> captor = ArgumentCaptor.forClass(HttpGet.class);
-        verify(httpClient).execute(captor.capture(), any(ResponseHandler.class));
+        ArgumentCaptor<SendGridResponseFactory> responseFactoryCaptor = ArgumentCaptor.forClass(SendGridResponseFactory.class);
+        verify(httpClient).execute(captor.capture(), responseFactoryCaptor.capture());
 
         HttpGet httpGet = captor.getValue();
+        SendGridResponseFactory actualResponseFactory = responseFactoryCaptor.getValue();
 
+        assertThat(actualResponseFactory, sameInstance(responseFactory));
         assertThat(httpGet, notNullValue());
         assertThat(httpGet.getURI().toString(), containsString("http://sendgrid"));
         assertThat(Arrays.asList(httpGet.getAllHeaders()), Matchers.<Header>hasItem(hasProperty("name", is("Authorization"))));

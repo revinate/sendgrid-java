@@ -61,7 +61,7 @@ public class SendGridResponseFactoryExceptionalResponseTest {
         when(httpResponse.getStatusLine().getStatusCode()).thenReturn(statusCode);
         when(reader.readContent(httpResponse.getEntity())).thenReturn("response message");
 
-        SendGridResponse actual = factory.create(httpResponse);
+        SendGridResponse actual = factory.handleResponse(httpResponse);
 
         assertThat(actual, notNullValue());
         assertThat(actual.isSuccessful(), is(false));

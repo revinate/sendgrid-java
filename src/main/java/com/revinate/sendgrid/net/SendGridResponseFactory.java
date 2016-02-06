@@ -3,11 +3,12 @@ package com.revinate.sendgrid.net;
 import com.revinate.sendgrid.exception.*;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
+import org.apache.http.client.ResponseHandler;
 import org.apache.http.util.EntityUtils;
 
 import java.io.IOException;
 
-public class SendGridResponseFactory {
+public class SendGridResponseFactory implements ResponseHandler<SendGridResponse> {
 
     private HttpEntityReader reader;
 
@@ -19,7 +20,8 @@ public class SendGridResponseFactory {
         this.reader = reader;
     }
 
-    public SendGridResponse create(HttpResponse response) throws IOException {
+    @Override
+    public SendGridResponse handleResponse(HttpResponse response) throws IOException {
         HttpEntity entity = response.getEntity();
         if (entity == null) {
             return new SendGridResponse(new ApiException("no response body"));

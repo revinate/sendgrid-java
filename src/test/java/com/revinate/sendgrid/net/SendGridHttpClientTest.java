@@ -27,6 +27,7 @@ import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -103,14 +104,10 @@ public class SendGridHttpClientTest {
         assertThat(actual, is("response"));
 
         ArgumentCaptor<HttpPost> captor = ArgumentCaptor.forClass(HttpPost.class);
-        ArgumentCaptor<StringResponseHandler> responseHandlerCaptor =
-                ArgumentCaptor.forClass(StringResponseHandler.class);
-        verify(httpClient).execute(captor.capture(), responseHandlerCaptor.capture());
+        verify(httpClient).execute(captor.capture(), eq(handler));
 
         HttpPost httpPost = captor.getValue();
-        StringResponseHandler actualResponseHandler = responseHandlerCaptor.getValue();
 
-        assertThat(actualResponseHandler, sameInstance(handler));
         assertThat(httpPost, notNullValue());
         assertThat(EntityUtils.toString(httpPost.getEntity()), is("request"));
         assertThat(httpPost.getURI().toString(), containsString("http://sendgrid"));

@@ -16,6 +16,7 @@ import java.util.List;
 
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.notNullValue;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.when;
 
@@ -36,22 +37,36 @@ public class ApiKeyOperationsTest {
     }
 
     @Test
-    public void getAll_shouldCallClient() throws Exception {
+    public void list_shouldReturnApiKeys() throws Exception {
         String response = readFile("responses/api-keys.json");
 
         when(client.get("https://api.sendgrid.com/v3/api_keys", credential)).thenReturn(response);
 
-        List<ApiKey> apiKeys = operations.getAll();
+        List<ApiKey> apiKeys = operations.list();
 
         assertThat(apiKeys, hasSize(2));
         assertThat(apiKeys.get(0).getName(), is("1st API key"));
     }
 
     @Test(expected = SendGridException.class)
-    public void getAll_shouldJsonParseException() throws Exception {
+    public void list_shouldThrowSendGridExceptionOnJsonParseException() throws Exception {
         when(client.get("https://api.sendgrid.com/v3/api_keys", credential)).thenReturn("not a json");
 
-        operations.getAll();
+        operations.list();
+    }
+
+    @Test
+    public void retrieve_shouldReturnApiKey() throws Exception {
+        String apiKeyId = "sdaspfgada5hahsrs5hSHF";
+        String response = readFile("responses/api-key.json");
+
+        when(client.get("https://api.sendgrid.com/v3/api_keys/" + apiKeyId, credential)).thenReturn(response);
+
+        ApiKey apiKey = operations.retrieve(apiKeyId);
+
+        assertThat(apiKey, notNullValue());
+        assertThat(apiKey.getName(), is("1st API key"));
+        assertThat(apiKey.getApiKeyId(), is(apiKeyId));
     }
 
     private static String readFile(String path) throws IOException {

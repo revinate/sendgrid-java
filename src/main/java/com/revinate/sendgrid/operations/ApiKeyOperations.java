@@ -19,7 +19,7 @@ public class ApiKeyOperations extends AbstractOperations {
         this.credential = credential;
     }
 
-    public List<ApiKey> getAll() throws SendGridException {
+    public List<ApiKey> list() throws SendGridException {
         String url = v3Url() + "/api_keys";
         String response = client.get(url, credential);
 
@@ -31,5 +31,19 @@ public class ApiKeyOperations extends AbstractOperations {
         }
 
         return apiKeysResponse.getResult();
+    }
+
+    public ApiKey retrieve(String id) throws SendGridException {
+        String url = v3Url() + "/api_keys/" + id;
+        String response = client.get(url, credential);
+
+        ApiKey apiKey;
+        try {
+            apiKey = OBJECT_MAPPER.readValue(response, ApiKey.class);
+        } catch (IOException e) {
+            throw new SendGridException(e);
+        }
+
+        return apiKey;
     }
 }

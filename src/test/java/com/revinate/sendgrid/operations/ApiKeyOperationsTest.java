@@ -37,7 +37,7 @@ public class ApiKeyOperationsTest {
 
     @Test
     public void getAll_shouldCallClient() throws Exception {
-        String response = readFile("responses/api-keys-result.json");
+        String response = readFile("responses/api-keys.json");
 
         when(client.get("https://api.sendgrid.com/v3/api_keys", credential)).thenReturn(response);
 

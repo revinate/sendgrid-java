@@ -63,4 +63,6 @@ public class SendGridHttpClientTest {
         assertThat(httpGet.getURI().toString(), containsString("http://sendgrid"));
         assertThat(Arrays.asList(httpGet.getAllHeaders()), Matchers.<Header>hasItem(hasProperty("name", is("Authorization"))));
     }
+
+    // TODO validate exception, it should catch IOException and return response
 }

@@ -22,10 +22,10 @@ public class SendGridResponseFactory {
     public SendGridResponse create(HttpResponse response) throws IOException {
         String responseBody = reader.readContent(response.getEntity());
         int statusCode = response.getStatusLine().getStatusCode();
-        if (statusCode == 200) {
-            return new SendGridResponse(responseBody);
-        } else {
+        if (statusCode < 200 || statusCode >= 300) {
             return new SendGridResponse(createException(statusCode, responseBody));
+        } else {
+            return new SendGridResponse(responseBody);
         }
     }
 
@@ -34,7 +34,7 @@ public class SendGridResponseFactory {
             case 400:
                 return new InvalidRequestException(responseBody);
             case 401:
-                return new NotAuthorizedException(responseBody);
+                return new AuthenticationException(responseBody);
             case 404:
                 return new NotFoundException(responseBody);
             default:

@@ -1,8 +1,8 @@
 package com.revinate.sendgrid.net;
 
 import com.revinate.sendgrid.exception.ApiException;
+import com.revinate.sendgrid.exception.AuthenticationException;
 import com.revinate.sendgrid.exception.InvalidRequestException;
-import com.revinate.sendgrid.exception.NotAuthorizedException;
 import com.revinate.sendgrid.exception.NotFoundException;
 import org.apache.http.HttpResponse;
 import org.junit.Before;
@@ -28,7 +28,7 @@ public class SendGridResponseFactoryExceptionalResponseTest {
     public static Collection<Object[]> data() {
         return Arrays.asList(new Object[][]{
                 {400, InvalidRequestException.class},
-                {401, NotAuthorizedException.class},
+                {401, AuthenticationException.class},
                 {404, NotFoundException.class},
                 {503, ApiException.class},
         });

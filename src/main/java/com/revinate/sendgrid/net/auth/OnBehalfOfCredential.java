@@ -16,8 +16,8 @@ public class OnBehalfOfCredential implements Credential {
 
     @Override
     public Header[] toHttpHeaders() {
-        final Header[] headers = credential.toHttpHeaders();
-        final int length = headers.length;
+        Header[] headers = credential.toHttpHeaders();
+        int length = headers.length;
         Header[] newHeaders = Arrays.copyOf(headers, length + 1);
         newHeaders[length] = new BasicHeader("On-Behalf-Of", subuserName);
         return newHeaders;

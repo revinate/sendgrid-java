@@ -4,7 +4,7 @@ import org.apache.http.Header;
 import org.apache.http.message.BasicHeader;
 
 public class ApiKeyCredential implements Credential {
-    private String apiKey;
+    private final String apiKey;
 
     public ApiKeyCredential(String apiKey) {
         this.apiKey = apiKey;

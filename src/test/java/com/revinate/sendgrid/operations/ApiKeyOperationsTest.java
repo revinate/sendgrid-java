@@ -2,7 +2,6 @@ package com.revinate.sendgrid.operations;
 
 import com.revinate.sendgrid.model.ApiKey;
 import com.revinate.sendgrid.net.SendGridHttpClient;
-import com.revinate.sendgrid.net.SendGridResponse;
 import com.revinate.sendgrid.net.auth.Credential;
 import org.apache.commons.io.IOUtils;
 import org.junit.Before;
@@ -37,7 +36,7 @@ public class ApiKeyOperationsTest {
 
     @Test
     public void getAll_shouldCallClient() throws Exception {
-        SendGridResponse response = new SendGridResponse(readFile("responses/api-keys-result.json"));
+        String response = readFile("responses/api-keys-result.json");
 
         when(client.get("https://api.sendgrid.com/v3/api_keys", credential)).thenReturn(response);
 

@@ -4,7 +4,6 @@ import com.revinate.sendgrid.exception.SendGridException;
 import com.revinate.sendgrid.model.ApiKey;
 import com.revinate.sendgrid.model.ApiKeysResponse;
 import com.revinate.sendgrid.net.SendGridHttpClient;
-import com.revinate.sendgrid.net.SendGridResponse;
 import com.revinate.sendgrid.net.auth.Credential;
 
 import java.io.IOException;
@@ -22,11 +21,11 @@ public class ApiKeyOperations extends AbstractOperations {
 
     public List<ApiKey> getAll() throws SendGridException {
         String url = v3Url() + "/api_keys";
-        SendGridResponse response = client.get(url, credential);
+        String response = client.get(url, credential);
 
         ApiKeysResponse apiKeysResponse;
         try {
-            apiKeysResponse = OBJECT_MAPPER.readValue(response.getResponseBody(), ApiKeysResponse.class);
+            apiKeysResponse = OBJECT_MAPPER.readValue(response, ApiKeysResponse.class);
         } catch (IOException e) {
             throw new SendGridException(e);
         }

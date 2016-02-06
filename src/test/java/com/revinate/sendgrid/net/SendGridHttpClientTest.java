@@ -29,33 +29,32 @@ public class SendGridHttpClientTest {
     HttpClient httpClient;
 
     @Mock
-    SendGridResponseFactory responseFactory;
+    StringResponseHandler handler;
 
     SendGridHttpClient client;
 
     @Before
     public void setUp() throws Exception {
-        client = new SendGridHttpClient(httpClient, responseFactory);
+        client = new SendGridHttpClient(httpClient, handler);
     }
 
     @Test
     public void get_shouldAttachCredentialToHeader() throws Exception {
-        SendGridResponse mockResponse = new SendGridResponse("response");
+        String expected = "response";
+        when(httpClient.execute(any(HttpGet.class), any(StringResponseHandler.class))).thenReturn(expected);
 
-        when(httpClient.execute(any(HttpGet.class), any(SendGridResponseFactory.class))).thenReturn(mockResponse);
+        String actual = client.get("http://sendgrid", new ApiKeyCredential("changeme"));
 
-        SendGridResponse response = client.get("http://sendgrid", new ApiKeyCredential("changeme"));
-
-        assertThat(response, sameInstance(mockResponse));
+        assertThat(actual, is(expected));
 
         ArgumentCaptor<HttpGet> captor = ArgumentCaptor.forClass(HttpGet.class);
-        ArgumentCaptor<SendGridResponseFactory> responseFactoryCaptor = ArgumentCaptor.forClass(SendGridResponseFactory.class);
+        ArgumentCaptor<StringResponseHandler> responseFactoryCaptor = ArgumentCaptor.forClass(StringResponseHandler.class);
         verify(httpClient).execute(captor.capture(), responseFactoryCaptor.capture());
 
         HttpGet httpGet = captor.getValue();
-        SendGridResponseFactory actualResponseFactory = responseFactoryCaptor.getValue();
+        StringResponseHandler actualResponseFactory = responseFactoryCaptor.getValue();
 
-        assertThat(actualResponseFactory, sameInstance(responseFactory));
+        assertThat(actualResponseFactory, sameInstance(handler));
         assertThat(httpGet, notNullValue());
         assertThat(httpGet.getURI().toString(), containsString("http://sendgrid"));
         assertThat(Arrays.asList(httpGet.getAllHeaders()), Matchers.<Header>hasItem(hasProperty("name", is("Authorization"))));

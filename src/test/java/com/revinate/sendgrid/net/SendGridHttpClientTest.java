@@ -1,17 +1,21 @@
 package com.revinate.sendgrid.net;
 
+import com.revinate.sendgrid.exception.ApiConnectionException;
 import com.revinate.sendgrid.net.auth.ApiKeyCredential;
 import org.apache.http.Header;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.hamcrest.Matchers;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
+import java.io.IOException;
 import java.util.Arrays;
 
 import static org.hamcrest.CoreMatchers.containsString;
@@ -24,6 +28,9 @@ import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 public class SendGridHttpClientTest {
+
+    @Rule
+    public ExpectedException thrown = ExpectedException.none();
 
     @Mock
     HttpClient httpClient;
@@ -60,5 +67,13 @@ public class SendGridHttpClientTest {
         assertThat(Arrays.asList(httpGet.getAllHeaders()), Matchers.<Header>hasItem(hasProperty("name", is("Authorization"))));
     }
 
-    // TODO validate exception, it should catch IOException and return response
+    @Test
+    public void get_shouldWrapExceptionFromClient() throws Exception {
+        when(httpClient.execute(any(HttpGet.class), any(StringResponseHandler.class))).thenThrow(new IOException("Unit test"));
+
+        thrown.expect(ApiConnectionException.class);
+        thrown.expectMessage("IOException while making API request to SendGrid.");
+
+        client.get("http://sendgrid", new ApiKeyCredential("changeme"));
+    }
 }

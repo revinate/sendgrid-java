@@ -1,5 +1,6 @@
 package com.revinate.sendgrid.operations;
 
+import com.revinate.sendgrid.exception.SendGridException;
 import com.revinate.sendgrid.model.ApiKey;
 import com.revinate.sendgrid.net.SendGridHttpClient;
 import com.revinate.sendgrid.net.auth.Credential;
@@ -44,6 +45,13 @@ public class ApiKeyOperationsTest {
 
         assertThat(apiKeys, hasSize(2));
         assertThat(apiKeys.get(0).getName(), is("1st API key"));
+    }
+
+    @Test(expected = SendGridException.class)
+    public void getAll_shouldJsonParseException() throws Exception {
+        when(client.get("https://api.sendgrid.com/v3/api_keys", credential)).thenReturn("not a json");
+
+        operations.getAll();
     }
 
     private static String readFile(String path) throws IOException {

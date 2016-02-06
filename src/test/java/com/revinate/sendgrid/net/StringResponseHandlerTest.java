@@ -47,20 +47,20 @@ public class StringResponseHandlerTest {
 
     @Test
     public void handleResponse_shouldHandleEmptyResponse() throws Exception {
-        thrown.expect(ClientProtocolException.class);
-
         when(httpResponse.getStatusLine().getStatusCode()).thenReturn(204);
         when(httpResponse.getEntity()).thenReturn(null);
+
+        thrown.expect(ClientProtocolException.class);
 
         handler.handleResponse(httpResponse);
     }
 
     @Test
     public void handleResponse_shouldHandleErrorResponse() throws Exception {
-        thrown.expect(HttpResponseException.class);
-
         when(httpResponse.getStatusLine().getStatusCode()).thenReturn(404);
         when(reader.readContent(httpResponse.getEntity())).thenReturn("not found");
+
+        thrown.expect(HttpResponseException.class);
 
         handler.handleResponse(httpResponse);
     }

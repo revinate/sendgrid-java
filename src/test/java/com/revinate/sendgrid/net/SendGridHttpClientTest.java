@@ -3,6 +3,7 @@ package com.revinate.sendgrid.net;
 import com.revinate.sendgrid.exception.ApiConnectionException;
 import com.revinate.sendgrid.net.auth.ApiKeyCredential;
 import org.apache.http.Header;
+import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.hamcrest.Matchers;
@@ -46,7 +47,7 @@ public class SendGridHttpClientTest {
     }
 
     @Test
-    public void get_shouldAttachCredentialToHeader() throws Exception {
+    public void get_shouldMakeRequestAndReturnResponse() throws Exception {
         String expected = "response";
         when(httpClient.execute(any(HttpGet.class), any(StringResponseHandler.class))).thenReturn(expected);
 
@@ -55,7 +56,8 @@ public class SendGridHttpClientTest {
         assertThat(actual, is(expected));
 
         ArgumentCaptor<HttpGet> captor = ArgumentCaptor.forClass(HttpGet.class);
-        ArgumentCaptor<StringResponseHandler> responseFactoryCaptor = ArgumentCaptor.forClass(StringResponseHandler.class);
+        ArgumentCaptor<StringResponseHandler> responseFactoryCaptor =
+                ArgumentCaptor.forClass(StringResponseHandler.class);
         verify(httpClient).execute(captor.capture(), responseFactoryCaptor.capture());
 
         HttpGet httpGet = captor.getValue();
@@ -64,12 +66,25 @@ public class SendGridHttpClientTest {
         assertThat(actualResponseFactory, sameInstance(handler));
         assertThat(httpGet, notNullValue());
         assertThat(httpGet.getURI().toString(), containsString("http://sendgrid"));
-        assertThat(Arrays.asList(httpGet.getAllHeaders()), Matchers.<Header>hasItem(hasProperty("name", is("Authorization"))));
+        assertThat(Arrays.asList(httpGet.getAllHeaders()),
+                Matchers.<Header>hasItem(hasProperty("name", is("Authorization"))));
     }
 
     @Test
-    public void get_shouldWrapExceptionFromClient() throws Exception {
-        when(httpClient.execute(any(HttpGet.class), any(StringResponseHandler.class))).thenThrow(new IOException("Unit test"));
+    public void get_shouldWrapClientProtocolException() throws Exception {
+        when(httpClient.execute(any(HttpGet.class), any(StringResponseHandler.class)))
+                .thenThrow(new ClientProtocolException("Unit test"));
+
+        thrown.expect(ApiConnectionException.class);
+        thrown.expectMessage("Unit test");
+
+        client.get("http://sendgrid", new ApiKeyCredential("changeme"));
+    }
+
+    @Test
+    public void get_shouldWrapIOException() throws Exception {
+        when(httpClient.execute(any(HttpGet.class), any(StringResponseHandler.class)))
+                .thenThrow(new IOException("Unit test"));
 
         thrown.expect(ApiConnectionException.class);
         thrown.expectMessage("IOException while making API request to SendGrid.");

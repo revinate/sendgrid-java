@@ -51,6 +51,7 @@ public class StringResponseHandlerTest {
         when(httpResponse.getEntity()).thenReturn(null);
 
         thrown.expect(ClientProtocolException.class);
+        thrown.expectMessage("Response contains no content");
 
         handler.handleResponse(httpResponse);
     }
@@ -61,6 +62,7 @@ public class StringResponseHandlerTest {
         when(reader.readContent(httpResponse.getEntity())).thenReturn("not found");
 
         thrown.expect(HttpResponseException.class);
+        thrown.expectMessage("not found");
 
         handler.handleResponse(httpResponse);
     }

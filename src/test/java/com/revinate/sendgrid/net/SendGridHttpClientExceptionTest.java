@@ -3,7 +3,7 @@ package com.revinate.sendgrid.net;
 import com.revinate.sendgrid.exception.ApiException;
 import com.revinate.sendgrid.exception.AuthenticationException;
 import com.revinate.sendgrid.exception.InvalidRequestException;
-import com.revinate.sendgrid.exception.NotFoundException;
+import com.revinate.sendgrid.exception.ResourceNotFoundException;
 import com.revinate.sendgrid.net.auth.ApiKeyCredential;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.HttpResponseException;
@@ -35,7 +35,7 @@ public class SendGridHttpClientExceptionTest {
         return Arrays.asList(new Object[][]{
                 {400, InvalidRequestException.class},
                 {401, AuthenticationException.class},
-                {404, NotFoundException.class},
+                {404, ResourceNotFoundException.class},
                 {503, ApiException.class},
         });
     }
@@ -64,10 +64,11 @@ public class SendGridHttpClientExceptionTest {
 
     @Test
     public void get_shouldHandleError() throws Exception {
-        thrown.expect(expectedType);
+        when(httpClient.execute(any(HttpGet.class), any(StringResponseHandler.class)))
+                .thenThrow(new HttpResponseException(statusCode, "error"));
 
-        HttpResponseException e = new HttpResponseException(statusCode, "error");
-        when(httpClient.execute(any(HttpGet.class), any(StringResponseHandler.class))).thenThrow(e);
+        thrown.expect(expectedType);
+        thrown.expectMessage("error");
 
         client.get("http://sendgrid", new ApiKeyCredential("changeme"));
     }

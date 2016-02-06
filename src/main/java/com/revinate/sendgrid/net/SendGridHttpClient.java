@@ -2,6 +2,7 @@ package com.revinate.sendgrid.net;
 
 import com.revinate.sendgrid.exception.*;
 import com.revinate.sendgrid.net.auth.Credential;
+import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.HttpResponseException;
 import org.apache.http.client.methods.HttpGet;
@@ -33,22 +34,24 @@ public class SendGridHttpClient {
             return client.execute(request, responseFactory);
         } catch (HttpResponseException e) {
             throw createException(e);
+        } catch (ClientProtocolException e) {
+            throw new ApiConnectionException(e.getMessage());
         } catch (IOException e) {
             throw new ApiConnectionException("IOException while making API request to SendGrid.", e);
         }
     }
 
     private SendGridException createException(HttpResponseException e) {
-        String responseBody = e.getMessage();
+        String message = e.getMessage();
         switch (e.getStatusCode()) {
             case 400:
-                return new InvalidRequestException(responseBody);
+                return new InvalidRequestException(message);
             case 401:
-                return new AuthenticationException(responseBody);
+                return new AuthenticationException(message);
             case 404:
-                return new NotFoundException(responseBody);
+                return new ResourceNotFoundException(message);
             default:
-                return new ApiException(responseBody);
+                return new ApiException(message);
         }
     }
 }

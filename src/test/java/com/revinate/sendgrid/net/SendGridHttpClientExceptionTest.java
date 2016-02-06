@@ -5,9 +5,9 @@ import com.revinate.sendgrid.exception.AuthenticationException;
 import com.revinate.sendgrid.exception.InvalidRequestException;
 import com.revinate.sendgrid.exception.ResourceNotFoundException;
 import com.revinate.sendgrid.net.auth.ApiKeyCredential;
-import org.apache.http.client.HttpClient;
 import org.apache.http.client.HttpResponseException;
 import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.CloseableHttpClient;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -41,7 +41,7 @@ public class SendGridHttpClientExceptionTest {
     }
 
     @Mock
-    HttpClient httpClient;
+    CloseableHttpClient httpClient;
 
     @Mock
     StringResponseHandler handler;

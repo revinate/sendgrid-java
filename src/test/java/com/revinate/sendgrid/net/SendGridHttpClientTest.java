@@ -4,8 +4,8 @@ import com.revinate.sendgrid.exception.ApiConnectionException;
 import com.revinate.sendgrid.net.auth.ApiKeyCredential;
 import org.apache.http.Header;
 import org.apache.http.client.ClientProtocolException;
-import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.CloseableHttpClient;
 import org.hamcrest.Matchers;
 import org.junit.Before;
 import org.junit.Rule;
@@ -34,7 +34,7 @@ public class SendGridHttpClientTest {
     public ExpectedException thrown = ExpectedException.none();
 
     @Mock
-    HttpClient httpClient;
+    CloseableHttpClient httpClient;
 
     @Mock
     StringResponseHandler handler;

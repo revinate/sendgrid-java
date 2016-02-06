@@ -3,26 +3,41 @@ package com.revinate.sendgrid.net;
 import com.revinate.sendgrid.exception.*;
 import com.revinate.sendgrid.net.auth.Credential;
 import org.apache.http.client.ClientProtocolException;
-import org.apache.http.client.HttpClient;
 import org.apache.http.client.HttpResponseException;
 import org.apache.http.client.ResponseHandler;
 import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 
+import java.io.Closeable;
 import java.io.IOException;
 
-public class SendGridHttpClient {
+public class SendGridHttpClient implements Closeable {
 
-    private final HttpClient client;
+    private final CloseableHttpClient client;
     private final ResponseHandler<String> responseHandler;
 
-    public SendGridHttpClient(String userAgent) {
-        this(HttpClients.custom().setUserAgent(userAgent).build(), new StringResponseHandler());
+    public SendGridHttpClient(String userAgent, int maxConnections) {
+        this(HttpClients.custom()
+                .setUserAgent(userAgent)
+                .setMaxConnTotal(maxConnections)
+                .setMaxConnPerRoute(maxConnections)
+                .build(),
+                new StringResponseHandler());
     }
 
-    public SendGridHttpClient(HttpClient client, ResponseHandler<String> responseHandler) {
+    public SendGridHttpClient(CloseableHttpClient client, ResponseHandler<String> responseHandler) {
         this.client = client;
         this.responseHandler = responseHandler;
+    }
+
+    @Override
+    public void close() {
+        try {
+            client.close();
+        } catch (IOException e) {
+            // do nothing
+        }
     }
 
     public String get(String url, Credential credential) throws SendGridException {

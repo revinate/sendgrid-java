@@ -18,6 +18,7 @@ import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.junit.Assert.assertThat;
+import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -67,6 +68,24 @@ public class ApiKeyOperationsTest {
         assertThat(apiKey, notNullValue());
         assertThat(apiKey.getName(), is("1st API key"));
         assertThat(apiKey.getApiKeyId(), is(apiKeyId));
+    }
+
+    @Test
+    public void create_shouldPostAndReturnApiKey() throws Exception {
+        String apiKeyId = "sdaspfgada5hahsrs5hSHF";
+        String response = readFile("responses/api-key.json");
+        ApiKey apiKey = new ApiKey();
+        apiKey.setName("1st API key");
+        String requestBody = ApiKeyOperations.OBJECT_MAPPER.writeValueAsString(apiKey);
+
+        when(client.post("https://api.sendgrid.com/v3/api_keys", requestBody,
+                "application/json", credential)).thenReturn(response);
+
+        ApiKey apiKey1 = operations.create(apiKey);
+
+        assertThat(apiKey1, notNullValue());
+        assertThat(apiKey1.getName(), is("1st API key"));
+        assertThat(apiKey1.getApiKeyId(), is(apiKeyId));
     }
 
     private static String readFile(String path) throws IOException {

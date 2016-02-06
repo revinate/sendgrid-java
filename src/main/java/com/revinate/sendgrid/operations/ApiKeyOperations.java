@@ -46,4 +46,19 @@ public class ApiKeyOperations extends AbstractOperations {
 
         return apiKey;
     }
+
+    public ApiKey create(ApiKey requestObject) throws SendGridException {
+        String url = v3Url() + "/api_keys";
+
+        ApiKey apiKey;
+        try {
+            String requestBody = OBJECT_MAPPER.writeValueAsString(requestObject);
+            String response = client.post(url, requestBody, "application/json", credential);
+            apiKey = OBJECT_MAPPER.readValue(response, ApiKey.class);
+        } catch (IOException e) {
+            throw new SendGridException(e);
+        }
+
+        return apiKey;
+    }
 }

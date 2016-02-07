@@ -2,7 +2,7 @@ package com.revinate.sendgrid.model;
 
 import java.util.List;
 
-public class IpPool extends SendGridResource {
+public class IpPool extends SendGridResource implements Identifiable {
 
     private String name;
     private String poolName;

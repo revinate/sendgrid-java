@@ -3,7 +3,7 @@ package com.revinate.sendgrid.model;
 import java.util.Date;
 import java.util.List;
 
-public class Ip extends SendGridResource {
+public class Ip extends SendGridResource implements Identifiable {
 
     private String ip;
     private String rdns;

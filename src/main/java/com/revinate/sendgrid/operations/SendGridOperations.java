@@ -1,6 +1,6 @@
 package com.revinate.sendgrid.operations;
 
-public class AbstractOperations {
+public abstract class SendGridOperations {
 
     protected String baseUrl() {
         return "https://api.sendgrid.com";

@@ -10,7 +10,7 @@ import com.revinate.sendgrid.util.JsonUtils;
 import java.io.IOException;
 import java.util.List;
 
-public class ApiKeyOperations extends AbstractOperations {
+public class ApiKeyOperations extends SendGridOperations {
 
     private final SendGridHttpClient client;
     private final Credential credential;

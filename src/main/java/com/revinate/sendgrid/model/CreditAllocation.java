@@ -1,6 +1,6 @@
 package com.revinate.sendgrid.model;
 
-public class CreditAllocation {
+public class CreditAllocation extends SendGridResource {
 
     private String type;
 

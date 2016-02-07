@@ -73,9 +73,9 @@ public class ApiKeyOperationsTest {
         String response = readFile("responses/api-key.json");
         ApiKey apiKey = new ApiKey();
         apiKey.setName("1st API key");
-        String requestBody = JsonUtils.toJson(apiKey);
+        String request = JsonUtils.toJson(apiKey);
 
-        when(client.post("https://api.sendgrid.com/v3/api_keys", requestBody,
+        when(client.post("https://api.sendgrid.com/v3/api_keys", request,
                 "application/json", credential)).thenReturn(response);
 
         ApiKey apiKey1 = operations.create(apiKey);

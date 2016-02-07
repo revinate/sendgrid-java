@@ -247,7 +247,7 @@ public class SendGrid {
         return getResourceUrl(api, endpoint, (String) null);
     }
 
-    private String getResourceUrl(String api, String endpoint, SendGridResource resource) {
+    private String getResourceUrl(String api, String endpoint, Identifiable resource) {
         return getResourceUrl(api, endpoint, resource.getPathId());
     }
 

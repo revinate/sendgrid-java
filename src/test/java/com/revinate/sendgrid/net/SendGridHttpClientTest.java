@@ -2,13 +2,11 @@ package com.revinate.sendgrid.net;
 
 import com.revinate.sendgrid.exception.ApiConnectionException;
 import com.revinate.sendgrid.net.auth.ApiKeyCredential;
-import org.apache.http.Header;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.util.EntityUtils;
-import org.hamcrest.Matchers;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -19,8 +17,6 @@ import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.List;
 
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.assertThat;
@@ -50,11 +46,12 @@ public class SendGridHttpClientTest {
 
     @Test
     public void get_shouldMakeRequestAndReturnResponse() throws Exception {
-        when(httpClient.execute(any(HttpGet.class), any(StringResponseHandler.class))).thenReturn("response");
+        when(httpClient.execute(any(HttpGet.class), any(StringResponseHandler.class)))
+                .thenReturn("response");
 
-        String actual = client.get("http://sendgrid", new ApiKeyCredential("changeme"));
+        String actual = client.get("http://sendgrid", new ApiKeyCredential("token"));
 
-        assertThat(actual, is("response"));
+        assertThat(actual, equalTo("response"));
 
         ArgumentCaptor<HttpGet> captor = ArgumentCaptor.forClass(HttpGet.class);
         verify(httpClient).execute(captor.capture(), eq(handler));
@@ -62,9 +59,10 @@ public class SendGridHttpClientTest {
         HttpGet httpGet = captor.getValue();
 
         assertThat(httpGet, notNullValue());
-        assertThat(httpGet.getURI().toString(), containsString("http://sendgrid"));
-        assertThat(Arrays.asList(httpGet.getAllHeaders()),
-                Matchers.<Header>hasItem(hasProperty("name", is("Authorization"))));
+        assertThat(httpGet.getURI(), hasToString("http://sendgrid"));
+        assertThat(httpGet.getAllHeaders(), hasItemInArray(
+                hasProperty("name", equalTo("Authorization"))
+        ));
     }
 
     @Test
@@ -91,11 +89,12 @@ public class SendGridHttpClientTest {
 
     @Test
     public void post_shouldMakeRequestAndReturnResponse() throws Exception {
-        when(httpClient.execute(any(HttpPost.class), any(StringResponseHandler.class))).thenReturn("response");
+        when(httpClient.execute(any(HttpPost.class), any(StringResponseHandler.class)))
+                .thenReturn("response");
 
-        String actual = client.post("http://sendgrid", "request", "text/plain", new ApiKeyCredential("changeme"));
+        String actual = client.post("http://sendgrid", "request", "text/plain", new ApiKeyCredential("token"));
 
-        assertThat(actual, is("response"));
+        assertThat(actual, equalTo("response"));
 
         ArgumentCaptor<HttpPost> captor = ArgumentCaptor.forClass(HttpPost.class);
         verify(httpClient).execute(captor.capture(), eq(handler));
@@ -103,16 +102,17 @@ public class SendGridHttpClientTest {
         HttpPost httpPost = captor.getValue();
 
         assertThat(httpPost, notNullValue());
-        assertThat(EntityUtils.toString(httpPost.getEntity()), is("request"));
-        assertThat(httpPost.getURI().toString(), containsString("http://sendgrid"));
-
-        List<Header> headers = Arrays.asList(httpPost.getAllHeaders());
-        assertThat(headers, Matchers.<Header>hasItem(hasProperty("name", is("Authorization"))));
-        assertThat(headers, Matchers.<Header>hasItem(
+        assertThat(EntityUtils.toString(httpPost.getEntity()), equalTo("request"));
+        assertThat(httpPost.getURI(), hasToString("http://sendgrid"));
+        assertThat(httpPost.getAllHeaders(), hasItemInArray(
+                hasProperty("name", equalTo("Authorization"))
+        ));
+        assertThat(httpPost.getAllHeaders(), hasItemInArray(
                 allOf(
-                        hasProperty("name", is("Content-Type")),
-                        hasProperty("value", is("text/plain"))
-                )));
+                        hasProperty("name", equalTo("Content-Type")),
+                        hasProperty("value", equalTo("text/plain"))
+                )
+        ));
     }
 
     @Test

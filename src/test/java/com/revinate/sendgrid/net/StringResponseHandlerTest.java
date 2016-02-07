@@ -12,7 +12,7 @@ import org.mockito.Answers;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
-import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.when;
 
@@ -42,7 +42,7 @@ public class StringResponseHandlerTest {
 
         String actual = handler.handleResponse(httpResponse);
 
-        assertThat(actual, is("body"));
+        assertThat(actual, equalTo("body"));
     }
 
     @Test

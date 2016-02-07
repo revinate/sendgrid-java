@@ -14,11 +14,8 @@ import org.mockito.runners.MockitoJUnitRunner;
 import java.io.IOException;
 import java.util.List;
 
-import static org.hamcrest.Matchers.hasSize;
-import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.notNullValue;
+import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.assertThat;
-import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -46,7 +43,7 @@ public class ApiKeyOperationsTest {
         List<ApiKey> apiKeys = operations.list();
 
         assertThat(apiKeys, hasSize(2));
-        assertThat(apiKeys.get(0).getName(), is("1st API key"));
+        assertThat(apiKeys.get(0).getName(), equalTo("1st API key"));
     }
 
     @Test(expected = SendGridException.class)
@@ -66,8 +63,8 @@ public class ApiKeyOperationsTest {
         ApiKey apiKey = operations.retrieve(apiKeyId);
 
         assertThat(apiKey, notNullValue());
-        assertThat(apiKey.getName(), is("1st API key"));
-        assertThat(apiKey.getApiKeyId(), is(apiKeyId));
+        assertThat(apiKey.getName(), equalTo("1st API key"));
+        assertThat(apiKey.getApiKeyId(), equalTo(apiKeyId));
     }
 
     @Test
@@ -84,8 +81,8 @@ public class ApiKeyOperationsTest {
         ApiKey apiKey1 = operations.create(apiKey);
 
         assertThat(apiKey1, notNullValue());
-        assertThat(apiKey1.getName(), is("1st API key"));
-        assertThat(apiKey1.getApiKeyId(), is(apiKeyId));
+        assertThat(apiKey1.getName(), equalTo("1st API key"));
+        assertThat(apiKey1.getApiKeyId(), equalTo(apiKeyId));
     }
 
     private static String readFile(String path) throws IOException {

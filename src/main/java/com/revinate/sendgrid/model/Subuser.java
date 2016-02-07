@@ -1,23 +1,17 @@
 package com.revinate.sendgrid.model;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-
 import java.util.ArrayList;
 import java.util.List;
 
 public class Subuser extends SendGridResource {
 
     private Integer id;
-    @JsonProperty("user_id")
     private Integer userId;
     private String username;
     private String email;
     private String password;
-    @JsonProperty("signup_session_token")
     private String signupSessionToken;
-    @JsonProperty("authorization_token")
     private String authorizationToken;
-    @JsonProperty("credit_allocation")
     private CreditAllocation creditAllocation;
     private List<String> ips;
 

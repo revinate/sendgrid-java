@@ -1,7 +1,6 @@
 package com.revinate.sendgrid.net;
 
 import com.revinate.sendgrid.exception.*;
-import com.revinate.sendgrid.net.auth.ApiKeyCredential;
 import com.revinate.sendgrid.net.auth.Credential;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpResponseException;

@@ -1,9 +1,5 @@
 package com.revinate.sendgrid;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
 import com.revinate.sendgrid.exception.SendGridException;
 import com.revinate.sendgrid.model.*;
 import com.revinate.sendgrid.net.SendGridApiClient;
@@ -14,12 +10,9 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 
-public class SendGrid {
+import static com.revinate.sendgrid.operations.AbstractOperations.OBJECT_MAPPER;
 
-    public static final ObjectMapper OBJECT_MAPPER = new ObjectMapper()
-            .setSerializationInclusion(JsonInclude.Include.NON_NULL)
-            .configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false)
-            .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+public class SendGrid {
 
     public static final String VERSION = "3.0.0";
     public static final String USER_AGENT = "sendgrid/" + VERSION + ";java";

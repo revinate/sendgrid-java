@@ -1,7 +1,5 @@
 package com.revinate.sendgrid.model;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-
 import java.util.Date;
 import java.util.List;
 
@@ -11,7 +9,6 @@ public class Ip extends SendGridResource {
     private String rdns;
     private List<String> subusers;
     private List<String> pools;
-    @JsonProperty("start_date")
     private Date startDate;
     private Boolean warmup;
     private Boolean whitelabeled;

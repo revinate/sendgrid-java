@@ -1,13 +1,10 @@
 package com.revinate.sendgrid.model;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-
 import java.util.List;
 
 public class IpPool extends SendGridResource {
 
     private String name;
-    @JsonProperty("pool_name")
     private String poolName;
     private List<Ip> ips;
 

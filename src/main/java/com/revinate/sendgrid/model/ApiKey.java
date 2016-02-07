@@ -1,16 +1,12 @@
 package com.revinate.sendgrid.model;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-
 import java.util.ArrayList;
 import java.util.List;
 
 public class ApiKey extends SendGridResource {
 
     private String name;
-    @JsonProperty("api_key_id")
     private String apiKeyId;
-    @JsonProperty("api_key")
     private String apiKey;
     private List<String> scopes;
 

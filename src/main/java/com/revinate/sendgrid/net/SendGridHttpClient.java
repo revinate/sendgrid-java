@@ -2,6 +2,7 @@ package com.revinate.sendgrid.net;
 
 import com.revinate.sendgrid.exception.*;
 import com.revinate.sendgrid.net.auth.Credential;
+import com.revinate.sendgrid.util.JsonUtils;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpResponseException;
 import org.apache.http.client.ResponseHandler;
@@ -43,29 +44,44 @@ public class SendGridHttpClient implements Closeable {
         }
     }
 
-    public String get(String url, Credential credential) throws SendGridException {
+    public <T> T get(String url, Class<T> type, Credential credential) throws SendGridException {
         HttpGet request = new HttpGet(url);
         request.setHeaders(credential.toHttpHeaders());
-        return request(request);
+        return request(request, type);
     }
 
-    public String post(String url, String requestBody, String contentType, Credential credential) throws SendGridException {
+    public <T> T post(String url, Object requestObject, Class<T> type, Credential credential) throws SendGridException {
+        String requestBody;
+        try {
+            requestBody = JsonUtils.toJson(requestObject);
+        } catch (IOException e) {
+            throw new SendGridException("IOException while mapping request.", e);
+        }
+
         HttpPost request = new HttpPost(url);
         request.setEntity(EntityBuilder.create().setText(requestBody).build());
         request.setHeaders(credential.toHttpHeaders());
-        request.addHeader("Content-Type", contentType);
-        return request(request);
+        request.addHeader("Content-Type", "application/json");
+
+        return request(request, type);
     }
 
-    private String request(HttpUriRequest request) throws SendGridException {
+    private <T> T request(HttpUriRequest request, Class<T> type) throws SendGridException {
+        String response;
         try {
-            return client.execute(request, responseHandler);
+            response = client.execute(request, responseHandler);
         } catch (HttpResponseException e) {
             throw createException(e);
         } catch (ClientProtocolException e) {
             throw new ApiConnectionException(e.getMessage(), e);
         } catch (IOException e) {
             throw new ApiConnectionException("IOException while making API request to SendGrid.", e);
+        }
+
+        try {
+            return JsonUtils.fromJson(response, type);
+        } catch (IOException e) {
+            throw new SendGridException("IOException while mapping response.", e);
         }
     }
 

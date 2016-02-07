@@ -1,7 +1,11 @@
 package com.revinate.sendgrid.net;
 
+import com.revinate.sendgrid.BaseSendGridTest;
 import com.revinate.sendgrid.exception.ApiConnectionException;
+import com.revinate.sendgrid.exception.SendGridException;
+import com.revinate.sendgrid.model.ApiKey;
 import com.revinate.sendgrid.net.auth.ApiKeyCredential;
+import com.revinate.sendgrid.util.JsonUtils;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
@@ -26,7 +30,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
-public class SendGridHttpClientTest {
+public class SendGridHttpClientTest extends BaseSendGridTest {
 
     @Rule
     public ExpectedException thrown = ExpectedException.none();
@@ -46,12 +50,16 @@ public class SendGridHttpClientTest {
 
     @Test
     public void get_shouldMakeRequestAndReturnResponse() throws Exception {
+        String response = readFile("/responses/api-key.json");
+
         when(httpClient.execute(any(HttpGet.class), any(StringResponseHandler.class)))
-                .thenReturn("response");
+                .thenReturn(response);
 
-        String actual = client.get("http://sendgrid", new ApiKeyCredential("token"));
+        ApiKey apiKey = client.get("http://sendgrid", ApiKey.class, new ApiKeyCredential("token"));
 
-        assertThat(actual, equalTo("response"));
+        assertThat(apiKey, notNullValue());
+        assertThat(apiKey.getName(), equalTo("1st API key"));
+        assertThat(apiKey.getApiKeyId(), equalTo("sdaspfgada5hahsrs5hSHF"));
 
         ArgumentCaptor<HttpGet> captor = ArgumentCaptor.forClass(HttpGet.class);
         verify(httpClient).execute(captor.capture(), eq(handler));
@@ -73,28 +81,47 @@ public class SendGridHttpClientTest {
         thrown.expect(ApiConnectionException.class);
         thrown.expectMessage("Unit test");
 
-        client.get("http://sendgrid", new ApiKeyCredential("changeme"));
+        client.get("http://sendgrid", ApiKey.class, new ApiKeyCredential("token"));
     }
 
     @Test
-    public void get_shouldWrapIOException() throws Exception {
+    public void get_shouldWrapConnectionIOException() throws Exception {
         when(httpClient.execute(any(HttpGet.class), any(StringResponseHandler.class)))
                 .thenThrow(new IOException("Unit test"));
 
         thrown.expect(ApiConnectionException.class);
         thrown.expectMessage("IOException while making API request to SendGrid.");
 
-        client.get("http://sendgrid", new ApiKeyCredential("changeme"));
+        client.get("http://sendgrid", ApiKey.class, new ApiKeyCredential("token"));
+    }
+
+    @Test
+    public void get_shouldWrapMappingIOException() throws Exception {
+        when(httpClient.execute(any(HttpGet.class), any(StringResponseHandler.class)))
+                .thenReturn("not a json");
+
+        thrown.expect(SendGridException.class);
+        thrown.expectMessage("IOException while mapping response.");
+
+        client.get("http://sendgrid", ApiKey.class, new ApiKeyCredential("token"));
     }
 
     @Test
     public void post_shouldMakeRequestAndReturnResponse() throws Exception {
+        String response = readFile("/responses/api-key.json");
+        ApiKey apiKey = new ApiKey();
+        apiKey.setName("1st API key");
+        String request = JsonUtils.toJson(apiKey);
+
         when(httpClient.execute(any(HttpPost.class), any(StringResponseHandler.class)))
-                .thenReturn("response");
+                .thenReturn(response);
 
-        String actual = client.post("http://sendgrid", "request", "text/plain", new ApiKeyCredential("token"));
+        ApiKey apiKey1 = client.post("http://sendgrid", apiKey, ApiKey.class,
+                new ApiKeyCredential("token"));
 
-        assertThat(actual, equalTo("response"));
+        assertThat(apiKey1, notNullValue());
+        assertThat(apiKey1.getName(), equalTo("1st API key"));
+        assertThat(apiKey1.getApiKeyId(), equalTo("sdaspfgada5hahsrs5hSHF"));
 
         ArgumentCaptor<HttpPost> captor = ArgumentCaptor.forClass(HttpPost.class);
         verify(httpClient).execute(captor.capture(), eq(handler));
@@ -102,7 +129,7 @@ public class SendGridHttpClientTest {
         HttpPost httpPost = captor.getValue();
 
         assertThat(httpPost, notNullValue());
-        assertThat(EntityUtils.toString(httpPost.getEntity()), equalTo("request"));
+        assertThat(EntityUtils.toString(httpPost.getEntity()), equalTo(request));
         assertThat(httpPost.getURI(), hasToString("http://sendgrid"));
         assertThat(httpPost.getAllHeaders(), hasItemInArray(
                 hasProperty("name", equalTo("Authorization"))
@@ -110,7 +137,7 @@ public class SendGridHttpClientTest {
         assertThat(httpPost.getAllHeaders(), hasItemInArray(
                 allOf(
                         hasProperty("name", equalTo("Content-Type")),
-                        hasProperty("value", equalTo("text/plain"))
+                        hasProperty("value", equalTo("application/json"))
                 )
         ));
     }

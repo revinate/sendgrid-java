@@ -4,6 +4,7 @@ import com.revinate.sendgrid.exception.ApiException;
 import com.revinate.sendgrid.exception.AuthenticationException;
 import com.revinate.sendgrid.exception.InvalidRequestException;
 import com.revinate.sendgrid.exception.ResourceNotFoundException;
+import com.revinate.sendgrid.model.ApiKey;
 import com.revinate.sendgrid.net.auth.ApiKeyCredential;
 import org.apache.http.client.HttpResponseException;
 import org.apache.http.client.methods.HttpGet;
@@ -70,6 +71,6 @@ public class SendGridHttpClientExceptionTest {
         thrown.expect(expectedType);
         thrown.expectMessage("error");
 
-        client.get("http://sendgrid", new ApiKeyCredential("changeme"));
+        client.get("http://sendgrid", ApiKey.class, new ApiKeyCredential("token"));
     }
 }

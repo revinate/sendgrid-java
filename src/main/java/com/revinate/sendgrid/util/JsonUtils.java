@@ -10,13 +10,13 @@ import java.io.IOException;
 
 public final class JsonUtils {
 
-    public static final ObjectMapper OBJECT_MAPPER = new ObjectMapper()
+    private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper()
             .setSerializationInclusion(JsonInclude.Include.NON_NULL)
             .setPropertyNamingStrategy(PropertyNamingStrategy.CAMEL_CASE_TO_LOWER_CASE_WITH_UNDERSCORES)
             .configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false)
             .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 
-    public static final ObjectMapper PRETTY_PRINT_OBJECT_MAPPER = new ObjectMapper()
+    private static final ObjectMapper PRETTY_PRINT_OBJECT_MAPPER = new ObjectMapper()
             .setSerializationInclusion(JsonInclude.Include.NON_NULL)
             .setPropertyNamingStrategy(PropertyNamingStrategy.CAMEL_CASE_TO_LOWER_CASE_WITH_UNDERSCORES)
             .configure(SerializationFeature.INDENT_OUTPUT, true)

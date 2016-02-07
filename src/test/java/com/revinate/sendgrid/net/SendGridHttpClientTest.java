@@ -22,8 +22,6 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 
-import static org.hamcrest.CoreMatchers.containsString;
-import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.any;
@@ -59,14 +57,10 @@ public class SendGridHttpClientTest {
         assertThat(actual, is("response"));
 
         ArgumentCaptor<HttpGet> captor = ArgumentCaptor.forClass(HttpGet.class);
-        ArgumentCaptor<StringResponseHandler> responseHandlerCaptor =
-                ArgumentCaptor.forClass(StringResponseHandler.class);
-        verify(httpClient).execute(captor.capture(), responseHandlerCaptor.capture());
+        verify(httpClient).execute(captor.capture(), eq(handler));
 
         HttpGet httpGet = captor.getValue();
-        StringResponseHandler actualResponseHandler = responseHandlerCaptor.getValue();
 
-        assertThat(actualResponseHandler, sameInstance(handler));
         assertThat(httpGet, notNullValue());
         assertThat(httpGet.getURI().toString(), containsString("http://sendgrid"));
         assertThat(Arrays.asList(httpGet.getAllHeaders()),

@@ -5,6 +5,7 @@ import com.revinate.sendgrid.model.ApiKey;
 import com.revinate.sendgrid.model.ApiKeysResponse;
 import com.revinate.sendgrid.net.SendGridHttpClient;
 import com.revinate.sendgrid.net.auth.Credential;
+import com.revinate.sendgrid.util.JsonUtils;
 
 import java.io.IOException;
 import java.util.List;
@@ -25,7 +26,7 @@ public class ApiKeyOperations extends AbstractOperations {
 
         ApiKeysResponse apiKeysResponse;
         try {
-            apiKeysResponse = OBJECT_MAPPER.readValue(response, ApiKeysResponse.class);
+            apiKeysResponse = JsonUtils.fromJson(response, ApiKeysResponse.class);
         } catch (IOException e) {
             throw new SendGridException(e);
         }
@@ -39,7 +40,7 @@ public class ApiKeyOperations extends AbstractOperations {
 
         ApiKey apiKey;
         try {
-            apiKey = OBJECT_MAPPER.readValue(response, ApiKey.class);
+            apiKey = JsonUtils.fromJson(response, ApiKey.class);
         } catch (IOException e) {
             throw new SendGridException(e);
         }
@@ -52,9 +53,9 @@ public class ApiKeyOperations extends AbstractOperations {
 
         ApiKey apiKey;
         try {
-            String requestBody = OBJECT_MAPPER.writeValueAsString(requestObject);
+            String requestBody = JsonUtils.toJson(requestObject);
             String response = client.post(url, requestBody, "application/json", credential);
-            apiKey = OBJECT_MAPPER.readValue(response, ApiKey.class);
+            apiKey = JsonUtils.fromJson(response, ApiKey.class);
         } catch (IOException e) {
             throw new SendGridException(e);
         }

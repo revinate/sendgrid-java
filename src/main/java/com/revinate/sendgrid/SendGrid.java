@@ -3,14 +3,13 @@ package com.revinate.sendgrid;
 import com.revinate.sendgrid.exception.SendGridException;
 import com.revinate.sendgrid.model.*;
 import com.revinate.sendgrid.net.SendGridApiClient;
+import com.revinate.sendgrid.util.JsonUtils;
 import org.apache.http.HttpResponse;
 import org.apache.http.util.EntityUtils;
 
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
-
-import static com.revinate.sendgrid.operations.AbstractOperations.OBJECT_MAPPER;
 
 public class SendGrid {
 
@@ -83,7 +82,7 @@ public class SendGrid {
         try {
             HttpResponse response = client.get(getResourceUrl(V3_API, SUBUSERS_ENDPOINT), username, password);
             String content = EntityUtils.toString(response.getEntity());
-            Subuser[] subusers = OBJECT_MAPPER.readValue(content, Subuser[].class);
+            Subuser[] subusers = JsonUtils.fromJson(content, Subuser[].class);
             return Arrays.asList(subusers);
         } catch (IOException e) {
             throw new SendGridException(e);
@@ -94,7 +93,7 @@ public class SendGrid {
         try {
             HttpResponse response = client.get(getResourceUrl(V3_API, SUBUSERS_ENDPOINT, id), username, password);
             String content = EntityUtils.toString(response.getEntity());
-            return OBJECT_MAPPER.readValue(content, Subuser.class);
+            return JsonUtils.fromJson(content, Subuser.class);
         } catch (IOException e) {
             throw new SendGridException(e);
         }
@@ -105,7 +104,7 @@ public class SendGrid {
             HttpResponse response = client.post(subuser.toHttpEntity(),
                     getResourceUrl(V3_API, SUBUSERS_ENDPOINT), username, password);
             String content = EntityUtils.toString(response.getEntity());
-            return OBJECT_MAPPER.readValue(content, Subuser.class);
+            return JsonUtils.fromJson(content, Subuser.class);
         } catch (IOException e) {
             throw new SendGridException(e);
         }
@@ -123,7 +122,7 @@ public class SendGrid {
         try {
             HttpResponse response = client.get(getResourceUrl(V3_API, IPS_ENDPOINT), username, password);
             String content = EntityUtils.toString(response.getEntity());
-            Ip[] ips = OBJECT_MAPPER.readValue(content, Ip[].class);
+            Ip[] ips = JsonUtils.fromJson(content, Ip[].class);
             return Arrays.asList(ips);
         } catch (IOException e) {
             throw new SendGridException(e);
@@ -134,7 +133,7 @@ public class SendGrid {
         try {
             HttpResponse response = client.get(getResourceUrl(V3_API, IPS_ENDPOINT, id), username, password);
             String content = EntityUtils.toString(response.getEntity());
-            return OBJECT_MAPPER.readValue(content, Ip.class);
+            return JsonUtils.fromJson(content, Ip.class);
         } catch (IOException e) {
             throw new SendGridException(e);
         }
@@ -149,7 +148,7 @@ public class SendGrid {
             HttpResponse response = client.get(getResourceUrl(V3_API, IP_POOLS_ENDPOINT),
                     username, password, subuserName);
             String content = EntityUtils.toString(response.getEntity());
-            IpPool[] ipPools = OBJECT_MAPPER.readValue(content, IpPool[].class);
+            IpPool[] ipPools = JsonUtils.fromJson(content, IpPool[].class);
             return Arrays.asList(ipPools);
         } catch (IOException e) {
             throw new SendGridException(e);
@@ -165,7 +164,7 @@ public class SendGrid {
             HttpResponse response = client.get(getResourceUrl(V3_API, IP_POOLS_ENDPOINT, id),
                     username, password, subuserName);
             String content = EntityUtils.toString(response.getEntity());
-            return OBJECT_MAPPER.readValue(content, IpPool.class);
+            return JsonUtils.fromJson(content, IpPool.class);
         } catch (IOException e) {
             throw new SendGridException(e);
         }
@@ -180,7 +179,7 @@ public class SendGrid {
             HttpResponse response = client.post(ipPool.toHttpEntity(),
                     getResourceUrl(V3_API, IP_POOLS_ENDPOINT), username, password, subuserName);
             String content = EntityUtils.toString(response.getEntity());
-            return OBJECT_MAPPER.readValue(content, IpPool.class);
+            return JsonUtils.fromJson(content, IpPool.class);
         } catch (IOException e) {
             throw new SendGridException(e);
         }
@@ -195,7 +194,7 @@ public class SendGrid {
             HttpResponse response = client.get(getResourceUrl(V3_API, API_KEYS_ENDPOINT),
                     username, password, subuserName);
             String content = EntityUtils.toString(response.getEntity());
-            ApiKeysResponse apiKeysResponse = OBJECT_MAPPER.readValue(content, ApiKeysResponse.class);
+            ApiKeysResponse apiKeysResponse = JsonUtils.fromJson(content, ApiKeysResponse.class);
             return apiKeysResponse.getResult();
         } catch (IOException e) {
             throw new SendGridException(e);
@@ -211,7 +210,7 @@ public class SendGrid {
             HttpResponse response = client.get(getResourceUrl(V3_API, API_KEYS_ENDPOINT, id),
                     username, password, subuserName);
             String content = EntityUtils.toString(response.getEntity());
-            return OBJECT_MAPPER.readValue(content, ApiKey.class);
+            return JsonUtils.fromJson(content, ApiKey.class);
         } catch (IOException e) {
             throw new SendGridException(e);
         }
@@ -226,7 +225,7 @@ public class SendGrid {
             HttpResponse response = client.post(apiKey.toHttpEntity(),
                     getResourceUrl(V3_API, API_KEYS_ENDPOINT), username, password, subuserName);
             String content = EntityUtils.toString(response.getEntity());
-            return OBJECT_MAPPER.readValue(content, ApiKey.class);
+            return JsonUtils.fromJson(content, ApiKey.class);
         } catch (IOException e) {
             throw new SendGridException(e);
         }

@@ -4,6 +4,7 @@ import com.revinate.sendgrid.exception.SendGridException;
 import com.revinate.sendgrid.model.ApiKey;
 import com.revinate.sendgrid.net.SendGridHttpClient;
 import com.revinate.sendgrid.net.auth.Credential;
+import com.revinate.sendgrid.util.JsonUtils;
 import org.apache.commons.io.IOUtils;
 import org.junit.Before;
 import org.junit.Test;
@@ -69,11 +70,10 @@ public class ApiKeyOperationsTest {
 
     @Test
     public void create_shouldPostAndReturnApiKey() throws Exception {
-        String apiKeyId = "sdaspfgada5hahsrs5hSHF";
         String response = readFile("responses/api-key.json");
         ApiKey apiKey = new ApiKey();
         apiKey.setName("1st API key");
-        String requestBody = ApiKeyOperations.OBJECT_MAPPER.writeValueAsString(apiKey);
+        String requestBody = JsonUtils.toJson(apiKey);
 
         when(client.post("https://api.sendgrid.com/v3/api_keys", requestBody,
                 "application/json", credential)).thenReturn(response);
@@ -82,7 +82,7 @@ public class ApiKeyOperationsTest {
 
         assertThat(apiKey1, notNullValue());
         assertThat(apiKey1.getName(), equalTo("1st API key"));
-        assertThat(apiKey1.getApiKeyId(), equalTo(apiKeyId));
+        assertThat(apiKey1.getApiKeyId(), equalTo("sdaspfgada5hahsrs5hSHF"));
     }
 
     private static String readFile(String path) throws IOException {

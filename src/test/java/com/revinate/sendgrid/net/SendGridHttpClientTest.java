@@ -7,6 +7,7 @@ import com.revinate.sendgrid.model.ApiKey;
 import com.revinate.sendgrid.net.auth.ApiKeyCredential;
 import com.revinate.sendgrid.util.JsonUtils;
 import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.methods.HttpDelete;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.CloseableHttpClient;
@@ -79,7 +80,7 @@ public class SendGridHttpClientTest extends BaseSendGridTest {
                 .thenThrow(new ClientProtocolException("Unit test"));
 
         thrown.expect(ApiConnectionException.class);
-        thrown.expectMessage("Unit test");
+        thrown.expectMessage("HTTP protocol error while making API request to SendGrid");
 
         client.get("http://sendgrid", ApiKey.class, new ApiKeyCredential("token"));
     }
@@ -90,7 +91,7 @@ public class SendGridHttpClientTest extends BaseSendGridTest {
                 .thenThrow(new IOException("Unit test"));
 
         thrown.expect(ApiConnectionException.class);
-        thrown.expectMessage("IOException while making API request to SendGrid.");
+        thrown.expectMessage("IOException while making API request to SendGrid");
 
         client.get("http://sendgrid", ApiKey.class, new ApiKeyCredential("token"));
     }
@@ -101,7 +102,15 @@ public class SendGridHttpClientTest extends BaseSendGridTest {
                 .thenReturn("not a json");
 
         thrown.expect(SendGridException.class);
-        thrown.expectMessage("IOException while mapping response.");
+        thrown.expectMessage("IOException while mapping response");
+
+        client.get("http://sendgrid", ApiKey.class, new ApiKeyCredential("token"));
+    }
+
+    @Test
+    public void get_shouldHandleEmptyResponse() throws Exception {
+        thrown.expect(SendGridException.class);
+        thrown.expectMessage("Response contains no content");
 
         client.get("http://sendgrid", ApiKey.class, new ApiKeyCredential("token"));
     }
@@ -139,6 +148,22 @@ public class SendGridHttpClientTest extends BaseSendGridTest {
                         hasProperty("name", equalTo("Content-Type")),
                         hasProperty("value", equalTo("application/json"))
                 )
+        ));
+    }
+
+    @Test
+    public void delete_shouldMakeRequest() throws Exception {
+        client.delete("http://sendgrid", new ApiKeyCredential("token"));
+
+        ArgumentCaptor<HttpDelete> captor = ArgumentCaptor.forClass(HttpDelete.class);
+        verify(httpClient).execute(captor.capture(), eq(handler));
+
+        HttpDelete httpDelete = captor.getValue();
+
+        assertThat(httpDelete, notNullValue());
+        assertThat(httpDelete.getURI(), hasToString("http://sendgrid"));
+        assertThat(httpDelete.getAllHeaders(), hasItemInArray(
+                hasProperty("name", equalTo("Authorization"))
         ));
     }
 

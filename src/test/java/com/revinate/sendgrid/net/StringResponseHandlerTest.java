@@ -13,6 +13,7 @@ import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.nullValue;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.when;
 
@@ -50,10 +51,9 @@ public class StringResponseHandlerTest {
         when(httpResponse.getStatusLine().getStatusCode()).thenReturn(204);
         when(httpResponse.getEntity()).thenReturn(null);
 
-        thrown.expect(ClientProtocolException.class);
-        thrown.expectMessage("Response contains no content");
+        String actual = handler.handleResponse(httpResponse);
 
-        handler.handleResponse(httpResponse);
+        assertThat(actual, nullValue());
     }
 
     @Test

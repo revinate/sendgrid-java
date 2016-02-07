@@ -16,6 +16,7 @@ import java.util.List;
 
 import static org.hamcrest.Matchers.sameInstance;
 import static org.junit.Assert.assertThat;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -72,5 +73,17 @@ public class ApiKeyOperationsTest extends BaseSendGridTest {
         ApiKey apiKey1 = operations.create(apiKey);
 
         assertThat(apiKey1, sameInstance(response));
+    }
+
+    @Test
+    public void delete_shouldDeleteApiKey() throws Exception {
+        String apiKeyId = "sdaspfgada5hahsrs5hSHF";
+        ApiKey apiKey = new ApiKey();
+        apiKey.setName("1st API key");
+        apiKey.setApiKeyId(apiKeyId);
+
+        operations.delete(apiKey);
+
+        verify(client).delete("https://api.sendgrid.com/v3/api_keys/" + apiKeyId, credential);
     }
 }

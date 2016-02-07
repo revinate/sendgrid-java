@@ -2,7 +2,6 @@ package com.revinate.sendgrid.net;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
-import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpResponseException;
 import org.apache.http.client.ResponseHandler;
 import org.apache.http.util.EntityUtils;
@@ -32,8 +31,6 @@ public class StringResponseHandler implements ResponseHandler<String> {
         int statusCode = response.getStatusLine().getStatusCode();
         if (statusCode < 200 || statusCode >= 300) {
             throw new HttpResponseException(statusCode, responseBody);
-        } else if (responseBody == null) {
-            throw new ClientProtocolException("Response contains no content");
         } else {
             return responseBody;
         }

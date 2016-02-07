@@ -33,4 +33,9 @@ public class ApiKeyOperations extends SendGridOperations {
         String url = v3Url() + "/api_keys";
         return client.post(url, requestObject, ApiKey.class, credential);
     }
+
+    public void delete(ApiKey apiKey) throws SendGridException {
+        String url = v3Url() + "/api_keys/" + apiKey.getPathId();
+        client.delete(url, credential);
+    }
 }

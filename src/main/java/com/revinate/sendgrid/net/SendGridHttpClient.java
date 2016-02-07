@@ -9,6 +9,7 @@ import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpResponseException;
 import org.apache.http.client.ResponseHandler;
 import org.apache.http.client.entity.EntityBuilder;
+import org.apache.http.client.methods.HttpDelete;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpUriRequest;
@@ -50,7 +51,7 @@ public class SendGridHttpClient implements Closeable {
     public <T> T get(String url, Class<T> type, Credential credential) throws SendGridException {
         HttpGet request = new HttpGet(url);
         request.setHeaders(credential.toHttpHeaders());
-        return request(request, type);
+        return map(request(request), type);
     }
 
     public <T> T post(String url, Object requestObject, Class<T> type, Credential credential) throws SendGridException {
@@ -58,7 +59,7 @@ public class SendGridHttpClient implements Closeable {
         try {
             requestBody = JsonUtils.toJson(requestObject);
         } catch (IOException e) {
-            throw new SendGridException("IOException while mapping request.", e);
+            throw new SendGridException("IOException while mapping request", e);
         }
 
         HttpPost request = new HttpPost(url);
@@ -66,29 +67,40 @@ public class SendGridHttpClient implements Closeable {
         request.setHeaders(credential.toHttpHeaders());
         request.addHeader("Content-Type", "application/json");
 
-        return request(request, type);
+        return map(request(request), type);
     }
 
-    private <T> T request(HttpUriRequest request, Class<T> type) throws SendGridException {
-        String response;
+    public void delete(String url, Credential credential) throws SendGridException {
+        HttpDelete request = new HttpDelete(url);
+        request.setHeaders(credential.toHttpHeaders());
+        request(request);
+    }
+
+    private String request(HttpUriRequest request) throws SendGridException {
         try {
-            response = client.execute(request, responseHandler);
+            return client.execute(request, responseHandler);
         } catch (HttpResponseException e) {
-            throw createException(e);
+            throw handleResponseException(e);
         } catch (ClientProtocolException e) {
-            throw new ApiConnectionException(e.getMessage(), e);
+            throw new ApiConnectionException("HTTP protocol error while making API request to SendGrid", e);
         } catch (IOException e) {
-            throw new ApiConnectionException("IOException while making API request to SendGrid.", e);
-        }
-
-        try {
-            return JsonUtils.fromJson(response, type);
-        } catch (IOException e) {
-            throw new SendGridException("IOException while mapping response.", e);
+            throw new ApiConnectionException("IOException while making API request to SendGrid", e);
         }
     }
 
-    private SendGridException createException(HttpResponseException e) {
+    private <T> T map(String content, Class<T> type) throws SendGridException {
+        if (content == null) {
+            throw new SendGridException("Response contains no content");
+        }
+
+        try {
+            return JsonUtils.fromJson(content, type);
+        } catch (IOException e) {
+            throw new SendGridException("IOException while mapping response", e);
+        }
+    }
+
+    private SendGridException handleResponseException(HttpResponseException e) {
         String responseBody = e.getMessage();
         String message;
         List<ApiError> errors;

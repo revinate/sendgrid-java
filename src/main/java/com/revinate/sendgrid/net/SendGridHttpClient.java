@@ -1,6 +1,8 @@
 package com.revinate.sendgrid.net;
 
 import com.revinate.sendgrid.exception.*;
+import com.revinate.sendgrid.model.ApiError;
+import com.revinate.sendgrid.model.ApiErrorsResponse;
 import com.revinate.sendgrid.net.auth.Credential;
 import com.revinate.sendgrid.util.JsonUtils;
 import org.apache.http.client.ClientProtocolException;
@@ -15,6 +17,7 @@ import org.apache.http.impl.client.HttpClients;
 
 import java.io.Closeable;
 import java.io.IOException;
+import java.util.List;
 
 public class SendGridHttpClient implements Closeable {
 
@@ -86,16 +89,27 @@ public class SendGridHttpClient implements Closeable {
     }
 
     private SendGridException createException(HttpResponseException e) {
-        String message = e.getMessage();
+        String responseBody = e.getMessage();
+        String message;
+        List<ApiError> errors;
+        try {
+            ApiErrorsResponse apiErrorsResponse = JsonUtils.fromJson(responseBody, ApiErrorsResponse.class);
+            message = apiErrorsResponse.toString();
+            errors = apiErrorsResponse.getErrors();
+        } catch (IOException ex) {
+            message = responseBody;
+            errors = null;
+        }
+
         switch (e.getStatusCode()) {
             case 400:
-                return new InvalidRequestException(message);
+                return new InvalidRequestException(message, errors);
             case 401:
-                return new AuthenticationException(message);
+                return new AuthenticationException(message, errors);
             case 404:
-                return new ResourceNotFoundException(message);
+                return new ResourceNotFoundException(message, errors);
             default:
-                return new ApiException(message);
+                return new ApiException(message, errors);
         }
     }
 }

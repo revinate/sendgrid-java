@@ -96,23 +96,23 @@ public class SendGridHttpClient implements Closeable {
         }
     }
 
-    private <T> T fromJson(String content, Class<T> type) throws SendGridException {
+    private <T> T fromJson(String content, Class<T> type) throws ApiConnectionException {
         if (content == null) {
-            throw new SendGridException("Response contains no content");
+            throw new ApiConnectionException("Response contains no content");
         }
 
         try {
             return JsonUtils.fromJson(content, type);
         } catch (IOException e) {
-            throw new SendGridException("IOException while mapping response", e);
+            throw new ApiConnectionException("IOException while mapping response", e);
         }
     }
 
-    private String toJson(Object object) throws SendGridException {
+    private String toJson(Object object) throws InvalidRequestException {
         try {
             return JsonUtils.toJson(object);
         } catch (IOException e) {
-            throw new SendGridException("IOException while mapping request", e);
+            throw new InvalidRequestException("Error while mapping request", e);
         }
     }
 

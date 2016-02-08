@@ -2,7 +2,6 @@ package com.revinate.sendgrid.net;
 
 import com.revinate.sendgrid.BaseSendGridTest;
 import com.revinate.sendgrid.exception.ApiConnectionException;
-import com.revinate.sendgrid.exception.SendGridException;
 import com.revinate.sendgrid.model.ApiKey;
 import com.revinate.sendgrid.net.auth.ApiKeyCredential;
 import com.revinate.sendgrid.util.JsonUtils;
@@ -99,7 +98,7 @@ public class SendGridHttpClientTest extends BaseSendGridTest {
         when(httpClient.execute(any(HttpGet.class), any(StringResponseHandler.class)))
                 .thenReturn("not a json");
 
-        thrown.expect(SendGridException.class);
+        thrown.expect(ApiConnectionException.class);
         thrown.expectMessage("IOException while mapping response");
 
         client.get("http://sendgrid", ApiKey.class, new ApiKeyCredential("token"));
@@ -107,7 +106,7 @@ public class SendGridHttpClientTest extends BaseSendGridTest {
 
     @Test
     public void get_shouldHandleEmptyResponse() throws Exception {
-        thrown.expect(SendGridException.class);
+        thrown.expect(ApiConnectionException.class);
         thrown.expectMessage("Response contains no content");
 
         client.get("http://sendgrid", ApiKey.class, new ApiKeyCredential("token"));
@@ -118,6 +117,7 @@ public class SendGridHttpClientTest extends BaseSendGridTest {
         String response = readFile("/responses/api-key.json");
         ApiKey apiKey = new ApiKey();
         apiKey.setName("1st API key");
+        apiKey.addScope("mail.send");
         String request = JsonUtils.toJson(apiKey);
 
         when(httpClient.execute(any(HttpPost.class), any(StringResponseHandler.class)))

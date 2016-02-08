@@ -1,5 +1,6 @@
 package com.revinate.sendgrid.operations;
 
+import com.revinate.sendgrid.exception.InvalidRequestException;
 import com.revinate.sendgrid.model.Identifiable;
 import com.revinate.sendgrid.net.SendGridHttpClient;
 import com.revinate.sendgrid.net.auth.Credential;
@@ -40,11 +41,14 @@ public abstract class SendGridOperations {
         return String.format("%s/%s/%s", baseUrl, getApiVersion().toUrlSegment(), getEndpoint());
     }
 
-    protected String getResourceUrl(Identifiable resource) {
+    protected String getResourceUrl(Identifiable resource) throws InvalidRequestException {
         return getResourceUrl(resource.getPathId());
     }
 
-    protected String getResourceUrl(String id) {
+    protected String getResourceUrl(String id) throws InvalidRequestException {
+        if (id == null) {
+            throw new InvalidRequestException("Resource missing identifier");
+        }
         return String.format("%s/%s/%s/%s", baseUrl, getApiVersion().toUrlSegment(), getEndpoint(), id);
     }
 }

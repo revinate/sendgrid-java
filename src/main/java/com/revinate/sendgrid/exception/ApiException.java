@@ -6,11 +6,10 @@ import java.util.List;
 
 public class ApiException extends SendGridException {
 
-    private final List<ApiError> errors;
+    private List<ApiError> errors;
 
     public ApiException(String message) {
         super(message);
-        this.errors = null;
     }
 
     public ApiException(String message, List<ApiError> errors) {

@@ -6,11 +6,14 @@ import java.util.List;
 
 public class InvalidRequestException extends SendGridException {
 
-    private final List<ApiError> errors;
+    private List<ApiError> errors;
 
     public InvalidRequestException(String message) {
         super(message);
-        this.errors = null;
+    }
+
+    public InvalidRequestException(String message, Throwable e) {
+        super(message, e);
     }
 
     public InvalidRequestException(String message, List<ApiError> errors) {

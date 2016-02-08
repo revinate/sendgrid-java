@@ -1,13 +1,16 @@
 package com.revinate.sendgrid.operations;
 
 import com.revinate.sendgrid.BaseSendGridTest;
+import com.revinate.sendgrid.exception.InvalidRequestException;
 import com.revinate.sendgrid.model.ApiKey;
 import com.revinate.sendgrid.model.ApiKeysResponse;
 import com.revinate.sendgrid.net.SendGridHttpClient;
 import com.revinate.sendgrid.net.auth.Credential;
 import com.revinate.sendgrid.util.JsonUtils;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
@@ -21,6 +24,9 @@ import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 public class ApiKeyOperationsTest extends BaseSendGridTest {
+
+    @Rule
+    public ExpectedException thrown = ExpectedException.none();
 
     @Mock
     SendGridHttpClient client;
@@ -85,5 +91,16 @@ public class ApiKeyOperationsTest extends BaseSendGridTest {
         operations.delete(apiKey);
 
         verify(client).delete("https://api.sendgrid.com/v3/api_keys/" + apiKeyId, credential);
+    }
+
+    @Test
+    public void delete_shouldHandleMissingId() throws Exception {
+        ApiKey apiKey = new ApiKey();
+        apiKey.setName("1st API key");
+
+        thrown.expect(InvalidRequestException.class);
+        thrown.expectMessage("Resource missing identifier");
+
+        operations.delete(apiKey);
     }
 }

@@ -2,6 +2,7 @@ package com.revinate.sendgrid.net;
 
 import com.revinate.sendgrid.BaseSendGridTest;
 import com.revinate.sendgrid.exception.ApiConnectionException;
+import com.revinate.sendgrid.exception.InvalidRequestException;
 import com.revinate.sendgrid.model.ApiKey;
 import com.revinate.sendgrid.net.auth.ApiKeyCredential;
 import com.revinate.sendgrid.util.JsonUtils;
@@ -147,6 +148,13 @@ public class SendGridHttpClientTest extends BaseSendGridTest {
                         hasProperty("value", equalTo("application/json"))
                 )
         ));
+    }
+
+    @Test
+    public void post_shouldHandleEmptyRequest() throws Exception {
+        thrown.expect(InvalidRequestException.class);
+        thrown.expectMessage("Request object is null");
+        client.post("http://sendgrid", null, ApiKey.class, new ApiKeyCredential("token"));
     }
 
     @Test

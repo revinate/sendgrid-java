@@ -109,6 +109,10 @@ public class SendGridHttpClient implements Closeable {
     }
 
     private String toJson(Object object) throws InvalidRequestException {
+        if (object == null) {
+            throw new InvalidRequestException("Request object is null");
+        }
+
         try {
             return JsonUtils.toJson(object);
         } catch (IOException e) {

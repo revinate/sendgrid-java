@@ -7,6 +7,7 @@ import com.revinate.sendgrid.net.SendGridHttpClient;
 import com.revinate.sendgrid.net.auth.Credential;
 
 import java.util.List;
+import java.util.Map;
 
 public class ApiKeyOperations extends SendGridOperations {
 
@@ -27,6 +28,17 @@ public class ApiKeyOperations extends SendGridOperations {
 
     public ApiKey create(ApiKey requestObject) throws SendGridException {
         return client.post(getResourceUrl(), requestObject, ApiKey.class, credential);
+    }
+
+    public ApiKey update(ApiKey apiKey) throws SendGridException {
+        ApiKey requestObject = new ApiKey();
+        requestObject.setName(apiKey.getName());
+        requestObject.setScopes(apiKey.getScopes());
+        return client.put(getResourceUrl(apiKey), requestObject, ApiKey.class, credential);
+    }
+
+    public ApiKey partialUpdate(ApiKey apiKey, Map<String, Object> requestObject) throws SendGridException {
+        return client.patch(getResourceUrl(apiKey), requestObject, ApiKey.class, credential);
     }
 
     public void delete(ApiKey apiKey) throws SendGridException {

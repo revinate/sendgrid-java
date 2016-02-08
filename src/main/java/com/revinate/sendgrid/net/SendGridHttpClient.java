@@ -9,10 +9,7 @@ import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpResponseException;
 import org.apache.http.client.ResponseHandler;
 import org.apache.http.client.entity.EntityBuilder;
-import org.apache.http.client.methods.HttpDelete;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.client.methods.HttpUriRequest;
+import org.apache.http.client.methods.*;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 
@@ -51,23 +48,34 @@ public class SendGridHttpClient implements Closeable {
     public <T> T get(String url, Class<T> type, Credential credential) throws SendGridException {
         HttpGet request = new HttpGet(url);
         request.setHeaders(credential.toHttpHeaders());
-        return map(request(request), type);
+        return fromJson(request(request), type);
     }
 
     public <T> T post(String url, Object requestObject, Class<T> type, Credential credential) throws SendGridException {
-        String requestBody;
-        try {
-            requestBody = JsonUtils.toJson(requestObject);
-        } catch (IOException e) {
-            throw new SendGridException("IOException while mapping request", e);
-        }
-
+        String requestBody = toJson(requestObject);
         HttpPost request = new HttpPost(url);
         request.setEntity(EntityBuilder.create().setText(requestBody).build());
         request.setHeaders(credential.toHttpHeaders());
         request.addHeader("Content-Type", "application/json");
+        return fromJson(request(request), type);
+    }
 
-        return map(request(request), type);
+    public <T> T put(String url, Object requestObject, Class<T> type, Credential credential) throws SendGridException {
+        String requestBody = toJson(requestObject);
+        HttpPut request = new HttpPut(url);
+        request.setEntity(EntityBuilder.create().setText(requestBody).build());
+        request.setHeaders(credential.toHttpHeaders());
+        request.addHeader("Content-Type", "application/json");
+        return fromJson(request(request), type);
+    }
+
+    public <T> T patch(String url, Object requestObject, Class<T> type, Credential credential) throws SendGridException {
+        String requestBody = toJson(requestObject);
+        HttpPatch request = new HttpPatch(url);
+        request.setEntity(EntityBuilder.create().setText(requestBody).build());
+        request.setHeaders(credential.toHttpHeaders());
+        request.addHeader("Content-Type", "application/json");
+        return fromJson(request(request), type);
     }
 
     public void delete(String url, Credential credential) throws SendGridException {
@@ -88,7 +96,7 @@ public class SendGridHttpClient implements Closeable {
         }
     }
 
-    private <T> T map(String content, Class<T> type) throws SendGridException {
+    private <T> T fromJson(String content, Class<T> type) throws SendGridException {
         if (content == null) {
             throw new SendGridException("Response contains no content");
         }
@@ -97,6 +105,14 @@ public class SendGridHttpClient implements Closeable {
             return JsonUtils.fromJson(content, type);
         } catch (IOException e) {
             throw new SendGridException("IOException while mapping response", e);
+        }
+    }
+
+    private String toJson(Object object) throws SendGridException {
+        try {
+            return JsonUtils.toJson(object);
+        } catch (IOException e) {
+            throw new SendGridException("IOException while mapping request", e);
         }
     }
 

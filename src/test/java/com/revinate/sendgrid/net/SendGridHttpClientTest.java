@@ -7,9 +7,7 @@ import com.revinate.sendgrid.model.ApiKey;
 import com.revinate.sendgrid.net.auth.ApiKeyCredential;
 import com.revinate.sendgrid.util.JsonUtils;
 import org.apache.http.client.ClientProtocolException;
-import org.apache.http.client.methods.HttpDelete;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.methods.HttpPost;
+import org.apache.http.client.methods.*;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.util.EntityUtils;
 import org.junit.Before;
@@ -144,6 +142,79 @@ public class SendGridHttpClientTest extends BaseSendGridTest {
                 hasProperty("name", equalTo("Authorization"))
         ));
         assertThat(httpPost.getAllHeaders(), hasItemInArray(
+                allOf(
+                        hasProperty("name", equalTo("Content-Type")),
+                        hasProperty("value", equalTo("application/json"))
+                )
+        ));
+    }
+
+    @Test
+    public void put_shouldMakeRequestAndReturnResponse() throws Exception {
+        String response = readFile("/responses/api-key.json");
+        ApiKey apiKey = new ApiKey();
+        apiKey.setName("1st API key");
+        apiKey.addScope("mail.send");
+        String request = JsonUtils.toJson(apiKey);
+
+        when(httpClient.execute(any(HttpPut.class), any(StringResponseHandler.class)))
+                .thenReturn(response);
+
+        ApiKey apiKey1 = client.put("http://sendgrid", apiKey, ApiKey.class,
+                new ApiKeyCredential("token"));
+
+        assertThat(apiKey1, notNullValue());
+        assertThat(apiKey1.getName(), equalTo("1st API key"));
+        assertThat(apiKey1.getApiKeyId(), equalTo("sdaspfgada5hahsrs5hSHF"));
+
+        ArgumentCaptor<HttpPut> captor = ArgumentCaptor.forClass(HttpPut.class);
+        verify(httpClient).execute(captor.capture(), eq(handler));
+
+        HttpPut httpPut = captor.getValue();
+
+        assertThat(httpPut, notNullValue());
+        assertThat(EntityUtils.toString(httpPut.getEntity()), equalTo(request));
+        assertThat(httpPut.getURI(), hasToString("http://sendgrid"));
+        assertThat(httpPut.getAllHeaders(), hasItemInArray(
+                hasProperty("name", equalTo("Authorization"))
+        ));
+        assertThat(httpPut.getAllHeaders(), hasItemInArray(
+                allOf(
+                        hasProperty("name", equalTo("Content-Type")),
+                        hasProperty("value", equalTo("application/json"))
+                )
+        ));
+    }
+
+    @Test
+    public void patch_shouldMakeRequestAndReturnResponse() throws Exception {
+        String response = readFile("/responses/api-key.json");
+        ApiKey apiKey = new ApiKey();
+        apiKey.setName("1st API key");
+        String request = JsonUtils.toJson(apiKey);
+
+        when(httpClient.execute(any(HttpPatch.class), any(StringResponseHandler.class)))
+                .thenReturn(response);
+
+        ApiKey apiKey1 = client.patch("http://sendgrid", apiKey, ApiKey.class,
+                new ApiKeyCredential("token"));
+
+        assertThat(apiKey1, notNullValue());
+        assertThat(apiKey1.getName(), equalTo("1st API key"));
+        assertThat(apiKey1.getApiKeyId(), equalTo("sdaspfgada5hahsrs5hSHF"));
+
+        ArgumentCaptor<HttpPatch> captor = ArgumentCaptor.forClass(HttpPatch.class);
+        verify(httpClient).execute(captor.capture(), eq(handler));
+
+        HttpPatch httpPatch = captor.getValue();
+
+        assertThat(httpPatch, notNullValue());
+        assertThat(EntityUtils.toString(httpPatch.getEntity()), equalTo(request));
+        assertThat(httpPatch.getURI(), hasToString("http://sendgrid"));
+        assertThat(httpPatch.getAllHeaders(), hasItemInArray(
+                hasProperty("name", equalTo("Authorization"))
+        ));
+        assertThat(httpPatch.getAllHeaders(), hasItemInArray(
                 allOf(
                         hasProperty("name", equalTo("Content-Type")),
                         hasProperty("value", equalTo("application/json"))

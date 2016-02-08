@@ -15,6 +15,7 @@ import org.apache.http.impl.client.HttpClients;
 
 import java.io.Closeable;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 public class SendGridHttpClient implements Closeable {
@@ -123,14 +124,13 @@ public class SendGridHttpClient implements Closeable {
     private SendGridException handleResponseException(HttpResponseException e) {
         String responseBody = e.getMessage();
         String message;
-        List<ApiError> errors;
+        List<ApiError> errors = new ArrayList<ApiError>();
         try {
             ApiErrorsResponse apiErrorsResponse = JsonUtils.fromJson(responseBody, ApiErrorsResponse.class);
             message = apiErrorsResponse.toString();
-            errors = apiErrorsResponse.getErrors();
+            errors.addAll(apiErrorsResponse.getErrors());
         } catch (IOException ex) {
             message = responseBody;
-            errors = null;
         }
 
         switch (e.getStatusCode()) {

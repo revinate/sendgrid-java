@@ -32,7 +32,7 @@ public class ApiKeyOperationsTest extends BaseSendGridTest {
 
     @Before
     public void setUp() throws Exception {
-        operations = new ApiKeyOperations(client, credential);
+        operations = new ApiKeyOperations("https://api.sendgrid.com", client, credential);
     }
 
     @Test

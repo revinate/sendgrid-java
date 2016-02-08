@@ -10,32 +10,36 @@ import java.util.List;
 
 public class ApiKeyOperations extends SendGridOperations {
 
-    private final SendGridHttpClient client;
-    private final Credential credential;
+    private static final ApiVersion API_VERSION = ApiVersion.V3;
+    private static final String ENDPOINT = "api_keys";
 
-    public ApiKeyOperations(SendGridHttpClient client, Credential credential) {
-        this.client = client;
-        this.credential = credential;
+    public ApiKeyOperations(String baseUrl, SendGridHttpClient client, Credential credential) {
+        super(baseUrl, client, credential);
     }
 
     public List<ApiKey> list() throws SendGridException {
-        String url = v3Url() + "/api_keys";
-        ApiKeysResponse apiKeysResponse = client.get(url, ApiKeysResponse.class, credential);
-        return apiKeysResponse.getResult();
+        return client.get(getResourceUrl(), ApiKeysResponse.class, credential).getResult();
     }
 
     public ApiKey retrieve(String id) throws SendGridException {
-        String url = v3Url() + "/api_keys/" + id;
-        return client.get(url, ApiKey.class, credential);
+        return client.get(getResourceUrl(id), ApiKey.class, credential);
     }
 
     public ApiKey create(ApiKey requestObject) throws SendGridException {
-        String url = v3Url() + "/api_keys";
-        return client.post(url, requestObject, ApiKey.class, credential);
+        return client.post(getResourceUrl(), requestObject, ApiKey.class, credential);
     }
 
     public void delete(ApiKey apiKey) throws SendGridException {
-        String url = v3Url() + "/api_keys/" + apiKey.getPathId();
-        client.delete(url, credential);
+        client.delete(getResourceUrl(apiKey), credential);
+    }
+
+    @Override
+    protected ApiVersion getApiVersion() {
+        return API_VERSION;
+    }
+
+    @Override
+    protected String getEndpoint() {
+        return ENDPOINT;
     }
 }

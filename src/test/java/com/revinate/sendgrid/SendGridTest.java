@@ -20,7 +20,7 @@ public class SendGridTest {
             SendGrid client = new SendGrid(USERNAME, PASSWORD);
             BufferedReader br = new BufferedReader(new FileReader("./build.gradle"));
             String line = br.readLine();
-            String regex = "version\\s*=\\s*'" + client.getVersion() + "'";
+            String regex = "version\\s*=\\s*'" + client.VERSION + "'";
 
             while (line != null) {
                 if (line.matches(regex)) {

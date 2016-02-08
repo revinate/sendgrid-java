@@ -15,6 +15,7 @@ public class SendGrid {
 
     public static final String VERSION = "3.0.0";
     public static final String USER_AGENT = "sendgrid/" + VERSION + ";java";
+    public static final String LIVE_URL = "https://api.sendgrid.com";
 
     private static final String V2_API = "api";
     private static final String V2_API_2 = "apiv2";
@@ -40,7 +41,7 @@ public class SendGrid {
     public SendGrid(String username, String password) {
         this.username = username;
         this.password = password;
-        this.url = "https://api.sendgrid.com";
+        this.url = LIVE_URL;
         this.client = new SendGridApiClient(USER_AGENT);
     }
 
@@ -56,10 +57,6 @@ public class SendGrid {
     public SendGrid setUrl(String url) {
         this.url = url;
         return this;
-    }
-
-    public String getVersion() {
-        return VERSION;
     }
 
     public SendGrid setClient(SendGridApiClient client) {

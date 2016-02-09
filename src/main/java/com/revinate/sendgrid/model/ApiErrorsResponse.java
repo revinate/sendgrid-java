@@ -2,7 +2,7 @@ package com.revinate.sendgrid.model;
 
 import java.util.List;
 
-public class ApiErrorsResponse extends SendGridResource {
+public class ApiErrorsResponse extends SendGridResource implements SendGridCollection<ApiError> {
 
     private List<ApiError> errors;
 
@@ -28,5 +28,10 @@ public class ApiErrorsResponse extends SendGridResource {
             }
             return sb.toString();
         }
+    }
+
+    @Override
+    public List<ApiError> getData() {
+        return errors;
     }
 }

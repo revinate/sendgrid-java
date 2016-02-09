@@ -19,7 +19,7 @@ public class ApiKeyOperations extends SendGridOperations {
     }
 
     public List<ApiKey> list() throws SendGridException {
-        return client.get(getResourceUrl(), ApiKeysResponse.class, credential).getResult();
+        return client.get(getResourceUrl(), ApiKeysResponse.class, credential).getData();
     }
 
     public ApiKey retrieve(String id) throws SendGridException {

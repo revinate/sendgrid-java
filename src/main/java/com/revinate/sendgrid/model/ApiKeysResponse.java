@@ -2,7 +2,7 @@ package com.revinate.sendgrid.model;
 
 import java.util.List;
 
-public class ApiKeysResponse extends SendGridResource {
+public class ApiKeysResponse extends SendGridResource implements SendGridCollection<ApiKey> {
 
     private List<ApiKey> result;
 
@@ -12,5 +12,10 @@ public class ApiKeysResponse extends SendGridResource {
 
     public void setResult(List<ApiKey> result) {
         this.result = result;
+    }
+
+    @Override
+    public List<ApiKey> getData() {
+        return result;
     }
 }

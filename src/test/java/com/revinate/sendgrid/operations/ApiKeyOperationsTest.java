@@ -56,7 +56,7 @@ public class ApiKeyOperationsTest extends BaseSendGridTest {
 
         List<ApiKey> apiKeys = operations.list();
 
-        assertThat(apiKeys, sameInstance(response.getResult()));
+        assertThat(apiKeys, sameInstance(response.getData()));
     }
 
     @Test

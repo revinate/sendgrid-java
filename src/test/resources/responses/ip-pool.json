@@ -1,0 +1,10 @@
+{
+  "ips": [
+    {
+      "ip": "127.0.0.1",
+      "start_date": null,
+      "warmup": false
+    }
+  ],
+  "pool_name": "transactional"
+}

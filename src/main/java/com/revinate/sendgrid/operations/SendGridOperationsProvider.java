@@ -19,6 +19,10 @@ public abstract class SendGridOperationsProvider {
         return new IpOperations(getUrl(), getClient(), getCredential());
     }
 
+    public IpPoolOperations ipPools() {
+        return new IpPoolOperations(getUrl(), getClient(), getCredential());
+    }
+
     public SubuserOperations subusers() {
         return new SubuserOperations(getUrl(), getClient(), getCredential());
     }

@@ -7,8 +7,8 @@ import com.revinate.sendgrid.net.auth.Credential;
 
 public class ApiKeyResource extends EntityResource<ApiKey> {
 
-    public ApiKeyResource(String url, SendGridHttpClient client, Credential credential, String id) {
-        super(url, client, credential, ApiKey.class, id);
+    public ApiKeyResource(String baseUrl, SendGridHttpClient client, Credential credential, String id) {
+        super(baseUrl, client, credential, ApiKey.class, id);
     }
 
     @Override
@@ -16,6 +16,6 @@ public class ApiKeyResource extends EntityResource<ApiKey> {
         ApiKey requestObject = new ApiKey();
         requestObject.setName(apiKey.getName());
         requestObject.setScopes(apiKey.getScopes());
-        return client.put(url, requestObject, ApiKey.class, credential);
+        return client.put(baseUrl, requestObject, ApiKey.class, credential);
     }
 }

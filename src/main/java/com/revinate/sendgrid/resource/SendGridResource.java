@@ -7,7 +7,7 @@ import com.revinate.sendgrid.net.auth.Credential;
 
 public abstract class SendGridResource {
 
-    protected final String url;
+    protected final String baseUrl;
     protected final SendGridHttpClient client;
     protected final Credential credential;
 
@@ -27,14 +27,14 @@ public abstract class SendGridResource {
         }
     }
 
-    public SendGridResource(String url, SendGridHttpClient client, Credential credential) {
-        this.url = url;
+    public SendGridResource(String baseUrl, SendGridHttpClient client, Credential credential) {
+        this.baseUrl = baseUrl;
         this.client = client;
         this.credential = credential;
     }
 
-    public String getUrl() {
-        return url;
+    public String getBaseUrl() {
+        return baseUrl;
     }
 
     public SendGridHttpClient getClient() {
@@ -46,11 +46,11 @@ public abstract class SendGridResource {
     }
 
     protected String getCollectionUrl(String endpoint) {
-        return String.format("%s/%s", url, endpoint);
+        return String.format("%s/%s", baseUrl, endpoint);
     }
 
     protected String getCollectionUrl(ApiVersion apiVersion, String endpoint) {
-        return String.format("%s/%s/%s", url, apiVersion.toUrlSegment(), endpoint);
+        return String.format("%s/%s/%s", baseUrl, apiVersion.toUrlSegment(), endpoint);
     }
 
     protected String getEntityUrl(SendGridEntity entity) throws InvalidRequestException {
@@ -61,6 +61,6 @@ public abstract class SendGridResource {
         if (id == null) {
             throw new InvalidRequestException("Missing entity identifier");
         }
-        return String.format("%s/%s", url, id);
+        return String.format("%s/%s", baseUrl, id);
     }
 }

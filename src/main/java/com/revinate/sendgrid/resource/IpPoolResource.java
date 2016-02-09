@@ -13,12 +13,12 @@ public class IpPoolResource extends SendGridResource {
     public static final ApiVersion API_VERSION = ApiVersion.V3;
     public static final String ENDPOINT = "ips/pools";
 
-    public IpPoolResource(String url, SendGridHttpClient client, Credential credential) {
-        super(url, client, credential);
+    public IpPoolResource(String baseUrl, SendGridHttpClient client, Credential credential) {
+        super(baseUrl, client, credential);
     }
 
     public List<IpPool> list() throws SendGridException {
-        return client.get(url, IpPoolCollection.class, credential).getData();
+        return client.get(baseUrl, IpPoolCollection.class, credential).getData();
     }
 
     public IpPool retrieve(String id) throws SendGridException {
@@ -26,7 +26,7 @@ public class IpPoolResource extends SendGridResource {
     }
 
     public IpPool create(IpPool requestObject) throws SendGridException {
-        return client.post(url, requestObject, IpPool.class, credential);
+        return client.post(baseUrl, requestObject, IpPool.class, credential);
     }
 
     public IpPool update(IpPool ipPool) throws SendGridException {

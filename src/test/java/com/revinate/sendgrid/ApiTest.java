@@ -18,7 +18,7 @@ import static org.junit.Assume.assumeThat;
 
 public class ApiTest {
 
-    private static final String API_KEY = System.getenv("SENDGRID_API_KEY");
+    private static final String API_KEY = System.getenv("SENDGRID_API_KEYs");
 
     @Rule
     public ExpectedException thrown = ExpectedException.none();

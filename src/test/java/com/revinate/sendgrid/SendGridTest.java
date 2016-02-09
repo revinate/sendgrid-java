@@ -30,7 +30,7 @@ public class SendGridTest {
     private static final String USERNAME = "username";
     private static final String PASSWORD = "password";
     private static final String API_KEY = "token";
-    private static final String URL = "http://sendgrid";
+    private static final String BASE_URL = "http://sendgrid";
     private static final int MAX_CONNECTIONS = 50;
 
     @Mock
@@ -95,12 +95,12 @@ public class SendGridTest {
 
     @Test
     public void onBehalfOf_shouldOverlayCredential() throws Exception {
-        SendGrid sendGrid = new SendGrid(URL, client, API_KEY);
+        SendGrid sendGrid = new SendGrid(BASE_URL, client, API_KEY);
 
         ApiKeysResource resource = sendGrid.onBehalfOf("username2").apiKeys();
 
         assertThat(resource, notNullValue());
-        assertThat(resource.getUrl(), equalTo(URL + "/v3/" + ApiKeysResource.ENDPOINT));
+        assertThat(resource.getBaseUrl(), equalTo(BASE_URL + "/v3/" + ApiKeysResource.ENDPOINT));
         assertThat(resource.getClient(), sameInstance(client));
 
         Credential credential = resource.getCredential();
@@ -114,55 +114,55 @@ public class SendGridTest {
 
     @Test
     public void apiKeys_shouldReturnResource() throws Exception {
-        SendGrid sendGrid = new SendGrid(URL, client, API_KEY);
+        SendGrid sendGrid = new SendGrid(BASE_URL, client, API_KEY);
 
         ApiKeysResource resource = sendGrid.apiKeys();
 
         assertThat(resource, notNullValue());
-        assertThat(resource.getUrl(), equalTo(URL + "/v3/" + ApiKeysResource.ENDPOINT));
+        assertThat(resource.getBaseUrl(), equalTo(BASE_URL + "/v3/" + ApiKeysResource.ENDPOINT));
         assertThat(resource.getClient(), sameInstance(client));
         assertThat(resource.getCredential(), sameInstance(sendGrid.getCredential()));
     }
 
     @Test
     public void subusers_shouldReturnResource() throws Exception {
-        SendGrid sendGrid = new SendGrid(URL, client, API_KEY);
+        SendGrid sendGrid = new SendGrid(BASE_URL, client, API_KEY);
 
         SubuserResource resource = sendGrid.subusers();
 
         assertThat(resource, notNullValue());
-        assertThat(resource.getUrl(), equalTo(URL + "/v3/" + SubuserResource.ENDPOINT));
+        assertThat(resource.getBaseUrl(), equalTo(BASE_URL + "/v3/" + SubuserResource.ENDPOINT));
         assertThat(resource.getClient(), sameInstance(client));
         assertThat(resource.getCredential(), sameInstance(sendGrid.getCredential()));
     }
 
     @Test
     public void ips_shouldReturnResource() throws Exception {
-        SendGrid sendGrid = new SendGrid(URL, client, API_KEY);
+        SendGrid sendGrid = new SendGrid(BASE_URL, client, API_KEY);
 
         IpResource resource = sendGrid.ips();
 
         assertThat(resource, notNullValue());
-        assertThat(resource.getUrl(), equalTo(URL + "/v3/" + IpResource.ENDPOINT));
+        assertThat(resource.getBaseUrl(), equalTo(BASE_URL + "/v3/" + IpResource.ENDPOINT));
         assertThat(resource.getClient(), sameInstance(client));
         assertThat(resource.getCredential(), sameInstance(sendGrid.getCredential()));
     }
 
     @Test
     public void ipPools_shouldReturnResource() throws Exception {
-        SendGrid sendGrid = new SendGrid(URL, client, API_KEY);
+        SendGrid sendGrid = new SendGrid(BASE_URL, client, API_KEY);
 
         IpPoolResource resource = sendGrid.ipPools();
 
         assertThat(resource, notNullValue());
-        assertThat(resource.getUrl(), equalTo(URL + "/v3/" + IpPoolResource.ENDPOINT));
+        assertThat(resource.getBaseUrl(), equalTo(BASE_URL + "/v3/" + IpPoolResource.ENDPOINT));
         assertThat(resource.getClient(), sameInstance(client));
         assertThat(resource.getCredential(), sameInstance(sendGrid.getCredential()));
     }
 
     @Test
     public void close_shouldCloseUnderlyingClient() throws Exception {
-        SendGrid sendGrid = new SendGrid(URL, client, API_KEY);
+        SendGrid sendGrid = new SendGrid(BASE_URL, client, API_KEY);
 
         sendGrid.close();
 

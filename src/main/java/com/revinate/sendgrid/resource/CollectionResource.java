@@ -13,17 +13,17 @@ public abstract class CollectionResource<T extends SendGridEntity, U extends Sen
     protected final Class<T> entityType;
     protected final Class<U> collectionType;
 
-    public CollectionResource(String url, SendGridHttpClient client, Credential credential, Class<T> entityType, Class<U> collectionType) {
-        super(url, client, credential);
+    public CollectionResource(String baseUrl, SendGridHttpClient client, Credential credential, Class<T> entityType, Class<U> collectionType) {
+        super(baseUrl, client, credential);
         this.entityType = entityType;
         this.collectionType = collectionType;
     }
 
     public List<T> list() throws SendGridException {
-        return client.get(url, collectionType, credential).getData();
+        return client.get(baseUrl, collectionType, credential).getData();
     }
 
     public T create(T requestObject) throws SendGridException {
-        return client.post(url, requestObject, entityType, credential);
+        return client.post(baseUrl, requestObject, entityType, credential);
     }
 }

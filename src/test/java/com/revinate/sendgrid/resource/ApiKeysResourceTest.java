@@ -49,7 +49,7 @@ public class ApiKeysResourceTest extends BaseSendGridTest {
         ApiKeyResource subresource = resource.entity(apiKey);
 
         assertThat(subresource, notNullValue());
-        assertThat(subresource.getUrl(), equalTo(resource.getUrl() + "/test"));
+        assertThat(subresource.getBaseUrl(), equalTo(resource.getBaseUrl() + "/test"));
         assertThat(subresource.getClient(), sameInstance(client));
         assertThat(subresource.getCredential(), sameInstance(resource.getCredential()));
     }

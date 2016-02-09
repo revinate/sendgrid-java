@@ -7,8 +7,8 @@ import com.revinate.sendgrid.net.auth.Credential;
 
 public class RootResource extends SendGridResource {
 
-    public RootResource(String url, SendGridHttpClient client, Credential credential) {
-        super(url, client, credential);
+    public RootResource(String baseUrl, SendGridHttpClient client, Credential credential) {
+        super(baseUrl, client, credential);
     }
 
     public ApiKeysResource apiKeys() {

@@ -110,7 +110,7 @@ public class ApiKeyResourceTest extends BaseSendGridTest {
     public void delete_shouldDeleteApiKey() throws Exception {
         ApiKey apiKey = new ApiKey();
         apiKey.setName("1st API key");
-        apiKey.setApiKeyId("sdaspfgada5hahsrs5hSHF");
+        apiKey.setApiKeyId(API_KEY_ID);
 
         resource.delete();
 

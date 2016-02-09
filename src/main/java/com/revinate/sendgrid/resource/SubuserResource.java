@@ -14,12 +14,12 @@ public class SubuserResource extends SendGridResource {
     public static final ApiVersion API_VERSION = ApiVersion.V3;
     public static final String ENDPOINT = "subusers";
 
-    public SubuserResource(String url, SendGridHttpClient client, Credential credential) {
-        super(url, client, credential);
+    public SubuserResource(String baseUrl, SendGridHttpClient client, Credential credential) {
+        super(baseUrl, client, credential);
     }
 
     public List<Subuser> list() throws SendGridException {
-        return client.get(url, SubuserCollection.class, credential).getData();
+        return client.get(baseUrl, SubuserCollection.class, credential).getData();
     }
 
     public Subuser retrieve(String id) throws SendGridException {
@@ -27,7 +27,7 @@ public class SubuserResource extends SendGridResource {
     }
 
     public Subuser create(Subuser requestObject) throws SendGridException {
-        return client.post(url, requestObject, Subuser.class, credential);
+        return client.post(baseUrl, requestObject, Subuser.class, credential);
     }
 
     public Subuser update(Subuser subuser) throws SendGridException {

@@ -11,8 +11,8 @@ public class ApiKeysResource extends CollectionResource<ApiKey, ApiKeysResponse>
     public static final ApiVersion API_VERSION = ApiVersion.V3;
     public static final String ENDPOINT = "api_keys";
 
-    public ApiKeysResource(String url, SendGridHttpClient client, Credential credential) {
-        super(url, client, credential, ApiKey.class, ApiKeysResponse.class);
+    public ApiKeysResource(String baseUrl, SendGridHttpClient client, Credential credential) {
+        super(baseUrl, client, credential, ApiKey.class, ApiKeysResponse.class);
     }
 
     public ApiKeyResource entity(ApiKey apiKey) throws InvalidRequestException {

@@ -12,12 +12,12 @@ public abstract class EntityResource<T extends SendGridEntity> extends SendGridR
     protected final Class<T> entityType;
     protected final String id;
 
-    public EntityResource(String url, SendGridHttpClient client, Credential credential, Class<T> entityType, T entity) {
-        this(url, client, credential, entityType, entity.getEntityId());
+    public EntityResource(String baseUrl, SendGridHttpClient client, Credential credential, Class<T> entityType, T entity) {
+        this(baseUrl, client, credential, entityType, entity.getEntityId());
     }
 
-    public EntityResource(String url, SendGridHttpClient client, Credential credential, Class<T> entityType, String id) {
-        super(url, client, credential);
+    public EntityResource(String baseUrl, SendGridHttpClient client, Credential credential, Class<T> entityType, String id) {
+        super(baseUrl, client, credential);
         this.entityType = entityType;
         this.id = id;
     }
@@ -27,18 +27,18 @@ public abstract class EntityResource<T extends SendGridEntity> extends SendGridR
     }
 
     public T retrieve() throws SendGridException {
-        return client.get(url, entityType, credential);
+        return client.get(baseUrl, entityType, credential);
     }
 
     public T update(T entity) throws SendGridException {
-        return client.put(url, entity, entityType, credential);
+        return client.put(baseUrl, entity, entityType, credential);
     }
 
     public T partialUpdate(Map<String, Object> requestObject) throws SendGridException {
-        return client.patch(url, requestObject, entityType, credential);
+        return client.patch(baseUrl, requestObject, entityType, credential);
     }
 
     public void delete() throws SendGridException {
-        client.delete(url, credential);
+        client.delete(baseUrl, credential);
     }
 }

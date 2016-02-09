@@ -239,6 +239,35 @@ public class SendGridHttpClientTest extends BaseSendGridTest {
     }
 
     @Test
+    public void patch_shouldMakeRequest() throws Exception {
+        ApiKey apiKey = new ApiKey();
+        apiKey.setName("1st API key");
+        String request = JsonUtils.toJson(apiKey);
+
+        client.patch("http://sendgrid", apiKey, new ApiKeyCredential("token"));
+
+        ArgumentCaptor<HttpEntityEnclosingRequestBase> captor = ArgumentCaptor
+                .forClass(HttpEntityEnclosingRequestBase.class);
+        verify(httpClient).execute(captor.capture(), eq(handler));
+
+        HttpEntityEnclosingRequestBase httpRequest = captor.getValue();
+
+        assertThat(httpRequest, notNullValue());
+        assertThat(httpRequest.getMethod(), equalTo("PATCH"));
+        assertThat(EntityUtils.toString(httpRequest.getEntity()), equalTo(request));
+        assertThat(httpRequest.getURI(), hasToString("http://sendgrid"));
+        assertThat(httpRequest.getAllHeaders(), hasItemInArray(
+                hasProperty("name", equalTo("Authorization"))
+        ));
+        assertThat(httpRequest.getAllHeaders(), hasItemInArray(
+                allOf(
+                        hasProperty("name", equalTo("Content-Type")),
+                        hasProperty("value", equalTo("application/json"))
+                )
+        ));
+    }
+
+    @Test
     public void delete_shouldMakeRequest() throws Exception {
         client.delete("http://sendgrid", new ApiKeyCredential("token"));
 

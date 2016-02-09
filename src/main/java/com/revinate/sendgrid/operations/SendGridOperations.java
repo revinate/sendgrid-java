@@ -51,4 +51,18 @@ public abstract class SendGridOperations {
         }
         return String.format("%s/%s/%s/%s", baseUrl, getApiVersion().toUrlSegment(), getEndpoint(), id);
     }
+
+    protected String getResourceUrl(Identifiable resource, String endpoint) throws InvalidRequestException {
+        return getResourceUrl(resource.getPathId(), endpoint);
+    }
+
+    protected String getResourceUrl(String id, String endpoint) throws InvalidRequestException {
+        if (id == null) {
+            throw new InvalidRequestException("Resource missing identifier");
+        }
+        if (endpoint == null) {
+            throw new InvalidRequestException("Missing subresource endpoint");
+        }
+        return String.format("%s/%s/%s/%s/%s", baseUrl, getApiVersion().toUrlSegment(), getEndpoint(), id, endpoint);
+    }
 }

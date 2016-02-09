@@ -1,0 +1,14 @@
+[
+  {
+    "disabled": false,
+    "email": "test1@email.com",
+    "id": 1,
+    "username": "test1"
+  },
+  {
+    "disabled": false,
+    "email": "test2@email.com",
+    "id": 2,
+    "username": "test2"
+  }
+]

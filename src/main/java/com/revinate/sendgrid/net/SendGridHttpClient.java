@@ -70,6 +70,11 @@ public class SendGridHttpClient implements Closeable {
         return fromJson(responseBody, type);
     }
 
+    public void patch(String url, Object requestObject, Credential credential) throws SendGridException {
+        String requestBody = toJson(requestObject);
+        execute(HttpPatch.METHOD_NAME, url, credential, requestBody, "application/json");
+    }
+
     public void delete(String url, Credential credential) throws SendGridException {
         execute(HttpDelete.METHOD_NAME, url, credential, null, null);
     }

@@ -9,6 +9,7 @@ public class Subuser extends SendGridResource implements Identifiable {
     private String username;
     private String email;
     private String password;
+    private Boolean disabled;
     private String signupSessionToken;
     private String authorizationToken;
     private CreditAllocation creditAllocation;
@@ -53,6 +54,14 @@ public class Subuser extends SendGridResource implements Identifiable {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public Boolean getDisabled() {
+        return disabled;
+    }
+
+    public void setDisabled(Boolean disabled) {
+        this.disabled = disabled;
     }
 
     public String getSignupSessionToken() {

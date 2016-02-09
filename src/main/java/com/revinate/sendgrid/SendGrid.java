@@ -23,11 +23,9 @@ public final class SendGrid extends RootResource implements Closeable {
     public static final String LIVE_URL = "https://api.sendgrid.com";
     public static final int DEFAULT_MAX_CONNECTIONS = 20;
 
-    private final Credential credential;
-    private String url;
-    private SendGridHttpClient client;
     private SendGridApiClient v2Client;
 
+    // TODO: change secondary constructors into builder
     public SendGrid(String username, String password) {
         this(username, password, DEFAULT_MAX_CONNECTIONS);
     }
@@ -49,38 +47,16 @@ public final class SendGrid extends RootResource implements Closeable {
     }
 
     public SendGrid(Credential credential, int maxConnections) {
-        this.credential = credential;
-        this.url = LIVE_URL;
-        this.client = new SendGridHttpClient(USER_AGENT, maxConnections);
+        this(LIVE_URL, new SendGridHttpClient(USER_AGENT, maxConnections), credential);
+    }
+
+    public SendGrid(String baseUrl, SendGridHttpClient client, String apiKey) {
+        this(baseUrl, client, new ApiKeyCredential(apiKey));
+    }
+
+    public SendGrid(String baseUrl, SendGridHttpClient client, Credential credential) {
+        super(baseUrl, client, credential);
         this.v2Client = new SendGridApiClient(USER_AGENT);
-    }
-
-    @Override
-    public Credential getCredential() {
-        return credential;
-    }
-
-    @Override
-    public String getUrl() {
-        return url;
-    }
-
-    public SendGrid setUrl(String url) {
-        this.url = url;
-        return this;
-    }
-
-    @Override
-    public SendGridHttpClient getClient() {
-        return client;
-    }
-
-    public SendGrid setClient(SendGridHttpClient client) {
-        if (this.client != client) {
-            this.client.close();
-            this.client = client;
-        }
-        return this;
     }
 
     @Override
@@ -90,41 +66,17 @@ public final class SendGrid extends RootResource implements Closeable {
 
     public RootResource onBehalfOf(String username) {
         OnBehalfOfCredential onBehalfOfCredential = new OnBehalfOfCredential(credential, username);
-        return new WithCredentialOverlay(onBehalfOfCredential);
+        return new RootResource(baseUrl, client, onBehalfOfCredential);
     }
 
     public Response send(Email email) throws SendGridException {
         try {
             HttpResponse response = v2Client.postV2(email.toHttpEntity(credential),
-                    url + "/api/mail.send.json", credential);
+                    baseUrl + "/api/mail.send.json", credential);
             return new Response(response.getStatusLine().getStatusCode(),
                     EntityUtils.toString(response.getEntity()));
         } catch (IOException e) {
             throw new SendGridException(e);
-        }
-    }
-
-    private class WithCredentialOverlay extends RootResource {
-
-        private final Credential credential;
-
-        public WithCredentialOverlay(Credential credential) {
-            this.credential = credential;
-        }
-
-        @Override
-        public String getUrl() {
-            return url;
-        }
-
-        @Override
-        public SendGridHttpClient getClient() {
-            return client;
-        }
-
-        @Override
-        public Credential getCredential() {
-            return credential;
         }
     }
 }

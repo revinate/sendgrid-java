@@ -6,8 +6,8 @@ import com.revinate.sendgrid.net.auth.Credential;
 import com.revinate.sendgrid.net.auth.OnBehalfOfCredential;
 import com.revinate.sendgrid.net.auth.UsernamePasswordCredential;
 import com.revinate.sendgrid.resource.ApiKeyResource;
-import com.revinate.sendgrid.resource.IpResource;
 import com.revinate.sendgrid.resource.IpPoolResource;
+import com.revinate.sendgrid.resource.IpResource;
 import com.revinate.sendgrid.resource.SubuserResource;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -95,7 +95,7 @@ public class SendGridTest {
 
     @Test
     public void onBehalfOf_shouldOverlayCredential() throws Exception {
-        SendGrid sendGrid = new SendGrid(API_KEY).setUrl(URL).setClient(client);
+        SendGrid sendGrid = new SendGrid(URL, client, API_KEY);
 
         ApiKeyResource resource = sendGrid.onBehalfOf("username2").apiKeys();
 
@@ -114,7 +114,7 @@ public class SendGridTest {
 
     @Test
     public void apiKeys_shouldReturnResource() throws Exception {
-        SendGrid sendGrid = new SendGrid(API_KEY).setUrl(URL).setClient(client);
+        SendGrid sendGrid = new SendGrid(URL, client, API_KEY);
 
         ApiKeyResource resource = sendGrid.apiKeys();
 
@@ -126,7 +126,7 @@ public class SendGridTest {
 
     @Test
     public void subusers_shouldReturnResource() throws Exception {
-        SendGrid sendGrid = new SendGrid(API_KEY).setUrl(URL).setClient(client);
+        SendGrid sendGrid = new SendGrid(URL, client, API_KEY);
 
         SubuserResource resource = sendGrid.subusers();
 
@@ -138,7 +138,7 @@ public class SendGridTest {
 
     @Test
     public void ips_shouldReturnResource() throws Exception {
-        SendGrid sendGrid = new SendGrid(API_KEY).setUrl(URL).setClient(client);
+        SendGrid sendGrid = new SendGrid(URL, client, API_KEY);
 
         IpResource resource = sendGrid.ips();
 
@@ -150,7 +150,7 @@ public class SendGridTest {
 
     @Test
     public void ipPools_shouldReturnResource() throws Exception {
-        SendGrid sendGrid = new SendGrid(API_KEY).setUrl(URL).setClient(client);
+        SendGrid sendGrid = new SendGrid(URL, client, API_KEY);
 
         IpPoolResource resource = sendGrid.ipPools();
 
@@ -162,7 +162,7 @@ public class SendGridTest {
 
     @Test
     public void close_shouldCloseUnderlyingClient() throws Exception {
-        SendGrid sendGrid = new SendGrid(API_KEY).setUrl(URL).setClient(client);
+        SendGrid sendGrid = new SendGrid(URL, client, API_KEY);
 
         sendGrid.close();
 

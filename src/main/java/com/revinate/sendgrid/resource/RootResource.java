@@ -3,27 +3,35 @@ package com.revinate.sendgrid.resource;
 import com.revinate.sendgrid.net.SendGridHttpClient;
 import com.revinate.sendgrid.net.auth.Credential;
 
-public abstract class RootResource {
+public class RootResource extends SendGridResource {
 
-    public abstract String getUrl();
-
-    public abstract SendGridHttpClient getClient();
-
-    public abstract Credential getCredential();
+    public RootResource(String baseUrl, SendGridHttpClient client, Credential credential) {
+        super(baseUrl, client, credential);
+    }
 
     public ApiKeyResource apiKeys() {
-        return new ApiKeyResource(getUrl(), getClient(), getCredential());
+        return new ApiKeyResource(baseUrl, client, credential);
     }
 
     public IpResource ips() {
-        return new IpResource(getUrl(), getClient(), getCredential());
+        return new IpResource(baseUrl, client, credential);
     }
 
     public IpPoolResource ipPools() {
-        return new IpPoolResource(getUrl(), getClient(), getCredential());
+        return new IpPoolResource(baseUrl, client, credential);
     }
 
     public SubuserResource subusers() {
-        return new SubuserResource(getUrl(), getClient(), getCredential());
+        return new SubuserResource(baseUrl, client, credential);
+    }
+
+    @Override
+    protected ApiVersion getApiVersion() {
+        return null;
+    }
+
+    @Override
+    protected String getEndpoint() {
+        return "";
     }
 }

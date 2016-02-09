@@ -1,5 +1,7 @@
 package com.revinate.sendgrid.model;
 
+import com.revinate.sendgrid.net.auth.Credential;
+import com.revinate.sendgrid.net.auth.UsernamePasswordCredential;
 import com.revinate.sendgrid.smtpapi.SMTPAPI;
 import org.apache.http.HttpEntity;
 import org.apache.http.entity.ContentType;
@@ -323,12 +325,13 @@ public class Email {
         return this.smtpapi;
     }
 
-    public HttpEntity toHttpEntity(String username, String password) {
+    public HttpEntity toHttpEntity(Credential credential) {
         MultipartEntityBuilder builder = MultipartEntityBuilder.create();
 
-        if (username != null) {
-            builder.addTextBody("api_user", username);
-            builder.addTextBody("api_key", password);
+        if (credential != null && credential instanceof UsernamePasswordCredential) {
+            UsernamePasswordCredential usernamePasswordCredential = (UsernamePasswordCredential) credential;
+            builder.addTextBody("api_user", usernamePasswordCredential.getUsername());
+            builder.addTextBody("api_key", usernamePasswordCredential.getPassword());
         }
 
         String[] tos = getTos();

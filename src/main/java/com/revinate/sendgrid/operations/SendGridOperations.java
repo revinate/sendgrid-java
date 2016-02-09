@@ -33,6 +33,18 @@ public abstract class SendGridOperations {
         this.credential = credential;
     }
 
+    public String getBaseUrl() {
+        return baseUrl;
+    }
+
+    public SendGridHttpClient getClient() {
+        return client;
+    }
+
+    public Credential getCredential() {
+        return credential;
+    }
+
     abstract protected ApiVersion getApiVersion();
 
     abstract protected String getEndpoint();

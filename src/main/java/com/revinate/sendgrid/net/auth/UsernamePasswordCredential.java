@@ -17,13 +17,21 @@ public class UsernamePasswordCredential implements Credential {
         this.password = password;
     }
 
-    private String base64Credential() {
-        return Base64.encodeBase64String((username + ":" + password).getBytes());
+    public String getUsername() {
+        return username;
+    }
+
+    public String getPassword() {
+        return password;
     }
 
     @Override
     public List<Header> toHttpHeaders() {
         return Collections.<Header>singletonList(
                 new BasicHeader("Authorization", "Basic " + base64Credential()));
+    }
+
+    private String base64Credential() {
+        return Base64.encodeBase64String((username + ":" + password).getBytes());
     }
 }

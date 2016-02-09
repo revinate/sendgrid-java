@@ -14,6 +14,10 @@ public class ApiKeyCredential implements Credential {
         this.apiKey = apiKey;
     }
 
+    public String getApiKey() {
+        return apiKey;
+    }
+
     @Override
     public List<Header> toHttpHeaders() {
         return Collections.<Header>singletonList(new BasicHeader("Authorization", "Bearer " + apiKey));

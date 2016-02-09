@@ -33,6 +33,10 @@ public class SendGridHttpClient implements Closeable {
                 new StringResponseHandler());
     }
 
+    public SendGridHttpClient(CloseableHttpClient client) {
+        this(client, new StringResponseHandler());
+    }
+
     public SendGridHttpClient(CloseableHttpClient client, ResponseHandler<String> responseHandler) {
         this.client = client;
         this.responseHandler = responseHandler;

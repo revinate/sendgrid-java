@@ -1,26 +1,40 @@
 package com.revinate.sendgrid;
 
+import com.revinate.sendgrid.net.SendGridHttpClient;
+import com.revinate.sendgrid.net.auth.ApiKeyCredential;
+import com.revinate.sendgrid.net.auth.Credential;
+import com.revinate.sendgrid.net.auth.UsernamePasswordCredential;
+import com.revinate.sendgrid.operations.ApiKeyOperations;
+import com.revinate.sendgrid.operations.SubuserOperations;
 import org.junit.Test;
+import org.mockito.Mock;
 
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 
+import static org.hamcrest.Matchers.*;
+import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
 
 public class SendGridTest {
 
-    private static final String USERNAME = "USERNAME";
-    private static final String PASSWORD = "PASSWORD";
+    private static final String USERNAME = "username";
+    private static final String PASSWORD = "password";
+    private static final String API_KEY = "token";
+    private static final String URL = "http://sendgrid";
+    private static final int MAX_CONNECTIONS = 50;
+
+    @Mock
+    SendGridHttpClient client;
 
     @Test
-    public void testBuildGradleVersion() {
+    public void version_shouldMatchGradleVersion() {
         try {
-            SendGrid client = new SendGrid(USERNAME, PASSWORD);
             BufferedReader br = new BufferedReader(new FileReader("./build.gradle"));
             String line = br.readLine();
-            String regex = "version\\s*=\\s*'" + client.VERSION + "'";
+            String regex = "version\\s*=\\s*'" + SendGrid.VERSION + "'";
 
             while (line != null) {
                 if (line.matches(regex)) {
@@ -39,12 +53,60 @@ public class SendGridTest {
     }
 
     @Test
-    public void testUsernamePasswordConstructor() {
-        SendGrid client = new SendGrid(USERNAME, PASSWORD);
+    public void usernamePasswordConstructor_shouldConstructInstance() {
+        SendGrid sendGrid = new SendGrid(USERNAME, PASSWORD);
+
+        Credential credential = sendGrid.getCredential();
+        assertThat(credential, instanceOf(UsernamePasswordCredential.class));
+
+        UsernamePasswordCredential usernamePasswordCredential = (UsernamePasswordCredential) credential;
+        assertThat(usernamePasswordCredential.getUsername(), equalTo(USERNAME));
+        assertThat(usernamePasswordCredential.getPassword(), equalTo(PASSWORD));
     }
 
     @Test
-    public void testApiKeyConstructor() {
-        SendGrid client = new SendGrid(PASSWORD);
+    public void apiKeyConstructor_shouldConstructInstance() {
+        SendGrid sendGrid = new SendGrid(API_KEY);
+
+        Credential credential = sendGrid.getCredential();
+        assertThat(credential, instanceOf(ApiKeyCredential.class));
+
+        ApiKeyCredential apiKeyCredential = (ApiKeyCredential) credential;
+        assertThat(apiKeyCredential.getApiKey(), equalTo(API_KEY));
+    }
+
+    @Test
+    public void maxConnectionsConstructor_shouldConstructInstance() {
+        SendGrid sendGrid = new SendGrid(API_KEY, MAX_CONNECTIONS);
+
+        Credential credential = sendGrid.getCredential();
+        assertThat(credential, instanceOf(ApiKeyCredential.class));
+
+        ApiKeyCredential apiKeyCredential = (ApiKeyCredential) credential;
+        assertThat(apiKeyCredential.getApiKey(), equalTo(API_KEY));
+    }
+
+    @Test
+    public void apiKeys_shouldReturnOperations() {
+        SendGrid sendGrid = new SendGrid(API_KEY).setUrl(URL).setClient(client);
+
+        ApiKeyOperations operations = sendGrid.apiKeys();
+
+        assertThat(operations, notNullValue());
+        assertThat(operations.getBaseUrl(), equalTo(URL));
+        assertThat(operations.getClient(), sameInstance(client));
+        assertThat(operations.getCredential(), sameInstance(sendGrid.getCredential()));
+    }
+
+    @Test
+    public void subusers_shouldReturnOperations() {
+        SendGrid sendGrid = new SendGrid(API_KEY).setUrl(URL).setClient(client);
+
+        SubuserOperations operations = sendGrid.subusers();
+
+        assertThat(operations, notNullValue());
+        assertThat(operations.getBaseUrl(), equalTo(URL));
+        assertThat(operations.getClient(), sameInstance(client));
+        assertThat(operations.getCredential(), sameInstance(sendGrid.getCredential()));
     }
 }

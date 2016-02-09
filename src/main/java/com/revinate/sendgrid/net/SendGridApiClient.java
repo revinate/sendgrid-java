@@ -1,10 +1,9 @@
 package com.revinate.sendgrid.net;
 
-import org.apache.commons.codec.binary.Base64;
+import com.revinate.sendgrid.net.auth.ApiKeyCredential;
+import com.revinate.sendgrid.net.auth.Credential;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
-import org.apache.http.client.methods.HttpDelete;
-import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
@@ -24,62 +23,12 @@ public class SendGridApiClient {
         return this;
     }
 
-    public HttpResponse postV2(HttpEntity entity, String url, String username, String password) throws IOException {
+    public HttpResponse postV2(HttpEntity entity, String url, Credential credential) throws IOException {
         HttpPost httpPost = new HttpPost(url);
         httpPost.setEntity(entity);
-        if (username == null) {
-            httpPost.setHeader("Authorization", "Bearer " + password);
+        if (credential != null && credential instanceof ApiKeyCredential) {
+            httpPost.setHeader("Authorization", "Bearer " + ((ApiKeyCredential) credential).getApiKey());
         }
         return this.client.execute(httpPost);
-    }
-
-    public HttpResponse get(String url, String username, String password) throws IOException {
-        return get(url, username, password, null);
-    }
-
-    public HttpResponse get(String url, String username, String password, String subuserName) throws IOException {
-        HttpGet httpGet = new HttpGet(url);
-        httpGet.setHeader("Authorization", getAuthHeaderValue(username, password));
-        if (subuserName != null) {
-            httpGet.setHeader("On-Behalf-Of", subuserName);
-        }
-        return this.client.execute(httpGet);
-    }
-
-    public HttpResponse post(HttpEntity entity, String url, String username, String password) throws IOException {
-        return post(entity, url, username, password, null);
-    }
-
-    public HttpResponse post(HttpEntity entity, String url, String username, String password, String subuserName) throws IOException {
-        HttpPost httpPost = new HttpPost(url);
-        httpPost.setEntity(entity);
-        httpPost.setHeader("Content-Type", "application/json");
-        httpPost.setHeader("Authorization", getAuthHeaderValue(username, password));
-        if (subuserName != null) {
-            httpPost.setHeader("On-Behalf-Of", subuserName);
-        }
-        return this.client.execute(httpPost);
-    }
-
-    public HttpResponse delete(String url, String username, String password) throws IOException {
-        return delete(url, username, password, null);
-    }
-
-    public HttpResponse delete(String url, String username, String password, String subuserName) throws IOException {
-        HttpDelete httpDelete = new HttpDelete(url);
-        httpDelete.setHeader("Authorization", getAuthHeaderValue(username, password));
-        if (subuserName != null) {
-            httpDelete.setHeader("On-Behalf-Of", subuserName);
-        }
-        return this.client.execute(httpDelete);
-    }
-
-    private String getAuthHeaderValue(String username, String password) {
-        if (username == null) {
-            return "Bearer " + password;
-        } else {
-            return "Basic " + Base64.encodeBase64String(
-                    (username + ":" + password).getBytes());
-        }
     }
 }

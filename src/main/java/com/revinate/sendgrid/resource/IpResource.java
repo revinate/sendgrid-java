@@ -13,8 +13,8 @@ public class IpResource extends SendGridResource {
     private static final ApiVersion API_VERSION = ApiVersion.V3;
     private static final String ENDPOINT = "ips";
 
-    public IpResource(String baseUrl, SendGridHttpClient client, Credential credential) {
-        super(baseUrl, client, credential);
+    public IpResource(String url, SendGridHttpClient client, Credential credential) {
+        super(url, client, credential);
     }
 
     public List<Ip> list() throws SendGridException {

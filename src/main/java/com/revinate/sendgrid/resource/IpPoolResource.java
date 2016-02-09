@@ -13,8 +13,8 @@ public class IpPoolResource extends SendGridResource {
     private static final ApiVersion API_VERSION = ApiVersion.V3;
     private static final String ENDPOINT = "ips/pools";
 
-    public IpPoolResource(String baseUrl, SendGridHttpClient client, Credential credential) {
-        super(baseUrl, client, credential);
+    public IpPoolResource(String url, SendGridHttpClient client, Credential credential) {
+        super(url, client, credential);
     }
 
     public List<IpPool> list() throws SendGridException {

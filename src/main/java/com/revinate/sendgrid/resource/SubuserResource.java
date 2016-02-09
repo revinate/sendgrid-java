@@ -15,8 +15,8 @@ public class SubuserResource extends SendGridResource {
     private static final String ENDPOINT = "subusers";
     private static final String IPS_ENDPOINT = "ips";
 
-    public SubuserResource(String baseUrl, SendGridHttpClient client, Credential credential) {
-        super(baseUrl, client, credential);
+    public SubuserResource(String url, SendGridHttpClient client, Credential credential) {
+        super(url, client, credential);
     }
 
     public List<Subuser> list() throws SendGridException {

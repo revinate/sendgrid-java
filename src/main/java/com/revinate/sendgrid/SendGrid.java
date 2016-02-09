@@ -50,12 +50,12 @@ public final class SendGrid extends RootResource implements Closeable {
         this(LIVE_URL, new SendGridHttpClient(USER_AGENT, maxConnections), credential);
     }
 
-    public SendGrid(String baseUrl, SendGridHttpClient client, String apiKey) {
-        this(baseUrl, client, new ApiKeyCredential(apiKey));
+    public SendGrid(String url, SendGridHttpClient client, String apiKey) {
+        this(url, client, new ApiKeyCredential(apiKey));
     }
 
-    public SendGrid(String baseUrl, SendGridHttpClient client, Credential credential) {
-        super(baseUrl, client, credential);
+    public SendGrid(String url, SendGridHttpClient client, Credential credential) {
+        super(url, client, credential);
         this.v2Client = new SendGridApiClient(USER_AGENT);
     }
 
@@ -66,13 +66,13 @@ public final class SendGrid extends RootResource implements Closeable {
 
     public RootResource onBehalfOf(String username) {
         OnBehalfOfCredential onBehalfOfCredential = new OnBehalfOfCredential(credential, username);
-        return new RootResource(baseUrl, client, onBehalfOfCredential);
+        return new RootResource(url, client, onBehalfOfCredential);
     }
 
     public Response send(Email email) throws SendGridException {
         try {
             HttpResponse response = v2Client.postV2(email.toHttpEntity(credential),
-                    baseUrl + "/api/mail.send.json", credential);
+                    url + "/api/mail.send.json", credential);
             return new Response(response.getStatusLine().getStatusCode(),
                     EntityUtils.toString(response.getEntity()));
         } catch (IOException e) {

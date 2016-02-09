@@ -14,8 +14,8 @@ public class ApiKeyResource extends SendGridResource {
     private static final ApiVersion API_VERSION = ApiVersion.V3;
     private static final String ENDPOINT = "api_keys";
 
-    public ApiKeyResource(String baseUrl, SendGridHttpClient client, Credential credential) {
-        super(baseUrl, client, credential);
+    public ApiKeyResource(String url, SendGridHttpClient client, Credential credential) {
+        super(url, client, credential);
     }
 
     public List<ApiKey> list() throws SendGridException {

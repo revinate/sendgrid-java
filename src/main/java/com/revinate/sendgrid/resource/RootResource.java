@@ -5,24 +5,24 @@ import com.revinate.sendgrid.net.auth.Credential;
 
 public class RootResource extends SendGridResource {
 
-    public RootResource(String baseUrl, SendGridHttpClient client, Credential credential) {
-        super(baseUrl, client, credential);
+    public RootResource(String url, SendGridHttpClient client, Credential credential) {
+        super(url, client, credential);
     }
 
     public ApiKeyResource apiKeys() {
-        return new ApiKeyResource(baseUrl, client, credential);
+        return new ApiKeyResource(url, client, credential);
     }
 
     public IpResource ips() {
-        return new IpResource(baseUrl, client, credential);
+        return new IpResource(url, client, credential);
     }
 
     public IpPoolResource ipPools() {
-        return new IpPoolResource(baseUrl, client, credential);
+        return new IpPoolResource(url, client, credential);
     }
 
     public SubuserResource subusers() {
-        return new SubuserResource(baseUrl, client, credential);
+        return new SubuserResource(url, client, credential);
     }
 
     @Override

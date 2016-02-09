@@ -7,7 +7,7 @@ import com.revinate.sendgrid.net.auth.Credential;
 
 public abstract class SendGridResource {
 
-    protected final String baseUrl;
+    protected final String url;
     protected final SendGridHttpClient client;
     protected final Credential credential;
 
@@ -27,14 +27,14 @@ public abstract class SendGridResource {
         }
     }
 
-    public SendGridResource(String baseUrl, SendGridHttpClient client, Credential credential) {
-        this.baseUrl = baseUrl;
+    public SendGridResource(String url, SendGridHttpClient client, Credential credential) {
+        this.url = url;
         this.client = client;
         this.credential = credential;
     }
 
-    public String getBaseUrl() {
-        return baseUrl;
+    public String getUrl() {
+        return url;
     }
 
     public SendGridHttpClient getClient() {
@@ -50,7 +50,7 @@ public abstract class SendGridResource {
     abstract protected String getEndpoint();
 
     protected String getResourceUrl() {
-        return String.format("%s/%s/%s", baseUrl, getApiVersion().toUrlSegment(), getEndpoint());
+        return String.format("%s/%s/%s", url, getApiVersion().toUrlSegment(), getEndpoint());
     }
 
     protected String getResourceUrl(Identifiable resource) throws InvalidRequestException {
@@ -61,7 +61,7 @@ public abstract class SendGridResource {
         if (id == null) {
             throw new InvalidRequestException("Missing object identifier");
         }
-        return String.format("%s/%s/%s/%s", baseUrl, getApiVersion().toUrlSegment(), getEndpoint(), id);
+        return String.format("%s/%s/%s/%s", url, getApiVersion().toUrlSegment(), getEndpoint(), id);
     }
 
     protected String getResourceUrl(Identifiable resource, String endpoint) throws InvalidRequestException {
@@ -75,6 +75,6 @@ public abstract class SendGridResource {
         if (endpoint == null) {
             throw new InvalidRequestException("Missing subresource endpoint");
         }
-        return String.format("%s/%s/%s/%s/%s", baseUrl, getApiVersion().toUrlSegment(), getEndpoint(), id, endpoint);
+        return String.format("%s/%s/%s/%s/%s", url, getApiVersion().toUrlSegment(), getEndpoint(), id, endpoint);
     }
 }

@@ -1,5 +1,6 @@
 package com.revinate.sendgrid.resource;
 
+import com.revinate.sendgrid.exception.InvalidRequestException;
 import com.revinate.sendgrid.exception.SendGridException;
 import com.revinate.sendgrid.model.SendGridEntity;
 import com.revinate.sendgrid.net.SendGridHttpClient;
@@ -27,18 +28,25 @@ public abstract class EntityResource<T extends SendGridEntity> extends SendGridR
     }
 
     public T retrieve() throws SendGridException {
-        return client.get(baseUrl, entityType, credential);
+        return client.get(getUrl(), entityType, credential);
     }
 
     public T update(T entity) throws SendGridException {
-        return client.put(baseUrl, entity, entityType, credential);
+        return client.put(getUrl(), entity, entityType, credential);
     }
 
     public T partialUpdate(Map<String, Object> requestObject) throws SendGridException {
-        return client.patch(baseUrl, requestObject, entityType, credential);
+        return client.patch(getUrl(), requestObject, entityType, credential);
     }
 
     public void delete() throws SendGridException {
-        client.delete(baseUrl, credential);
+        client.delete(getUrl(), credential);
+    }
+
+    protected String getUrl() throws InvalidRequestException {
+        if (id == null) {
+            throw new InvalidRequestException("Missing entity identifier");
+        }
+        return String.format("%s/%s", baseUrl, id);
     }
 }

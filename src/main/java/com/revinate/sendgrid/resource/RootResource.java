@@ -12,8 +12,7 @@ public class RootResource extends SendGridResource {
     }
 
     public ApiKeysResource apiKeys() {
-        return new ApiKeysResource(getCollectionUrl(ApiKeysResource.API_VERSION,
-                ApiKeysResource.ENDPOINT), client, credential);
+        return new ApiKeysResource(getApiUrl(ApiKeysResource.API_VERSION), client, credential);
     }
 
     public ApiKeyResource apiKey(ApiKey apiKey) throws InvalidRequestException {

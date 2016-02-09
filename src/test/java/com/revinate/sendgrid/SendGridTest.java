@@ -100,7 +100,7 @@ public class SendGridTest {
         ApiKeysResource resource = sendGrid.onBehalfOf("username2").apiKeys();
 
         assertThat(resource, notNullValue());
-        assertThat(resource.getBaseUrl(), equalTo(BASE_URL + "/v3/" + ApiKeysResource.ENDPOINT));
+        assertThat(resource.getBaseUrl(), equalTo(BASE_URL + "/v3"));
         assertThat(resource.getClient(), sameInstance(client));
 
         Credential credential = resource.getCredential();
@@ -119,7 +119,7 @@ public class SendGridTest {
         ApiKeysResource resource = sendGrid.apiKeys();
 
         assertThat(resource, notNullValue());
-        assertThat(resource.getBaseUrl(), equalTo(BASE_URL + "/v3/" + ApiKeysResource.ENDPOINT));
+        assertThat(resource.getBaseUrl(), equalTo(BASE_URL + "/v3"));
         assertThat(resource.getClient(), sameInstance(client));
         assertThat(resource.getCredential(), sameInstance(sendGrid.getCredential()));
     }

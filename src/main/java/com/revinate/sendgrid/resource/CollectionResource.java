@@ -20,10 +20,16 @@ public abstract class CollectionResource<T extends SendGridEntity, U extends Sen
     }
 
     public List<T> list() throws SendGridException {
-        return client.get(baseUrl, collectionType, credential).getData();
+        return client.get(getUrl(), collectionType, credential).getData();
     }
 
     public T create(T requestObject) throws SendGridException {
-        return client.post(baseUrl, requestObject, entityType, credential);
+        return client.post(getUrl(), requestObject, entityType, credential);
     }
+
+    protected String getUrl() {
+        return String.format("%s/%s", baseUrl, getEndpoint());
+    }
+
+    protected abstract String getEndpoint();
 }

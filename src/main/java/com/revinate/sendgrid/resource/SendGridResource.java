@@ -45,6 +45,10 @@ public abstract class SendGridResource {
         return credential;
     }
 
+    protected String getApiUrl(ApiVersion apiVersion) {
+        return String.format("%s/%s", baseUrl, apiVersion.toUrlSegment());
+    }
+
     protected String getCollectionUrl(String endpoint) {
         return String.format("%s/%s", baseUrl, endpoint);
     }

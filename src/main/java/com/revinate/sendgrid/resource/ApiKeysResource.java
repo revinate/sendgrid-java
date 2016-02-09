@@ -16,10 +16,15 @@ public class ApiKeysResource extends CollectionResource<ApiKey, ApiKeysResponse>
     }
 
     public ApiKeyResource entity(ApiKey apiKey) throws InvalidRequestException {
-        return entity(apiKey.getEntityId());
+        return new ApiKeyResource(getUrl(), client, credential, apiKey);
     }
 
     public ApiKeyResource entity(String id) throws InvalidRequestException {
-        return new ApiKeyResource(getEntityUrl(id), client, credential, id);
+        return new ApiKeyResource(getUrl(), client, credential, id);
+    }
+
+    @Override
+    protected String getEndpoint() {
+        return ENDPOINT;
     }
 }

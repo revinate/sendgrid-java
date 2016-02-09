@@ -45,7 +45,7 @@ public class ApiKeyResourceTest extends BaseSendGridTest {
 
     @Before
     public void setUp() throws Exception {
-        resource = new ApiKeyResource("https://api.sendgrid.com/v3/api_keys/" + API_KEY_ID, client, credential, API_KEY_ID);
+        resource = new ApiKeyResource("https://api.sendgrid.com/v3/api_keys", client, credential, API_KEY_ID);
     }
 
     @Test
@@ -58,6 +58,18 @@ public class ApiKeyResourceTest extends BaseSendGridTest {
         ApiKey apiKey = resource.retrieve();
 
         assertThat(apiKey, sameInstance(response));
+    }
+
+    @Test
+    public void retrieve_shouldHandleMissingId() throws Exception {
+        ApiKey apiKey = new ApiKey();
+        apiKey.setName("1st API key");
+        resource = new ApiKeyResource("https://api.sendgrid.com/v3/api_keys", client, credential, apiKey);
+
+        thrown.expect(InvalidRequestException.class);
+        thrown.expectMessage("Missing entity identifier");
+
+        resource.retrieve();
     }
 
     @Test

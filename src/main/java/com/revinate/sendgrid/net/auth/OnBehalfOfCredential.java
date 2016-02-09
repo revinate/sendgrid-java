@@ -16,6 +16,14 @@ public class OnBehalfOfCredential implements Credential {
         this.username = username;
     }
 
+    public Credential getCredential() {
+        return credential;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
     @Override
     public List<Header> toHttpHeaders() {
         List<Header> headers = new ArrayList<Header>(credential.toHttpHeaders());

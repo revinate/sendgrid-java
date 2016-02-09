@@ -7,16 +7,16 @@ import com.revinate.sendgrid.net.SendGridApiClient;
 import com.revinate.sendgrid.net.SendGridHttpClient;
 import com.revinate.sendgrid.net.auth.ApiKeyCredential;
 import com.revinate.sendgrid.net.auth.Credential;
+import com.revinate.sendgrid.net.auth.OnBehalfOfCredential;
 import com.revinate.sendgrid.net.auth.UsernamePasswordCredential;
-import com.revinate.sendgrid.operations.ApiKeyOperations;
-import com.revinate.sendgrid.operations.SubuserOperations;
+import com.revinate.sendgrid.operations.SendGridOperationsProvider;
 import org.apache.http.HttpResponse;
 import org.apache.http.util.EntityUtils;
 
 import java.io.Closeable;
 import java.io.IOException;
 
-public class SendGrid implements Closeable {
+public class SendGrid extends SendGridOperationsProvider implements Closeable {
 
     public static final String VERSION = "3.0.0";
     public static final String USER_AGENT = "sendgrid/" + VERSION + ";java";
@@ -55,10 +55,12 @@ public class SendGrid implements Closeable {
         this.v2Client = new SendGridApiClient(USER_AGENT);
     }
 
+    @Override
     public Credential getCredential() {
         return credential;
     }
 
+    @Override
     public String getUrl() {
         return url;
     }
@@ -68,6 +70,7 @@ public class SendGrid implements Closeable {
         return this;
     }
 
+    @Override
     public SendGridHttpClient getClient() {
         return client;
     }
@@ -85,6 +88,11 @@ public class SendGrid implements Closeable {
         client.close();
     }
 
+    public SendGridOperationsProvider onBehalfOf(String username) {
+        OnBehalfOfCredential onBehalfOfCredential = new OnBehalfOfCredential(credential, username);
+        return new WithCredentialOverlay(onBehalfOfCredential);
+    }
+
     public Response send(Email email) throws SendGridException {
         try {
             HttpResponse response = v2Client.postV2(email.toHttpEntity(credential),
@@ -96,11 +104,27 @@ public class SendGrid implements Closeable {
         }
     }
 
-    public ApiKeyOperations apiKeys() {
-        return new ApiKeyOperations(url, client, credential);
-    }
+    private class WithCredentialOverlay extends SendGridOperationsProvider {
 
-    public SubuserOperations subusers() {
-        return new SubuserOperations(url, client, credential);
+        private final Credential credential;
+
+        public WithCredentialOverlay(Credential credential) {
+            this.credential = credential;
+        }
+
+        @Override
+        public String getUrl() {
+            return url;
+        }
+
+        @Override
+        public SendGridHttpClient getClient() {
+            return client;
+        }
+
+        @Override
+        public Credential getCredential() {
+            return credential;
+        }
     }
 }

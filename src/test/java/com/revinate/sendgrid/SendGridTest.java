@@ -3,6 +3,7 @@ package com.revinate.sendgrid;
 import com.revinate.sendgrid.net.SendGridHttpClient;
 import com.revinate.sendgrid.net.auth.ApiKeyCredential;
 import com.revinate.sendgrid.net.auth.Credential;
+import com.revinate.sendgrid.net.auth.OnBehalfOfCredential;
 import com.revinate.sendgrid.net.auth.UsernamePasswordCredential;
 import com.revinate.sendgrid.operations.ApiKeyOperations;
 import com.revinate.sendgrid.operations.SubuserOperations;
@@ -34,7 +35,7 @@ public class SendGridTest {
     SendGridHttpClient client;
 
     @Test
-    public void version_shouldMatchGradleVersion() {
+    public void version_shouldMatchGradleVersion() throws Exception {
         try {
             BufferedReader br = new BufferedReader(new FileReader("./build.gradle"));
             String line = br.readLine();
@@ -57,7 +58,7 @@ public class SendGridTest {
     }
 
     @Test
-    public void usernamePasswordConstructor_shouldConstructInstance() {
+    public void usernamePasswordConstructor_shouldConstructInstance() throws Exception {
         SendGrid sendGrid = new SendGrid(USERNAME, PASSWORD);
 
         Credential credential = sendGrid.getCredential();
@@ -69,7 +70,7 @@ public class SendGridTest {
     }
 
     @Test
-    public void apiKeyConstructor_shouldConstructInstance() {
+    public void apiKeyConstructor_shouldConstructInstance() throws Exception {
         SendGrid sendGrid = new SendGrid(API_KEY);
 
         Credential credential = sendGrid.getCredential();
@@ -80,7 +81,7 @@ public class SendGridTest {
     }
 
     @Test
-    public void maxConnectionsConstructor_shouldConstructInstance() {
+    public void maxConnectionsConstructor_shouldConstructInstance() throws Exception {
         SendGrid sendGrid = new SendGrid(API_KEY, MAX_CONNECTIONS);
 
         Credential credential = sendGrid.getCredential();
@@ -91,7 +92,26 @@ public class SendGridTest {
     }
 
     @Test
-    public void apiKeys_shouldReturnOperations() {
+    public void onBehalfOf_shouldOverlayCredential() throws Exception {
+        SendGrid sendGrid = new SendGrid(API_KEY).setUrl(URL).setClient(client);
+
+        ApiKeyOperations operations = sendGrid.onBehalfOf("username2").apiKeys();
+
+        assertThat(operations, notNullValue());
+        assertThat(operations.getBaseUrl(), equalTo(URL));
+        assertThat(operations.getClient(), sameInstance(client));
+
+        Credential credential = operations.getCredential();
+        assertThat(credential, notNullValue());
+        assertThat(credential, instanceOf(OnBehalfOfCredential.class));
+
+        OnBehalfOfCredential onBehalfOfCredential = (OnBehalfOfCredential) credential;
+        assertThat(onBehalfOfCredential.getCredential(), sameInstance(sendGrid.getCredential()));
+        assertThat(onBehalfOfCredential.getUsername(), equalTo("username2"));
+    }
+
+    @Test
+    public void apiKeys_shouldReturnOperations() throws Exception {
         SendGrid sendGrid = new SendGrid(API_KEY).setUrl(URL).setClient(client);
 
         ApiKeyOperations operations = sendGrid.apiKeys();
@@ -103,7 +123,7 @@ public class SendGridTest {
     }
 
     @Test
-    public void subusers_shouldReturnOperations() {
+    public void subusers_shouldReturnOperations() throws Exception {
         SendGrid sendGrid = new SendGrid(API_KEY).setUrl(URL).setClient(client);
 
         SubuserOperations operations = sendGrid.subusers();

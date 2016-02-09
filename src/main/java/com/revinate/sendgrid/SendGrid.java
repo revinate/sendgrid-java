@@ -13,9 +13,10 @@ import com.revinate.sendgrid.operations.SubuserOperations;
 import org.apache.http.HttpResponse;
 import org.apache.http.util.EntityUtils;
 
+import java.io.Closeable;
 import java.io.IOException;
 
-public class SendGrid {
+public class SendGrid implements Closeable {
 
     public static final String VERSION = "3.0.0";
     public static final String USER_AGENT = "sendgrid/" + VERSION + ";java";
@@ -77,6 +78,11 @@ public class SendGrid {
             this.client = client;
         }
         return this;
+    }
+
+    @Override
+    public void close() {
+        client.close();
     }
 
     public Response send(Email email) throws SendGridException {

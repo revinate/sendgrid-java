@@ -7,7 +7,9 @@ import com.revinate.sendgrid.net.auth.UsernamePasswordCredential;
 import com.revinate.sendgrid.operations.ApiKeyOperations;
 import com.revinate.sendgrid.operations.SubuserOperations;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.mockito.Mock;
+import org.mockito.runners.MockitoJUnitRunner;
 
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
@@ -17,7 +19,9 @@ import java.io.IOException;
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
+import static org.mockito.Mockito.verify;
 
+@RunWith(MockitoJUnitRunner.class)
 public class SendGridTest {
 
     private static final String USERNAME = "username";
@@ -108,5 +112,14 @@ public class SendGridTest {
         assertThat(operations.getBaseUrl(), equalTo(URL));
         assertThat(operations.getClient(), sameInstance(client));
         assertThat(operations.getCredential(), sameInstance(sendGrid.getCredential()));
+    }
+
+    @Test
+    public void close_shouldCloseUnderlyingClient() throws Exception {
+        SendGrid sendGrid = new SendGrid(API_KEY).setUrl(URL).setClient(client);
+
+        sendGrid.close();
+
+        verify(client).close();
     }
 }

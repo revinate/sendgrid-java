@@ -23,7 +23,7 @@ public class SubuserResource extends SendGridResource {
     }
 
     public Subuser retrieve(String id) throws SendGridException {
-        return client.get(getObjectUrl(id), Subuser.class, credential);
+        return client.get(getEntityUrl(id), Subuser.class, credential);
     }
 
     public Subuser create(Subuser requestObject) throws SendGridException {
@@ -31,7 +31,7 @@ public class SubuserResource extends SendGridResource {
     }
 
     public Subuser update(Subuser subuser) throws SendGridException {
-        Subuser response = client.put(getObjectUrl(subuser) + "/" + IpResource.ENDPOINT,
+        Subuser response = client.put(getEntityUrl(subuser) + "/" + IpResource.ENDPOINT,
                 subuser.getIps(), Subuser.class, credential);
         response.setId(subuser.getId());
         response.setUsername(subuser.getUsername());
@@ -41,7 +41,7 @@ public class SubuserResource extends SendGridResource {
     }
 
     public Subuser partialUpdate(Subuser subuser, Map<String, Object> requestObject) throws SendGridException {
-        client.patch(getObjectUrl(subuser), requestObject, credential);
+        client.patch(getEntityUrl(subuser), requestObject, credential);
         Subuser response = new Subuser();
         response.setId(subuser.getId());
         response.setUsername(subuser.getUsername());
@@ -51,6 +51,6 @@ public class SubuserResource extends SendGridResource {
     }
 
     public void delete(Subuser subuser) throws SendGridException {
-        client.delete(getObjectUrl(subuser), credential);
+        client.delete(getEntityUrl(subuser), credential);
     }
 }

@@ -1,0 +1,44 @@
+package com.revinate.sendgrid.resource;
+
+import com.revinate.sendgrid.exception.SendGridException;
+import com.revinate.sendgrid.model.SendGridEntity;
+import com.revinate.sendgrid.net.SendGridHttpClient;
+import com.revinate.sendgrid.net.auth.Credential;
+
+import java.util.Map;
+
+public abstract class EntityResource<T extends SendGridEntity> extends SendGridResource {
+
+    protected final Class<T> entityType;
+    protected final String id;
+
+    public EntityResource(String url, SendGridHttpClient client, Credential credential, Class<T> entityType, T entity) {
+        this(url, client, credential, entityType, entity.getEntityId());
+    }
+
+    public EntityResource(String url, SendGridHttpClient client, Credential credential, Class<T> entityType, String id) {
+        super(url, client, credential);
+        this.entityType = entityType;
+        this.id = id;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public T retrieve() throws SendGridException {
+        return client.get(url, entityType, credential);
+    }
+
+    public T update(T entity) throws SendGridException {
+        return client.put(url, entity, entityType, credential);
+    }
+
+    public T partialUpdate(Map<String, Object> requestObject) throws SendGridException {
+        return client.patch(url, requestObject, entityType, credential);
+    }
+
+    public void delete() throws SendGridException {
+        client.delete(url, credential);
+    }
+}

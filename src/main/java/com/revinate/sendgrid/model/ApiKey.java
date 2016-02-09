@@ -3,7 +3,7 @@ package com.revinate.sendgrid.model;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ApiKey extends SendGridModel implements Identifiable {
+public class ApiKey extends SendGridModel implements SendGridEntity {
 
     private String name;
     private String apiKeyId;
@@ -11,7 +11,7 @@ public class ApiKey extends SendGridModel implements Identifiable {
     private List<String> scopes;
 
     @Override
-    public String getPathId() {
+    public String getEntityId() {
         return apiKeyId;
     }
 

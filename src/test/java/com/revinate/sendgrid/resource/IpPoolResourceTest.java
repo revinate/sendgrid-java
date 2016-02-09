@@ -112,7 +112,7 @@ public class IpPoolResourceTest extends BaseSendGridTest {
         IpPool ipPool = new IpPool();
 
         thrown.expect(InvalidRequestException.class);
-        thrown.expectMessage("Missing object identifier");
+        thrown.expectMessage("Missing entity identifier");
 
         resource.update(ipPool);
     }
@@ -132,7 +132,7 @@ public class IpPoolResourceTest extends BaseSendGridTest {
         IpPool ipPool = new IpPool();
 
         thrown.expect(InvalidRequestException.class);
-        thrown.expectMessage("Missing object identifier");
+        thrown.expectMessage("Missing entity identifier");
 
         resource.delete(ipPool);
     }

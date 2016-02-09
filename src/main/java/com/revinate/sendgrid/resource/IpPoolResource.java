@@ -22,7 +22,7 @@ public class IpPoolResource extends SendGridResource {
     }
 
     public IpPool retrieve(String id) throws SendGridException {
-        return client.get(getObjectUrl(id), IpPool.class, credential);
+        return client.get(getEntityUrl(id), IpPool.class, credential);
     }
 
     public IpPool create(IpPool requestObject) throws SendGridException {
@@ -34,10 +34,10 @@ public class IpPoolResource extends SendGridResource {
         // need to wait until SendGrid implements pool IDs.
         IpPool requestObject = new IpPool();
         requestObject.setName(ipPool.getName());
-        return client.put(getObjectUrl(ipPool), requestObject, IpPool.class, credential);
+        return client.put(getEntityUrl(ipPool), requestObject, IpPool.class, credential);
     }
 
     public void delete(IpPool ipPool) throws SendGridException {
-        client.delete(getObjectUrl(ipPool), credential);
+        client.delete(getEntityUrl(ipPool), credential);
     }
 }

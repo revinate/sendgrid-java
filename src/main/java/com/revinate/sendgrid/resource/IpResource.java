@@ -22,6 +22,6 @@ public class IpResource extends SendGridResource {
     }
 
     public Ip retrieve(String id) throws SendGridException {
-        return client.get(getObjectUrl(id), Ip.class, credential);
+        return client.get(getEntityUrl(id), Ip.class, credential);
     }
 }

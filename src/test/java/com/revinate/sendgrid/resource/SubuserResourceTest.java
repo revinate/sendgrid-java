@@ -122,7 +122,7 @@ public class SubuserResourceTest extends BaseSendGridTest {
         subuser.setEmail("test1@email.com");
 
         thrown.expect(InvalidRequestException.class);
-        thrown.expectMessage("Missing object identifier");
+        thrown.expectMessage("Missing entity identifier");
 
         resource.update(subuser);
     }
@@ -152,7 +152,7 @@ public class SubuserResourceTest extends BaseSendGridTest {
         requestObject.put("disabled", true);
 
         thrown.expect(InvalidRequestException.class);
-        thrown.expectMessage("Missing object identifier");
+        thrown.expectMessage("Missing entity identifier");
 
         resource.partialUpdate(subuser, requestObject);
     }
@@ -174,7 +174,7 @@ public class SubuserResourceTest extends BaseSendGridTest {
         subuser.setEmail("test1@email.com");
 
         thrown.expect(InvalidRequestException.class);
-        thrown.expectMessage("Missing object identifier");
+        thrown.expectMessage("Missing entity identifier");
 
         resource.delete(subuser);
     }

@@ -2,13 +2,13 @@ package com.revinate.sendgrid.model;
 
 import java.util.List;
 
-public class IpPool extends SendGridModel implements Identifiable {
+public class IpPool extends SendGridModel implements SendGridEntity {
 
     private String name;
     private List<Ip> ips;
 
     @Override
-    public String getPathId() {
+    public String getEntityId() {
         return name;
     }
 

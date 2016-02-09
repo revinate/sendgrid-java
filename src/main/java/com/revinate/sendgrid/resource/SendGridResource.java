@@ -1,7 +1,7 @@
 package com.revinate.sendgrid.resource;
 
 import com.revinate.sendgrid.exception.InvalidRequestException;
-import com.revinate.sendgrid.model.Identifiable;
+import com.revinate.sendgrid.model.SendGridEntity;
 import com.revinate.sendgrid.net.SendGridHttpClient;
 import com.revinate.sendgrid.net.auth.Credential;
 
@@ -53,13 +53,13 @@ public abstract class SendGridResource {
         return String.format("%s/%s/%s", url, apiVersion.toUrlSegment(), endpoint);
     }
 
-    protected String getObjectUrl(Identifiable resource) throws InvalidRequestException {
-        return getObjectUrl(resource.getPathId());
+    protected String getEntityUrl(SendGridEntity entity) throws InvalidRequestException {
+        return getEntityUrl(entity.getEntityId());
     }
 
-    protected String getObjectUrl(String id) throws InvalidRequestException {
+    protected String getEntityUrl(String id) throws InvalidRequestException {
         if (id == null) {
-            throw new InvalidRequestException("Missing object identifier");
+            throw new InvalidRequestException("Missing entity identifier");
         }
         return String.format("%s/%s", url, id);
     }

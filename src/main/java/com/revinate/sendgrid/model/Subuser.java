@@ -3,7 +3,7 @@ package com.revinate.sendgrid.model;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Subuser extends SendGridModel implements Identifiable {
+public class Subuser extends SendGridModel implements SendGridEntity {
 
     private Integer id;
     private String username;
@@ -16,7 +16,7 @@ public class Subuser extends SendGridModel implements Identifiable {
     private List<String> ips;
 
     @Override
-    public String getPathId() {
+    public String getEntityId() {
         return username;
     }
 

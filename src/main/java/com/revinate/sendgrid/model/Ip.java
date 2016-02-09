@@ -3,7 +3,7 @@ package com.revinate.sendgrid.model;
 import java.util.Date;
 import java.util.List;
 
-public class Ip extends SendGridModel implements Identifiable {
+public class Ip extends SendGridModel implements SendGridEntity {
 
     private String ip;
     private String rdns;
@@ -14,7 +14,7 @@ public class Ip extends SendGridModel implements Identifiable {
     private Boolean whitelabeled;
 
     @Override
-    public String getPathId() {
+    public String getEntityId() {
         return ip;
     }
 

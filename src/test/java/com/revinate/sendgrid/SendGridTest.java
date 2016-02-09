@@ -5,7 +5,7 @@ import com.revinate.sendgrid.net.auth.ApiKeyCredential;
 import com.revinate.sendgrid.net.auth.Credential;
 import com.revinate.sendgrid.net.auth.OnBehalfOfCredential;
 import com.revinate.sendgrid.net.auth.UsernamePasswordCredential;
-import com.revinate.sendgrid.resource.ApiKeyResource;
+import com.revinate.sendgrid.resource.ApiKeysResource;
 import com.revinate.sendgrid.resource.IpPoolResource;
 import com.revinate.sendgrid.resource.IpResource;
 import com.revinate.sendgrid.resource.SubuserResource;
@@ -97,10 +97,10 @@ public class SendGridTest {
     public void onBehalfOf_shouldOverlayCredential() throws Exception {
         SendGrid sendGrid = new SendGrid(URL, client, API_KEY);
 
-        ApiKeyResource resource = sendGrid.onBehalfOf("username2").apiKeys();
+        ApiKeysResource resource = sendGrid.onBehalfOf("username2").apiKeys();
 
         assertThat(resource, notNullValue());
-        assertThat(resource.getUrl(), equalTo(URL + "/v3/" + ApiKeyResource.ENDPOINT));
+        assertThat(resource.getUrl(), equalTo(URL + "/v3/" + ApiKeysResource.ENDPOINT));
         assertThat(resource.getClient(), sameInstance(client));
 
         Credential credential = resource.getCredential();
@@ -116,10 +116,10 @@ public class SendGridTest {
     public void apiKeys_shouldReturnResource() throws Exception {
         SendGrid sendGrid = new SendGrid(URL, client, API_KEY);
 
-        ApiKeyResource resource = sendGrid.apiKeys();
+        ApiKeysResource resource = sendGrid.apiKeys();
 
         assertThat(resource, notNullValue());
-        assertThat(resource.getUrl(), equalTo(URL + "/v3/" + ApiKeyResource.ENDPOINT));
+        assertThat(resource.getUrl(), equalTo(URL + "/v3/" + ApiKeysResource.ENDPOINT));
         assertThat(resource.getClient(), sameInstance(client));
         assertThat(resource.getCredential(), sameInstance(sendGrid.getCredential()));
     }

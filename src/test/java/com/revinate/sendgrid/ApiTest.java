@@ -98,15 +98,15 @@ public class ApiTest {
         assertThat(apiKey1.getApiKeyId(), notNullValue());
         assertThat(apiKey1.getApiKey(), notNullValue());
 
-        ApiKey apiKey2 = sendGrid.apiKeys().retrieve(apiKey1.getApiKeyId());
+        ApiKey apiKey2 = sendGrid.apiKey(apiKey1.getApiKeyId()).retrieve();
 
         assertThat(apiKey2, notNullValue());
         assertThat(apiKey2.getName(), equalTo("testapikey"));
         assertThat(apiKey2.getApiKeyId(), equalTo(apiKey1.getApiKeyId()));
 
-        sendGrid.apiKeys().delete(apiKey1);
+        sendGrid.apiKey(apiKey1).delete();
 
-        ApiKey apiKey3 = sendGrid.apiKeys().retrieve(apiKey1.getApiKeyId());
+        ApiKey apiKey3 = sendGrid.apiKey(apiKey1.getApiKeyId()).retrieve();
 
         // SendGrid does not throw a 404 here, so we get an API key with unset fields
         assertThat(apiKey3.getApiKeyId(), nullValue());
@@ -125,15 +125,15 @@ public class ApiTest {
         assertThat(apiKey1.getApiKeyId(), notNullValue());
         assertThat(apiKey1.getApiKey(), notNullValue());
 
-        ApiKey apiKey2 = sendGrid.onBehalfOf("testsubuser123").apiKeys().retrieve(apiKey1.getApiKeyId());
+        ApiKey apiKey2 = sendGrid.onBehalfOf("testsubuser123").apiKey(apiKey1.getApiKeyId()).retrieve();
 
         assertThat(apiKey2, notNullValue());
         assertThat(apiKey2.getName(), equalTo("testapikey"));
         assertThat(apiKey2.getApiKeyId(), equalTo(apiKey1.getApiKeyId()));
 
-        sendGrid.onBehalfOf("testsubuser123").apiKeys().delete(apiKey1);
+        sendGrid.onBehalfOf("testsubuser123").apiKey(apiKey1).delete();
 
-        ApiKey apiKey3 = sendGrid.onBehalfOf("testsubuser123").apiKeys().retrieve(apiKey1.getApiKeyId());
+        ApiKey apiKey3 = sendGrid.onBehalfOf("testsubuser123").apiKey(apiKey1.getApiKeyId()).retrieve();
 
         // SendGrid does not throw a 404 here, so we get an API key with unset fields
         assertThat(apiKey3.getApiKeyId(), nullValue());

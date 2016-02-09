@@ -3,23 +3,23 @@ package com.revinate.sendgrid.net.auth;
 import org.apache.http.Header;
 import org.apache.http.message.BasicHeader;
 
-import java.util.Arrays;
+import java.util.ArrayList;
+import java.util.List;
 
 public class OnBehalfOfCredential implements Credential {
-    private final Credential credential;
-    private final String subuserName;
 
-    public OnBehalfOfCredential(Credential credential, String subuserName) {
+    private final Credential credential;
+    private final String username;
+
+    public OnBehalfOfCredential(Credential credential, String username) {
         this.credential = credential;
-        this.subuserName = subuserName;
+        this.username = username;
     }
 
     @Override
-    public Header[] toHttpHeaders() {
-        Header[] headers = credential.toHttpHeaders();
-        int length = headers.length;
-        Header[] newHeaders = Arrays.copyOf(headers, length + 1);
-        newHeaders[length] = new BasicHeader("On-Behalf-Of", subuserName);
-        return newHeaders;
+    public List<Header> toHttpHeaders() {
+        List<Header> headers = new ArrayList<Header>(credential.toHttpHeaders());
+        headers.add(new BasicHeader("On-Behalf-Of", username));
+        return headers;
     }
 }

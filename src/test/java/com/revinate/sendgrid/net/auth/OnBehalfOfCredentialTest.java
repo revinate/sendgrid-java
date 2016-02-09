@@ -7,6 +7,9 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
+import java.util.Collections;
+import java.util.List;
+
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.when;
@@ -21,11 +24,11 @@ public class OnBehalfOfCredentialTest {
     @SuppressWarnings("unchecked")
     public void toHttpHeaders_shouldAppendExtraHeader() throws Exception {
         BasicHeader baseAuth = new BasicHeader("Authorization", "Bearer token");
-        when(baseCredential.toHttpHeaders()).thenReturn(new Header[]{baseAuth});
+        when(baseCredential.toHttpHeaders()).thenReturn(Collections.<Header>singletonList(baseAuth));
 
-        Header[] headers = new OnBehalfOfCredential(baseCredential, "username").toHttpHeaders();
+        List<Header> headers = new OnBehalfOfCredential(baseCredential, "username").toHttpHeaders();
 
-        assertThat(headers, arrayContainingInAnyOrder(
+        assertThat(headers, containsInAnyOrder(
                 allOf(
                         hasProperty("name", equalTo("Authorization")),
                         hasProperty("value", equalTo("Bearer token"))

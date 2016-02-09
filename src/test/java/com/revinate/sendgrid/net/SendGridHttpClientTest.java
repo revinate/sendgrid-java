@@ -7,7 +7,8 @@ import com.revinate.sendgrid.model.ApiKey;
 import com.revinate.sendgrid.net.auth.ApiKeyCredential;
 import com.revinate.sendgrid.util.JsonUtils;
 import org.apache.http.client.ClientProtocolException;
-import org.apache.http.client.methods.*;
+import org.apache.http.client.methods.HttpEntityEnclosingRequestBase;
+import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.util.EntityUtils;
 import org.junit.Before;
@@ -51,7 +52,7 @@ public class SendGridHttpClientTest extends BaseSendGridTest {
     public void get_shouldMakeRequestAndReturnResponse() throws Exception {
         String response = readFile("/responses/api-key.json");
 
-        when(httpClient.execute(any(HttpGet.class), any(StringResponseHandler.class)))
+        when(httpClient.execute(any(HttpUriRequest.class), any(StringResponseHandler.class)))
                 .thenReturn(response);
 
         ApiKey apiKey = client.get("http://sendgrid", ApiKey.class, new ApiKeyCredential("token"));
@@ -60,21 +61,22 @@ public class SendGridHttpClientTest extends BaseSendGridTest {
         assertThat(apiKey.getName(), equalTo("1st API key"));
         assertThat(apiKey.getApiKeyId(), equalTo("sdaspfgada5hahsrs5hSHF"));
 
-        ArgumentCaptor<HttpGet> captor = ArgumentCaptor.forClass(HttpGet.class);
+        ArgumentCaptor<HttpUriRequest> captor = ArgumentCaptor.forClass(HttpUriRequest.class);
         verify(httpClient).execute(captor.capture(), eq(handler));
 
-        HttpGet httpGet = captor.getValue();
+        HttpUriRequest httpRequest = captor.getValue();
 
-        assertThat(httpGet, notNullValue());
-        assertThat(httpGet.getURI(), hasToString("http://sendgrid"));
-        assertThat(httpGet.getAllHeaders(), hasItemInArray(
+        assertThat(httpRequest, notNullValue());
+        assertThat(httpRequest.getMethod(), equalTo("GET"));
+        assertThat(httpRequest.getURI(), hasToString("http://sendgrid"));
+        assertThat(httpRequest.getAllHeaders(), hasItemInArray(
                 hasProperty("name", equalTo("Authorization"))
         ));
     }
 
     @Test
     public void get_shouldWrapClientProtocolException() throws Exception {
-        when(httpClient.execute(any(HttpGet.class), any(StringResponseHandler.class)))
+        when(httpClient.execute(any(HttpUriRequest.class), any(StringResponseHandler.class)))
                 .thenThrow(new ClientProtocolException("Unit test"));
 
         thrown.expect(ApiConnectionException.class);
@@ -85,22 +87,22 @@ public class SendGridHttpClientTest extends BaseSendGridTest {
 
     @Test
     public void get_shouldWrapConnectionIOException() throws Exception {
-        when(httpClient.execute(any(HttpGet.class), any(StringResponseHandler.class)))
+        when(httpClient.execute(any(HttpUriRequest.class), any(StringResponseHandler.class)))
                 .thenThrow(new IOException("Unit test"));
 
         thrown.expect(ApiConnectionException.class);
-        thrown.expectMessage("IOException while making API request to SendGrid");
+        thrown.expectMessage("I/O error while making API request to SendGrid");
 
         client.get("http://sendgrid", ApiKey.class, new ApiKeyCredential("token"));
     }
 
     @Test
     public void get_shouldWrapMappingIOException() throws Exception {
-        when(httpClient.execute(any(HttpGet.class), any(StringResponseHandler.class)))
+        when(httpClient.execute(any(HttpUriRequest.class), any(StringResponseHandler.class)))
                 .thenReturn("not a json");
 
         thrown.expect(ApiConnectionException.class);
-        thrown.expectMessage("IOException while mapping response");
+        thrown.expectMessage("Error while mapping response");
 
         client.get("http://sendgrid", ApiKey.class, new ApiKeyCredential("token"));
     }
@@ -121,7 +123,7 @@ public class SendGridHttpClientTest extends BaseSendGridTest {
         apiKey.addScope("mail.send");
         String request = JsonUtils.toJson(apiKey);
 
-        when(httpClient.execute(any(HttpPost.class), any(StringResponseHandler.class)))
+        when(httpClient.execute(any(HttpUriRequest.class), any(StringResponseHandler.class)))
                 .thenReturn(response);
 
         ApiKey apiKey1 = client.post("http://sendgrid", apiKey, ApiKey.class,
@@ -131,18 +133,20 @@ public class SendGridHttpClientTest extends BaseSendGridTest {
         assertThat(apiKey1.getName(), equalTo("1st API key"));
         assertThat(apiKey1.getApiKeyId(), equalTo("sdaspfgada5hahsrs5hSHF"));
 
-        ArgumentCaptor<HttpPost> captor = ArgumentCaptor.forClass(HttpPost.class);
+        ArgumentCaptor<HttpEntityEnclosingRequestBase> captor = ArgumentCaptor
+                .forClass(HttpEntityEnclosingRequestBase.class);
         verify(httpClient).execute(captor.capture(), eq(handler));
 
-        HttpPost httpPost = captor.getValue();
+        HttpEntityEnclosingRequestBase httpRequest = captor.getValue();
 
-        assertThat(httpPost, notNullValue());
-        assertThat(EntityUtils.toString(httpPost.getEntity()), equalTo(request));
-        assertThat(httpPost.getURI(), hasToString("http://sendgrid"));
-        assertThat(httpPost.getAllHeaders(), hasItemInArray(
+        assertThat(httpRequest, notNullValue());
+        assertThat(httpRequest.getMethod(), equalTo("POST"));
+        assertThat(EntityUtils.toString(httpRequest.getEntity()), equalTo(request));
+        assertThat(httpRequest.getURI(), hasToString("http://sendgrid"));
+        assertThat(httpRequest.getAllHeaders(), hasItemInArray(
                 hasProperty("name", equalTo("Authorization"))
         ));
-        assertThat(httpPost.getAllHeaders(), hasItemInArray(
+        assertThat(httpRequest.getAllHeaders(), hasItemInArray(
                 allOf(
                         hasProperty("name", equalTo("Content-Type")),
                         hasProperty("value", equalTo("application/json"))
@@ -165,7 +169,7 @@ public class SendGridHttpClientTest extends BaseSendGridTest {
         apiKey.addScope("mail.send");
         String request = JsonUtils.toJson(apiKey);
 
-        when(httpClient.execute(any(HttpPut.class), any(StringResponseHandler.class)))
+        when(httpClient.execute(any(HttpUriRequest.class), any(StringResponseHandler.class)))
                 .thenReturn(response);
 
         ApiKey apiKey1 = client.put("http://sendgrid", apiKey, ApiKey.class,
@@ -175,18 +179,20 @@ public class SendGridHttpClientTest extends BaseSendGridTest {
         assertThat(apiKey1.getName(), equalTo("1st API key"));
         assertThat(apiKey1.getApiKeyId(), equalTo("sdaspfgada5hahsrs5hSHF"));
 
-        ArgumentCaptor<HttpPut> captor = ArgumentCaptor.forClass(HttpPut.class);
+        ArgumentCaptor<HttpEntityEnclosingRequestBase> captor = ArgumentCaptor
+                .forClass(HttpEntityEnclosingRequestBase.class);
         verify(httpClient).execute(captor.capture(), eq(handler));
 
-        HttpPut httpPut = captor.getValue();
+        HttpEntityEnclosingRequestBase httpRequest = captor.getValue();
 
-        assertThat(httpPut, notNullValue());
-        assertThat(EntityUtils.toString(httpPut.getEntity()), equalTo(request));
-        assertThat(httpPut.getURI(), hasToString("http://sendgrid"));
-        assertThat(httpPut.getAllHeaders(), hasItemInArray(
+        assertThat(httpRequest, notNullValue());
+        assertThat(httpRequest.getMethod(), equalTo("PUT"));
+        assertThat(EntityUtils.toString(httpRequest.getEntity()), equalTo(request));
+        assertThat(httpRequest.getURI(), hasToString("http://sendgrid"));
+        assertThat(httpRequest.getAllHeaders(), hasItemInArray(
                 hasProperty("name", equalTo("Authorization"))
         ));
-        assertThat(httpPut.getAllHeaders(), hasItemInArray(
+        assertThat(httpRequest.getAllHeaders(), hasItemInArray(
                 allOf(
                         hasProperty("name", equalTo("Content-Type")),
                         hasProperty("value", equalTo("application/json"))
@@ -201,7 +207,7 @@ public class SendGridHttpClientTest extends BaseSendGridTest {
         apiKey.setName("1st API key");
         String request = JsonUtils.toJson(apiKey);
 
-        when(httpClient.execute(any(HttpPatch.class), any(StringResponseHandler.class)))
+        when(httpClient.execute(any(HttpUriRequest.class), any(StringResponseHandler.class)))
                 .thenReturn(response);
 
         ApiKey apiKey1 = client.patch("http://sendgrid", apiKey, ApiKey.class,
@@ -211,18 +217,20 @@ public class SendGridHttpClientTest extends BaseSendGridTest {
         assertThat(apiKey1.getName(), equalTo("1st API key"));
         assertThat(apiKey1.getApiKeyId(), equalTo("sdaspfgada5hahsrs5hSHF"));
 
-        ArgumentCaptor<HttpPatch> captor = ArgumentCaptor.forClass(HttpPatch.class);
+        ArgumentCaptor<HttpEntityEnclosingRequestBase> captor = ArgumentCaptor
+                .forClass(HttpEntityEnclosingRequestBase.class);
         verify(httpClient).execute(captor.capture(), eq(handler));
 
-        HttpPatch httpPatch = captor.getValue();
+        HttpEntityEnclosingRequestBase httpRequest = captor.getValue();
 
-        assertThat(httpPatch, notNullValue());
-        assertThat(EntityUtils.toString(httpPatch.getEntity()), equalTo(request));
-        assertThat(httpPatch.getURI(), hasToString("http://sendgrid"));
-        assertThat(httpPatch.getAllHeaders(), hasItemInArray(
+        assertThat(httpRequest, notNullValue());
+        assertThat(httpRequest.getMethod(), equalTo("PATCH"));
+        assertThat(EntityUtils.toString(httpRequest.getEntity()), equalTo(request));
+        assertThat(httpRequest.getURI(), hasToString("http://sendgrid"));
+        assertThat(httpRequest.getAllHeaders(), hasItemInArray(
                 hasProperty("name", equalTo("Authorization"))
         ));
-        assertThat(httpPatch.getAllHeaders(), hasItemInArray(
+        assertThat(httpRequest.getAllHeaders(), hasItemInArray(
                 allOf(
                         hasProperty("name", equalTo("Content-Type")),
                         hasProperty("value", equalTo("application/json"))
@@ -234,14 +242,15 @@ public class SendGridHttpClientTest extends BaseSendGridTest {
     public void delete_shouldMakeRequest() throws Exception {
         client.delete("http://sendgrid", new ApiKeyCredential("token"));
 
-        ArgumentCaptor<HttpDelete> captor = ArgumentCaptor.forClass(HttpDelete.class);
+        ArgumentCaptor<HttpUriRequest> captor = ArgumentCaptor.forClass(HttpUriRequest.class);
         verify(httpClient).execute(captor.capture(), eq(handler));
 
-        HttpDelete httpDelete = captor.getValue();
+        HttpUriRequest httpRequest = captor.getValue();
 
-        assertThat(httpDelete, notNullValue());
-        assertThat(httpDelete.getURI(), hasToString("http://sendgrid"));
-        assertThat(httpDelete.getAllHeaders(), hasItemInArray(
+        assertThat(httpRequest, notNullValue());
+        assertThat(httpRequest.getMethod(), equalTo("DELETE"));
+        assertThat(httpRequest.getURI(), hasToString("http://sendgrid"));
+        assertThat(httpRequest.getAllHeaders(), hasItemInArray(
                 hasProperty("name", equalTo("Authorization"))
         ));
     }

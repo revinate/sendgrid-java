@@ -2,6 +2,8 @@ package com.revinate.sendgrid.net.auth;
 
 import org.apache.http.Header;
 
+import java.util.List;
+
 public interface Credential {
-    Header[] toHttpHeaders();
+    List<Header> toHttpHeaders();
 }

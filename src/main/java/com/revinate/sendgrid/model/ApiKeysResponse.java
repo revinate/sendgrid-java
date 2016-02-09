@@ -2,7 +2,7 @@ package com.revinate.sendgrid.model;
 
 import java.util.List;
 
-public class ApiKeysResponse extends SendGridResource implements SendGridCollection<ApiKey> {
+public class ApiKeysResponse extends SendGridModel implements SendGridCollection<ApiKey> {
 
     private List<ApiKey> result;
 

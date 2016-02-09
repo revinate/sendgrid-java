@@ -5,10 +5,10 @@ import com.revinate.sendgrid.net.auth.ApiKeyCredential;
 import com.revinate.sendgrid.net.auth.Credential;
 import com.revinate.sendgrid.net.auth.OnBehalfOfCredential;
 import com.revinate.sendgrid.net.auth.UsernamePasswordCredential;
-import com.revinate.sendgrid.operations.ApiKeyOperations;
-import com.revinate.sendgrid.operations.IpOperations;
-import com.revinate.sendgrid.operations.IpPoolOperations;
-import com.revinate.sendgrid.operations.SubuserOperations;
+import com.revinate.sendgrid.resource.ApiKeyResource;
+import com.revinate.sendgrid.resource.IpResource;
+import com.revinate.sendgrid.resource.IpPoolResource;
+import com.revinate.sendgrid.resource.SubuserResource;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -97,13 +97,13 @@ public class SendGridTest {
     public void onBehalfOf_shouldOverlayCredential() throws Exception {
         SendGrid sendGrid = new SendGrid(API_KEY).setUrl(URL).setClient(client);
 
-        ApiKeyOperations operations = sendGrid.onBehalfOf("username2").apiKeys();
+        ApiKeyResource resource = sendGrid.onBehalfOf("username2").apiKeys();
 
-        assertThat(operations, notNullValue());
-        assertThat(operations.getBaseUrl(), equalTo(URL));
-        assertThat(operations.getClient(), sameInstance(client));
+        assertThat(resource, notNullValue());
+        assertThat(resource.getBaseUrl(), equalTo(URL));
+        assertThat(resource.getClient(), sameInstance(client));
 
-        Credential credential = operations.getCredential();
+        Credential credential = resource.getCredential();
         assertThat(credential, notNullValue());
         assertThat(credential, instanceOf(OnBehalfOfCredential.class));
 
@@ -113,51 +113,51 @@ public class SendGridTest {
     }
 
     @Test
-    public void apiKeys_shouldReturnOperations() throws Exception {
+    public void apiKeys_shouldReturnResource() throws Exception {
         SendGrid sendGrid = new SendGrid(API_KEY).setUrl(URL).setClient(client);
 
-        ApiKeyOperations operations = sendGrid.apiKeys();
+        ApiKeyResource resource = sendGrid.apiKeys();
 
-        assertThat(operations, notNullValue());
-        assertThat(operations.getBaseUrl(), equalTo(URL));
-        assertThat(operations.getClient(), sameInstance(client));
-        assertThat(operations.getCredential(), sameInstance(sendGrid.getCredential()));
+        assertThat(resource, notNullValue());
+        assertThat(resource.getBaseUrl(), equalTo(URL));
+        assertThat(resource.getClient(), sameInstance(client));
+        assertThat(resource.getCredential(), sameInstance(sendGrid.getCredential()));
     }
 
     @Test
-    public void subusers_shouldReturnOperations() throws Exception {
+    public void subusers_shouldReturnResource() throws Exception {
         SendGrid sendGrid = new SendGrid(API_KEY).setUrl(URL).setClient(client);
 
-        SubuserOperations operations = sendGrid.subusers();
+        SubuserResource resource = sendGrid.subusers();
 
-        assertThat(operations, notNullValue());
-        assertThat(operations.getBaseUrl(), equalTo(URL));
-        assertThat(operations.getClient(), sameInstance(client));
-        assertThat(operations.getCredential(), sameInstance(sendGrid.getCredential()));
+        assertThat(resource, notNullValue());
+        assertThat(resource.getBaseUrl(), equalTo(URL));
+        assertThat(resource.getClient(), sameInstance(client));
+        assertThat(resource.getCredential(), sameInstance(sendGrid.getCredential()));
     }
 
     @Test
-    public void ips_shouldReturnOperations() throws Exception {
+    public void ips_shouldReturnResource() throws Exception {
         SendGrid sendGrid = new SendGrid(API_KEY).setUrl(URL).setClient(client);
 
-        IpOperations operations = sendGrid.ips();
+        IpResource resource = sendGrid.ips();
 
-        assertThat(operations, notNullValue());
-        assertThat(operations.getBaseUrl(), equalTo(URL));
-        assertThat(operations.getClient(), sameInstance(client));
-        assertThat(operations.getCredential(), sameInstance(sendGrid.getCredential()));
+        assertThat(resource, notNullValue());
+        assertThat(resource.getBaseUrl(), equalTo(URL));
+        assertThat(resource.getClient(), sameInstance(client));
+        assertThat(resource.getCredential(), sameInstance(sendGrid.getCredential()));
     }
 
     @Test
-    public void ipPools_shouldReturnOperations() throws Exception {
+    public void ipPools_shouldReturnResource() throws Exception {
         SendGrid sendGrid = new SendGrid(API_KEY).setUrl(URL).setClient(client);
 
-        IpPoolOperations operations = sendGrid.ipPools();
+        IpPoolResource resource = sendGrid.ipPools();
 
-        assertThat(operations, notNullValue());
-        assertThat(operations.getBaseUrl(), equalTo(URL));
-        assertThat(operations.getClient(), sameInstance(client));
-        assertThat(operations.getCredential(), sameInstance(sendGrid.getCredential()));
+        assertThat(resource, notNullValue());
+        assertThat(resource.getBaseUrl(), equalTo(URL));
+        assertThat(resource.getClient(), sameInstance(client));
+        assertThat(resource.getCredential(), sameInstance(sendGrid.getCredential()));
     }
 
     @Test

@@ -1,4 +1,4 @@
-package com.revinate.sendgrid.operations;
+package com.revinate.sendgrid.resource;
 
 import com.revinate.sendgrid.exception.SendGridException;
 import com.revinate.sendgrid.model.ApiKey;
@@ -9,12 +9,12 @@ import com.revinate.sendgrid.net.auth.Credential;
 import java.util.List;
 import java.util.Map;
 
-public class ApiKeyOperations extends SendGridOperations {
+public class ApiKeyResource extends SendGridResource {
 
     private static final ApiVersion API_VERSION = ApiVersion.V3;
     private static final String ENDPOINT = "api_keys";
 
-    public ApiKeyOperations(String baseUrl, SendGridHttpClient client, Credential credential) {
+    public ApiKeyResource(String baseUrl, SendGridHttpClient client, Credential credential) {
         super(baseUrl, client, credential);
     }
 

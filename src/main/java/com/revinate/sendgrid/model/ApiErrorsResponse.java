@@ -2,7 +2,7 @@ package com.revinate.sendgrid.model;
 
 import java.util.List;
 
-public class ApiErrorsResponse extends SendGridResource implements SendGridCollection<ApiError> {
+public class ApiErrorsResponse extends SendGridModel implements SendGridCollection<ApiError> {
 
     private List<ApiError> errors;
 

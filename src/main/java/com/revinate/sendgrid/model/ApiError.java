@@ -1,6 +1,6 @@
 package com.revinate.sendgrid.model;
 
-public class ApiError extends SendGridResource {
+public class ApiError extends SendGridModel {
 
     private String field;
     private String message;

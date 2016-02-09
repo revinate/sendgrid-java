@@ -1,11 +1,11 @@
-package com.revinate.sendgrid.operations;
+package com.revinate.sendgrid.resource;
 
 import com.revinate.sendgrid.exception.InvalidRequestException;
 import com.revinate.sendgrid.model.Identifiable;
 import com.revinate.sendgrid.net.SendGridHttpClient;
 import com.revinate.sendgrid.net.auth.Credential;
 
-public abstract class SendGridOperations {
+public abstract class SendGridResource {
 
     protected final String baseUrl;
     protected final SendGridHttpClient client;
@@ -27,7 +27,7 @@ public abstract class SendGridOperations {
         }
     }
 
-    public SendGridOperations(String baseUrl, SendGridHttpClient client, Credential credential) {
+    public SendGridResource(String baseUrl, SendGridHttpClient client, Credential credential) {
         this.baseUrl = baseUrl;
         this.client = client;
         this.credential = credential;
@@ -59,7 +59,7 @@ public abstract class SendGridOperations {
 
     protected String getResourceUrl(String id) throws InvalidRequestException {
         if (id == null) {
-            throw new InvalidRequestException("Resource missing identifier");
+            throw new InvalidRequestException("Missing object identifier");
         }
         return String.format("%s/%s/%s/%s", baseUrl, getApiVersion().toUrlSegment(), getEndpoint(), id);
     }
@@ -70,7 +70,7 @@ public abstract class SendGridOperations {
 
     protected String getResourceUrl(String id, String endpoint) throws InvalidRequestException {
         if (id == null) {
-            throw new InvalidRequestException("Resource missing identifier");
+            throw new InvalidRequestException("Missing object identifier");
         }
         if (endpoint == null) {
             throw new InvalidRequestException("Missing subresource endpoint");

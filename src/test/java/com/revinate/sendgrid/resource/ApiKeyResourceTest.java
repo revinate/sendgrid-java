@@ -1,4 +1,4 @@
-package com.revinate.sendgrid.operations;
+package com.revinate.sendgrid.resource;
 
 import com.revinate.sendgrid.BaseSendGridTest;
 import com.revinate.sendgrid.exception.InvalidRequestException;
@@ -28,7 +28,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
-public class ApiKeyOperationsTest extends BaseSendGridTest {
+public class ApiKeyResourceTest extends BaseSendGridTest {
 
     @Rule
     public ExpectedException thrown = ExpectedException.none();
@@ -39,11 +39,11 @@ public class ApiKeyOperationsTest extends BaseSendGridTest {
     @Mock
     Credential credential;
 
-    ApiKeyOperations operations;
+    ApiKeyResource resource;
 
     @Before
     public void setUp() throws Exception {
-        operations = new ApiKeyOperations("https://api.sendgrid.com", client, credential);
+        resource = new ApiKeyResource("https://api.sendgrid.com", client, credential);
     }
 
     @Test
@@ -54,7 +54,7 @@ public class ApiKeyOperationsTest extends BaseSendGridTest {
         when(client.get("https://api.sendgrid.com/v3/api_keys", ApiKeysResponse.class, credential))
                 .thenReturn(response);
 
-        List<ApiKey> apiKeys = operations.list();
+        List<ApiKey> apiKeys = resource.list();
 
         assertThat(apiKeys, sameInstance(response.getData()));
     }
@@ -66,7 +66,7 @@ public class ApiKeyOperationsTest extends BaseSendGridTest {
         when(client.get("https://api.sendgrid.com/v3/api_keys/" + response.getApiKeyId(),
                 ApiKey.class, credential)).thenReturn(response);
 
-        ApiKey apiKey = operations.retrieve(response.getApiKeyId());
+        ApiKey apiKey = resource.retrieve(response.getApiKeyId());
 
         assertThat(apiKey, sameInstance(response));
     }
@@ -81,7 +81,7 @@ public class ApiKeyOperationsTest extends BaseSendGridTest {
         when(client.post("https://api.sendgrid.com/v3/api_keys", apiKey,
                 ApiKey.class, credential)).thenReturn(response);
 
-        ApiKey apiKey1 = operations.create(apiKey);
+        ApiKey apiKey1 = resource.create(apiKey);
 
         assertThat(apiKey1, sameInstance(response));
     }
@@ -98,7 +98,7 @@ public class ApiKeyOperationsTest extends BaseSendGridTest {
         when(client.put(any(String.class), any(ApiKey.class), any(Class.class),
                 any(Credential.class))).thenReturn(response);
 
-        ApiKey apiKey1 = operations.update(apiKey);
+        ApiKey apiKey1 = resource.update(apiKey);
 
         assertThat(apiKey1, sameInstance(response));
 
@@ -120,9 +120,9 @@ public class ApiKeyOperationsTest extends BaseSendGridTest {
         apiKey.setName("1st API key");
 
         thrown.expect(InvalidRequestException.class);
-        thrown.expectMessage("Resource missing identifier");
+        thrown.expectMessage("Missing object identifier");
 
-        operations.update(apiKey);
+        resource.update(apiKey);
     }
 
     @Test
@@ -138,7 +138,7 @@ public class ApiKeyOperationsTest extends BaseSendGridTest {
         when(client.patch("https://api.sendgrid.com/v3/api_keys/" + response.getApiKeyId(),
                 requestObject, ApiKey.class, credential)).thenReturn(response);
 
-        ApiKey apiKey1 = operations.partialUpdate(apiKey, requestObject);
+        ApiKey apiKey1 = resource.partialUpdate(apiKey, requestObject);
 
         assertThat(apiKey1, sameInstance(response));
     }
@@ -151,9 +151,9 @@ public class ApiKeyOperationsTest extends BaseSendGridTest {
         requestObject.put("name", "3rd API key");
 
         thrown.expect(InvalidRequestException.class);
-        thrown.expectMessage("Resource missing identifier");
+        thrown.expectMessage("Missing object identifier");
 
-        operations.partialUpdate(apiKey, requestObject);
+        resource.partialUpdate(apiKey, requestObject);
     }
 
     @Test
@@ -162,7 +162,7 @@ public class ApiKeyOperationsTest extends BaseSendGridTest {
         apiKey.setName("1st API key");
         apiKey.setApiKeyId("sdaspfgada5hahsrs5hSHF");
 
-        operations.delete(apiKey);
+        resource.delete(apiKey);
 
         verify(client).delete("https://api.sendgrid.com/v3/api_keys/" + apiKey.getApiKeyId(), credential);
     }
@@ -173,8 +173,8 @@ public class ApiKeyOperationsTest extends BaseSendGridTest {
         apiKey.setName("1st API key");
 
         thrown.expect(InvalidRequestException.class);
-        thrown.expectMessage("Resource missing identifier");
+        thrown.expectMessage("Missing object identifier");
 
-        operations.delete(apiKey);
+        resource.delete(apiKey);
     }
 }

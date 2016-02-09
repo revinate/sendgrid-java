@@ -1,4 +1,4 @@
-package com.revinate.sendgrid.operations;
+package com.revinate.sendgrid.resource;
 
 import com.revinate.sendgrid.BaseSendGridTest;
 import com.revinate.sendgrid.exception.InvalidRequestException;
@@ -26,7 +26,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
-public class IpPoolOperationsTest extends BaseSendGridTest {
+public class IpPoolResourceTest extends BaseSendGridTest {
 
     @Rule
     public ExpectedException thrown = ExpectedException.none();
@@ -37,11 +37,11 @@ public class IpPoolOperationsTest extends BaseSendGridTest {
     @Mock
     Credential credential;
 
-    IpPoolOperations operations;
+    IpPoolResource resource;
 
     @Before
     public void setUp() throws Exception {
-        operations = new IpPoolOperations("https://api.sendgrid.com", client, credential);
+        resource = new IpPoolResource("https://api.sendgrid.com", client, credential);
     }
 
     @Test
@@ -52,7 +52,7 @@ public class IpPoolOperationsTest extends BaseSendGridTest {
         when(client.get("https://api.sendgrid.com/v3/ips/pools", IpPoolCollection.class, credential))
                 .thenReturn(response);
 
-        List<IpPool> ipPools = operations.list();
+        List<IpPool> ipPools = resource.list();
 
         assertThat(ipPools, sameInstance(response.getData()));
     }
@@ -64,7 +64,7 @@ public class IpPoolOperationsTest extends BaseSendGridTest {
         when(client.get("https://api.sendgrid.com/v3/ips/pools/" + response.getName(),
                 IpPool.class, credential)).thenReturn(response);
 
-        IpPool ipPool = operations.retrieve(response.getName());
+        IpPool ipPool = resource.retrieve(response.getName());
 
         assertThat(ipPool, sameInstance(response));
     }
@@ -78,7 +78,7 @@ public class IpPoolOperationsTest extends BaseSendGridTest {
         when(client.post("https://api.sendgrid.com/v3/ips/pools", ipPool,
                 IpPool.class, credential)).thenReturn(response);
 
-        IpPool ipPool1 = operations.create(ipPool);
+        IpPool ipPool1 = resource.create(ipPool);
 
         assertThat(ipPool1, sameInstance(response));
     }
@@ -93,7 +93,7 @@ public class IpPoolOperationsTest extends BaseSendGridTest {
         when(client.put(any(String.class), any(IpPool.class), any(Class.class),
                 any(Credential.class))).thenReturn(response);
 
-        IpPool ipPool1 = operations.update(ipPool);
+        IpPool ipPool1 = resource.update(ipPool);
 
         assertThat(ipPool1, sameInstance(response));
 
@@ -112,9 +112,9 @@ public class IpPoolOperationsTest extends BaseSendGridTest {
         IpPool ipPool = new IpPool();
 
         thrown.expect(InvalidRequestException.class);
-        thrown.expectMessage("Resource missing identifier");
+        thrown.expectMessage("Missing object identifier");
 
-        operations.update(ipPool);
+        resource.update(ipPool);
     }
 
     @Test
@@ -122,7 +122,7 @@ public class IpPoolOperationsTest extends BaseSendGridTest {
         IpPool ipPool = new IpPool();
         ipPool.setName("transactional");
 
-        operations.delete(ipPool);
+        resource.delete(ipPool);
 
         verify(client).delete("https://api.sendgrid.com/v3/ips/pools/" + ipPool.getName(), credential);
     }
@@ -132,8 +132,8 @@ public class IpPoolOperationsTest extends BaseSendGridTest {
         IpPool ipPool = new IpPool();
 
         thrown.expect(InvalidRequestException.class);
-        thrown.expectMessage("Resource missing identifier");
+        thrown.expectMessage("Missing object identifier");
 
-        operations.delete(ipPool);
+        resource.delete(ipPool);
     }
 }

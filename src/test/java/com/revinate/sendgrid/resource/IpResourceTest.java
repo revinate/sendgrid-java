@@ -1,4 +1,4 @@
-package com.revinate.sendgrid.operations;
+package com.revinate.sendgrid.resource;
 
 import com.revinate.sendgrid.BaseSendGridTest;
 import com.revinate.sendgrid.model.Ip;
@@ -21,7 +21,7 @@ import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
-public class IpOperationsTest extends BaseSendGridTest {
+public class IpResourceTest extends BaseSendGridTest {
 
     @Rule
     public ExpectedException thrown = ExpectedException.none();
@@ -32,11 +32,11 @@ public class IpOperationsTest extends BaseSendGridTest {
     @Mock
     Credential credential;
 
-    IpOperations operations;
+    IpResource resource;
 
     @Before
     public void setUp() throws Exception {
-        operations = new IpOperations("https://api.sendgrid.com", client, credential);
+        resource = new IpResource("https://api.sendgrid.com", client, credential);
     }
 
     @Test
@@ -47,7 +47,7 @@ public class IpOperationsTest extends BaseSendGridTest {
         when(client.get("https://api.sendgrid.com/v3/ips", IpCollection.class, credential))
                 .thenReturn(response);
 
-        List<Ip> ips = operations.list();
+        List<Ip> ips = resource.list();
 
         assertThat(ips, sameInstance(response.getData()));
     }
@@ -59,7 +59,7 @@ public class IpOperationsTest extends BaseSendGridTest {
         when(client.get("https://api.sendgrid.com/v3/ips/" + response.getIp(),
                 Ip.class, credential)).thenReturn(response);
 
-        Ip ip = operations.retrieve(response.getIp());
+        Ip ip = resource.retrieve(response.getIp());
 
         assertThat(ip, sameInstance(response));
     }

@@ -9,14 +9,14 @@ import com.revinate.sendgrid.net.auth.ApiKeyCredential;
 import com.revinate.sendgrid.net.auth.Credential;
 import com.revinate.sendgrid.net.auth.OnBehalfOfCredential;
 import com.revinate.sendgrid.net.auth.UsernamePasswordCredential;
-import com.revinate.sendgrid.operations.SendGridOperationsProvider;
+import com.revinate.sendgrid.resource.RootResource;
 import org.apache.http.HttpResponse;
 import org.apache.http.util.EntityUtils;
 
 import java.io.Closeable;
 import java.io.IOException;
 
-public class SendGrid extends SendGridOperationsProvider implements Closeable {
+public final class SendGrid extends RootResource implements Closeable {
 
     public static final String VERSION = "3.0.0";
     public static final String USER_AGENT = "sendgrid/" + VERSION + ";java";
@@ -88,7 +88,7 @@ public class SendGrid extends SendGridOperationsProvider implements Closeable {
         client.close();
     }
 
-    public SendGridOperationsProvider onBehalfOf(String username) {
+    public RootResource onBehalfOf(String username) {
         OnBehalfOfCredential onBehalfOfCredential = new OnBehalfOfCredential(credential, username);
         return new WithCredentialOverlay(onBehalfOfCredential);
     }
@@ -104,7 +104,7 @@ public class SendGrid extends SendGridOperationsProvider implements Closeable {
         }
     }
 
-    private class WithCredentialOverlay extends SendGridOperationsProvider {
+    private class WithCredentialOverlay extends RootResource {
 
         private final Credential credential;
 

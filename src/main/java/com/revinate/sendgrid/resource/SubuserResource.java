@@ -1,4 +1,4 @@
-package com.revinate.sendgrid.operations;
+package com.revinate.sendgrid.resource;
 
 import com.revinate.sendgrid.exception.SendGridException;
 import com.revinate.sendgrid.model.Subuser;
@@ -9,13 +9,13 @@ import com.revinate.sendgrid.net.auth.Credential;
 import java.util.List;
 import java.util.Map;
 
-public class SubuserOperations extends SendGridOperations {
+public class SubuserResource extends SendGridResource {
 
     private static final ApiVersion API_VERSION = ApiVersion.V3;
     private static final String ENDPOINT = "subusers";
     private static final String IPS_ENDPOINT = "ips";
 
-    public SubuserOperations(String baseUrl, SendGridHttpClient client, Credential credential) {
+    public SubuserResource(String baseUrl, SendGridHttpClient client, Credential credential) {
         super(baseUrl, client, credential);
     }
 

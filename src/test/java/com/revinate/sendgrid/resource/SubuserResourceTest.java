@@ -1,4 +1,4 @@
-package com.revinate.sendgrid.operations;
+package com.revinate.sendgrid.resource;
 
 import com.revinate.sendgrid.BaseSendGridTest;
 import com.revinate.sendgrid.exception.InvalidRequestException;
@@ -28,7 +28,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
-public class SubuserOperationsTest extends BaseSendGridTest {
+public class SubuserResourceTest extends BaseSendGridTest {
 
     @Rule
     public ExpectedException thrown = ExpectedException.none();
@@ -39,11 +39,11 @@ public class SubuserOperationsTest extends BaseSendGridTest {
     @Mock
     Credential credential;
 
-    SubuserOperations operations;
+    SubuserResource resource;
 
     @Before
     public void setUp() throws Exception {
-        operations = new SubuserOperations("https://api.sendgrid.com", client, credential);
+        resource = new SubuserResource("https://api.sendgrid.com", client, credential);
     }
 
     @Test
@@ -54,7 +54,7 @@ public class SubuserOperationsTest extends BaseSendGridTest {
         when(client.get("https://api.sendgrid.com/v3/subusers", SubuserCollection.class, credential))
                 .thenReturn(response);
 
-        List<Subuser> subusers = operations.list();
+        List<Subuser> subusers = resource.list();
 
         assertThat(subusers, sameInstance(response.getData()));
     }
@@ -66,7 +66,7 @@ public class SubuserOperationsTest extends BaseSendGridTest {
         when(client.get("https://api.sendgrid.com/v3/subusers/" + response.getUsername(),
                 Subuser.class, credential)).thenReturn(response);
 
-        Subuser subuser = operations.retrieve(response.getUsername());
+        Subuser subuser = resource.retrieve(response.getUsername());
 
         assertThat(subuser, sameInstance(response));
     }
@@ -83,7 +83,7 @@ public class SubuserOperationsTest extends BaseSendGridTest {
         when(client.post("https://api.sendgrid.com/v3/subusers", subuser,
                 Subuser.class, credential)).thenReturn(response);
 
-        Subuser subuser1 = operations.create(subuser);
+        Subuser subuser1 = resource.create(subuser);
 
         assertThat(subuser1, sameInstance(response));
     }
@@ -100,7 +100,7 @@ public class SubuserOperationsTest extends BaseSendGridTest {
         when(client.put(any(String.class), any(Subuser.class), any(Class.class),
                 any(Credential.class))).thenReturn(response);
 
-        Subuser subuser1 = operations.update(subuser);
+        Subuser subuser1 = resource.update(subuser);
 
         assertThat(subuser1, notNullValue());
         assertThat(subuser1.getUsername(), equalTo(subuser.getUsername()));
@@ -122,9 +122,9 @@ public class SubuserOperationsTest extends BaseSendGridTest {
         subuser.setEmail("test1@email.com");
 
         thrown.expect(InvalidRequestException.class);
-        thrown.expectMessage("Resource missing identifier");
+        thrown.expectMessage("Missing object identifier");
 
-        operations.update(subuser);
+        resource.update(subuser);
     }
 
     @Test
@@ -135,7 +135,7 @@ public class SubuserOperationsTest extends BaseSendGridTest {
         Map<String, Object> requestObject = new HashMap<String, Object>();
         requestObject.put("disabled", true);
 
-        Subuser subuser1 = operations.partialUpdate(subuser, requestObject);
+        Subuser subuser1 = resource.partialUpdate(subuser, requestObject);
 
         verify(client).patch("https://api.sendgrid.com/v3/subusers/" + subuser.getUsername(), requestObject, credential);
         assertThat(subuser1, notNullValue());
@@ -152,9 +152,9 @@ public class SubuserOperationsTest extends BaseSendGridTest {
         requestObject.put("disabled", true);
 
         thrown.expect(InvalidRequestException.class);
-        thrown.expectMessage("Resource missing identifier");
+        thrown.expectMessage("Missing object identifier");
 
-        operations.partialUpdate(subuser, requestObject);
+        resource.partialUpdate(subuser, requestObject);
     }
 
     @Test
@@ -163,7 +163,7 @@ public class SubuserOperationsTest extends BaseSendGridTest {
         subuser.setUsername("test1");
         subuser.setEmail("test1@email.com");
 
-        operations.delete(subuser);
+        resource.delete(subuser);
 
         verify(client).delete("https://api.sendgrid.com/v3/subusers/" + subuser.getUsername(), credential);
     }
@@ -174,8 +174,8 @@ public class SubuserOperationsTest extends BaseSendGridTest {
         subuser.setEmail("test1@email.com");
 
         thrown.expect(InvalidRequestException.class);
-        thrown.expectMessage("Resource missing identifier");
+        thrown.expectMessage("Missing object identifier");
 
-        operations.delete(subuser);
+        resource.delete(subuser);
     }
 }

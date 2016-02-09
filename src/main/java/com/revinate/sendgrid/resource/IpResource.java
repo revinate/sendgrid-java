@@ -1,4 +1,4 @@
-package com.revinate.sendgrid.operations;
+package com.revinate.sendgrid.resource;
 
 import com.revinate.sendgrid.exception.SendGridException;
 import com.revinate.sendgrid.model.Ip;
@@ -8,12 +8,12 @@ import com.revinate.sendgrid.net.auth.Credential;
 
 import java.util.List;
 
-public class IpOperations extends SendGridOperations {
+public class IpResource extends SendGridResource {
 
     private static final ApiVersion API_VERSION = ApiVersion.V3;
     private static final String ENDPOINT = "ips";
 
-    public IpOperations(String baseUrl, SendGridHttpClient client, Credential credential) {
+    public IpResource(String baseUrl, SendGridHttpClient client, Credential credential) {
         super(baseUrl, client, credential);
     }
 

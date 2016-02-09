@@ -45,36 +45,22 @@ public abstract class SendGridResource {
         return credential;
     }
 
-    abstract protected ApiVersion getApiVersion();
-
-    abstract protected String getEndpoint();
-
-    protected String getResourceUrl() {
-        return String.format("%s/%s/%s", url, getApiVersion().toUrlSegment(), getEndpoint());
+    protected String getCollectionUrl(String endpoint) {
+        return String.format("%s/%s", url, endpoint);
     }
 
-    protected String getResourceUrl(Identifiable resource) throws InvalidRequestException {
-        return getResourceUrl(resource.getPathId());
+    protected String getCollectionUrl(ApiVersion apiVersion, String endpoint) {
+        return String.format("%s/%s/%s", url, apiVersion.toUrlSegment(), endpoint);
     }
 
-    protected String getResourceUrl(String id) throws InvalidRequestException {
+    protected String getObjectUrl(Identifiable resource) throws InvalidRequestException {
+        return getObjectUrl(resource.getPathId());
+    }
+
+    protected String getObjectUrl(String id) throws InvalidRequestException {
         if (id == null) {
             throw new InvalidRequestException("Missing object identifier");
         }
-        return String.format("%s/%s/%s/%s", url, getApiVersion().toUrlSegment(), getEndpoint(), id);
-    }
-
-    protected String getResourceUrl(Identifiable resource, String endpoint) throws InvalidRequestException {
-        return getResourceUrl(resource.getPathId(), endpoint);
-    }
-
-    protected String getResourceUrl(String id, String endpoint) throws InvalidRequestException {
-        if (id == null) {
-            throw new InvalidRequestException("Missing object identifier");
-        }
-        if (endpoint == null) {
-            throw new InvalidRequestException("Missing subresource endpoint");
-        }
-        return String.format("%s/%s/%s/%s/%s", url, getApiVersion().toUrlSegment(), getEndpoint(), id, endpoint);
+        return String.format("%s/%s", url, id);
     }
 }

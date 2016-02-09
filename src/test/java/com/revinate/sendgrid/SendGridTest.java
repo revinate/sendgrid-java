@@ -100,7 +100,7 @@ public class SendGridTest {
         ApiKeyResource resource = sendGrid.onBehalfOf("username2").apiKeys();
 
         assertThat(resource, notNullValue());
-        assertThat(resource.getUrl(), equalTo(URL));
+        assertThat(resource.getUrl(), equalTo(URL + "/v3/" + ApiKeyResource.ENDPOINT));
         assertThat(resource.getClient(), sameInstance(client));
 
         Credential credential = resource.getCredential();
@@ -119,7 +119,7 @@ public class SendGridTest {
         ApiKeyResource resource = sendGrid.apiKeys();
 
         assertThat(resource, notNullValue());
-        assertThat(resource.getUrl(), equalTo(URL));
+        assertThat(resource.getUrl(), equalTo(URL + "/v3/" + ApiKeyResource.ENDPOINT));
         assertThat(resource.getClient(), sameInstance(client));
         assertThat(resource.getCredential(), sameInstance(sendGrid.getCredential()));
     }
@@ -131,7 +131,7 @@ public class SendGridTest {
         SubuserResource resource = sendGrid.subusers();
 
         assertThat(resource, notNullValue());
-        assertThat(resource.getUrl(), equalTo(URL));
+        assertThat(resource.getUrl(), equalTo(URL + "/v3/" + SubuserResource.ENDPOINT));
         assertThat(resource.getClient(), sameInstance(client));
         assertThat(resource.getCredential(), sameInstance(sendGrid.getCredential()));
     }
@@ -143,7 +143,7 @@ public class SendGridTest {
         IpResource resource = sendGrid.ips();
 
         assertThat(resource, notNullValue());
-        assertThat(resource.getUrl(), equalTo(URL));
+        assertThat(resource.getUrl(), equalTo(URL + "/v3/" + IpResource.ENDPOINT));
         assertThat(resource.getClient(), sameInstance(client));
         assertThat(resource.getCredential(), sameInstance(sendGrid.getCredential()));
     }
@@ -155,7 +155,7 @@ public class SendGridTest {
         IpPoolResource resource = sendGrid.ipPools();
 
         assertThat(resource, notNullValue());
-        assertThat(resource.getUrl(), equalTo(URL));
+        assertThat(resource.getUrl(), equalTo(URL + "/v3/" + IpPoolResource.ENDPOINT));
         assertThat(resource.getClient(), sameInstance(client));
         assertThat(resource.getCredential(), sameInstance(sendGrid.getCredential()));
     }

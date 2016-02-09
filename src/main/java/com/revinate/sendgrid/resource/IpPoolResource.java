@@ -10,23 +10,23 @@ import java.util.List;
 
 public class IpPoolResource extends SendGridResource {
 
-    private static final ApiVersion API_VERSION = ApiVersion.V3;
-    private static final String ENDPOINT = "ips/pools";
+    public static final ApiVersion API_VERSION = ApiVersion.V3;
+    public static final String ENDPOINT = "ips/pools";
 
     public IpPoolResource(String url, SendGridHttpClient client, Credential credential) {
         super(url, client, credential);
     }
 
     public List<IpPool> list() throws SendGridException {
-        return client.get(getResourceUrl(), IpPoolCollection.class, credential).getData();
+        return client.get(url, IpPoolCollection.class, credential).getData();
     }
 
     public IpPool retrieve(String id) throws SendGridException {
-        return client.get(getResourceUrl(id), IpPool.class, credential);
+        return client.get(getObjectUrl(id), IpPool.class, credential);
     }
 
     public IpPool create(IpPool requestObject) throws SendGridException {
-        return client.post(getResourceUrl(), requestObject, IpPool.class, credential);
+        return client.post(url, requestObject, IpPool.class, credential);
     }
 
     public IpPool update(IpPool ipPool) throws SendGridException {
@@ -34,20 +34,10 @@ public class IpPoolResource extends SendGridResource {
         // need to wait until SendGrid implements pool IDs.
         IpPool requestObject = new IpPool();
         requestObject.setName(ipPool.getName());
-        return client.put(getResourceUrl(ipPool), requestObject, IpPool.class, credential);
+        return client.put(getObjectUrl(ipPool), requestObject, IpPool.class, credential);
     }
 
     public void delete(IpPool ipPool) throws SendGridException {
-        client.delete(getResourceUrl(ipPool), credential);
-    }
-
-    @Override
-    protected ApiVersion getApiVersion() {
-        return API_VERSION;
-    }
-
-    @Override
-    protected String getEndpoint() {
-        return ENDPOINT;
+        client.delete(getObjectUrl(ipPool), credential);
     }
 }

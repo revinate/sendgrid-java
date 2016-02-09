@@ -11,47 +11,37 @@ import java.util.Map;
 
 public class ApiKeyResource extends SendGridResource {
 
-    private static final ApiVersion API_VERSION = ApiVersion.V3;
-    private static final String ENDPOINT = "api_keys";
+    public static final ApiVersion API_VERSION = ApiVersion.V3;
+    public static final String ENDPOINT = "api_keys";
 
     public ApiKeyResource(String url, SendGridHttpClient client, Credential credential) {
         super(url, client, credential);
     }
 
     public List<ApiKey> list() throws SendGridException {
-        return client.get(getResourceUrl(), ApiKeysResponse.class, credential).getData();
+        return client.get(url, ApiKeysResponse.class, credential).getData();
     }
 
     public ApiKey retrieve(String id) throws SendGridException {
-        return client.get(getResourceUrl(id), ApiKey.class, credential);
+        return client.get(getObjectUrl(id), ApiKey.class, credential);
     }
 
     public ApiKey create(ApiKey requestObject) throws SendGridException {
-        return client.post(getResourceUrl(), requestObject, ApiKey.class, credential);
+        return client.post(url, requestObject, ApiKey.class, credential);
     }
 
     public ApiKey update(ApiKey apiKey) throws SendGridException {
         ApiKey requestObject = new ApiKey();
         requestObject.setName(apiKey.getName());
         requestObject.setScopes(apiKey.getScopes());
-        return client.put(getResourceUrl(apiKey), requestObject, ApiKey.class, credential);
+        return client.put(getObjectUrl(apiKey), requestObject, ApiKey.class, credential);
     }
 
     public ApiKey partialUpdate(ApiKey apiKey, Map<String, Object> requestObject) throws SendGridException {
-        return client.patch(getResourceUrl(apiKey), requestObject, ApiKey.class, credential);
+        return client.patch(getObjectUrl(apiKey), requestObject, ApiKey.class, credential);
     }
 
     public void delete(ApiKey apiKey) throws SendGridException {
-        client.delete(getResourceUrl(apiKey), credential);
-    }
-
-    @Override
-    protected ApiVersion getApiVersion() {
-        return API_VERSION;
-    }
-
-    @Override
-    protected String getEndpoint() {
-        return ENDPOINT;
+        client.delete(getObjectUrl(apiKey), credential);
     }
 }

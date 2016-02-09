@@ -10,28 +10,18 @@ import java.util.List;
 
 public class IpResource extends SendGridResource {
 
-    private static final ApiVersion API_VERSION = ApiVersion.V3;
-    private static final String ENDPOINT = "ips";
+    public static final ApiVersion API_VERSION = ApiVersion.V3;
+    public static final String ENDPOINT = "ips";
 
     public IpResource(String url, SendGridHttpClient client, Credential credential) {
         super(url, client, credential);
     }
 
     public List<Ip> list() throws SendGridException {
-        return client.get(getResourceUrl(), IpCollection.class, credential).getData();
+        return client.get(url, IpCollection.class, credential).getData();
     }
 
     public Ip retrieve(String id) throws SendGridException {
-        return client.get(getResourceUrl(id), Ip.class, credential);
-    }
-
-    @Override
-    protected ApiVersion getApiVersion() {
-        return API_VERSION;
-    }
-
-    @Override
-    protected String getEndpoint() {
-        return ENDPOINT;
+        return client.get(getObjectUrl(id), Ip.class, credential);
     }
 }

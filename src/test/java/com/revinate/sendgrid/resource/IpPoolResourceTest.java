@@ -41,7 +41,7 @@ public class IpPoolResourceTest extends BaseSendGridTest {
 
     @Before
     public void setUp() throws Exception {
-        resource = new IpPoolResource("https://api.sendgrid.com", client, credential);
+        resource = new IpPoolResource("https://api.sendgrid.com/v3/ips/pools", client, credential);
     }
 
     @Test

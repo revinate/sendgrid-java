@@ -11,28 +11,28 @@ import java.util.Map;
 
 public class SubuserResource extends SendGridResource {
 
-    private static final ApiVersion API_VERSION = ApiVersion.V3;
-    private static final String ENDPOINT = "subusers";
-    private static final String IPS_ENDPOINT = "ips";
+    public static final ApiVersion API_VERSION = ApiVersion.V3;
+    public static final String ENDPOINT = "subusers";
 
     public SubuserResource(String url, SendGridHttpClient client, Credential credential) {
         super(url, client, credential);
     }
 
     public List<Subuser> list() throws SendGridException {
-        return client.get(getResourceUrl(), SubuserCollection.class, credential).getData();
+        return client.get(url, SubuserCollection.class, credential).getData();
     }
 
     public Subuser retrieve(String id) throws SendGridException {
-        return client.get(getResourceUrl(id), Subuser.class, credential);
+        return client.get(getObjectUrl(id), Subuser.class, credential);
     }
 
     public Subuser create(Subuser requestObject) throws SendGridException {
-        return client.post(getResourceUrl(), requestObject, Subuser.class, credential);
+        return client.post(url, requestObject, Subuser.class, credential);
     }
 
     public Subuser update(Subuser subuser) throws SendGridException {
-        Subuser response = client.put(getResourceUrl(subuser, IPS_ENDPOINT), subuser.getIps(), Subuser.class, credential);
+        Subuser response = client.put(getObjectUrl(subuser) + "/" + IpResource.ENDPOINT,
+                subuser.getIps(), Subuser.class, credential);
         response.setId(subuser.getId());
         response.setUsername(subuser.getUsername());
         response.setEmail(subuser.getEmail());
@@ -41,7 +41,7 @@ public class SubuserResource extends SendGridResource {
     }
 
     public Subuser partialUpdate(Subuser subuser, Map<String, Object> requestObject) throws SendGridException {
-        client.patch(getResourceUrl(subuser), requestObject, credential);
+        client.patch(getObjectUrl(subuser), requestObject, credential);
         Subuser response = new Subuser();
         response.setId(subuser.getId());
         response.setUsername(subuser.getUsername());
@@ -51,16 +51,6 @@ public class SubuserResource extends SendGridResource {
     }
 
     public void delete(Subuser subuser) throws SendGridException {
-        client.delete(getResourceUrl(subuser), credential);
-    }
-
-    @Override
-    protected ApiVersion getApiVersion() {
-        return API_VERSION;
-    }
-
-    @Override
-    protected String getEndpoint() {
-        return ENDPOINT;
+        client.delete(getObjectUrl(subuser), credential);
     }
 }

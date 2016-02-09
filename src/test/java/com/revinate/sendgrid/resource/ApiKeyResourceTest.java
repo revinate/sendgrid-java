@@ -43,7 +43,7 @@ public class ApiKeyResourceTest extends BaseSendGridTest {
 
     @Before
     public void setUp() throws Exception {
-        resource = new ApiKeyResource("https://api.sendgrid.com", client, credential);
+        resource = new ApiKeyResource("https://api.sendgrid.com/v3/api_keys", client, credential);
     }
 
     @Test

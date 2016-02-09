@@ -36,7 +36,7 @@ public class IpResourceTest extends BaseSendGridTest {
 
     @Before
     public void setUp() throws Exception {
-        resource = new IpResource("https://api.sendgrid.com", client, credential);
+        resource = new IpResource("https://api.sendgrid.com/v3/ips", client, credential);
     }
 
     @Test

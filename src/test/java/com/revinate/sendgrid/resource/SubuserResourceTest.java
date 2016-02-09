@@ -43,7 +43,7 @@ public class SubuserResourceTest extends BaseSendGridTest {
 
     @Before
     public void setUp() throws Exception {
-        resource = new SubuserResource("https://api.sendgrid.com", client, credential);
+        resource = new SubuserResource("https://api.sendgrid.com/v3/subusers", client, credential);
     }
 
     @Test

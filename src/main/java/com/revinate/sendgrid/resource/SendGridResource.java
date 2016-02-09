@@ -1,6 +1,7 @@
 package com.revinate.sendgrid.resource;
 
 import com.revinate.sendgrid.exception.InvalidRequestException;
+import com.revinate.sendgrid.exception.UnsupportedOperationException;
 import com.revinate.sendgrid.model.SendGridEntity;
 import com.revinate.sendgrid.net.SendGridHttpClient;
 import com.revinate.sendgrid.net.auth.Credential;
@@ -66,5 +67,9 @@ public abstract class SendGridResource {
             throw new InvalidRequestException("Missing entity identifier");
         }
         return String.format("%s/%s", baseUrl, id);
+    }
+
+    protected UnsupportedOperationException unsupported() {
+        return new UnsupportedOperationException("Operation not supported on this resource");
     }
 }

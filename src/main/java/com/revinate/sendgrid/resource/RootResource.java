@@ -1,6 +1,7 @@
 package com.revinate.sendgrid.resource;
 
 import com.revinate.sendgrid.model.ApiKey;
+import com.revinate.sendgrid.model.Ip;
 import com.revinate.sendgrid.model.Subuser;
 import com.revinate.sendgrid.net.SendGridHttpClient;
 import com.revinate.sendgrid.net.auth.Credential;
@@ -23,9 +24,16 @@ public class RootResource extends SendGridResource {
         return apiKeys().entity(id);
     }
 
-    public IpResource ips() {
-        return new IpResource(getCollectionUrl(IpResource.API_VERSION,
-                IpResource.ENDPOINT), client, credential);
+    public IpsResource ips() {
+        return new IpsResource(getApiUrl(IpsResource.API_VERSION), client, credential);
+    }
+
+    public IpResource ip(Ip ip) {
+        return ips().entity(ip);
+    }
+
+    public IpResource ip(String id) {
+        return ips().entity(id);
     }
 
     public IpPoolResource ipPools() {

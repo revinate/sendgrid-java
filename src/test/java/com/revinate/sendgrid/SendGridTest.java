@@ -7,7 +7,7 @@ import com.revinate.sendgrid.net.auth.OnBehalfOfCredential;
 import com.revinate.sendgrid.net.auth.UsernamePasswordCredential;
 import com.revinate.sendgrid.resource.ApiKeysResource;
 import com.revinate.sendgrid.resource.IpPoolResource;
-import com.revinate.sendgrid.resource.IpResource;
+import com.revinate.sendgrid.resource.IpsResource;
 import com.revinate.sendgrid.resource.SubusersResource;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -140,10 +140,10 @@ public class SendGridTest {
     public void ips_shouldReturnResource() throws Exception {
         SendGrid sendGrid = new SendGrid(BASE_URL, client, API_KEY);
 
-        IpResource resource = sendGrid.ips();
+        IpsResource resource = sendGrid.ips();
 
         assertThat(resource, notNullValue());
-        assertThat(resource.getBaseUrl(), equalTo(BASE_URL + "/v3/" + IpResource.ENDPOINT));
+        assertThat(resource.getBaseUrl(), equalTo(BASE_URL + "/v3"));
         assertThat(resource.getClient(), sameInstance(client));
         assertThat(resource.getCredential(), sameInstance(sendGrid.getCredential()));
     }

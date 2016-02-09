@@ -20,7 +20,7 @@ public class SubuserResource extends EntityResource<Subuser> {
     @Override
     public Subuser update(Subuser subuser) throws SendGridException {
         // TODO: fix this URL, and do a better job of copying the subuser
-        Subuser response = client.put(getUrl() + "/" + IpResource.ENDPOINT,
+        Subuser response = client.put(getUrl() + "/" + IpsResource.ENDPOINT,
                 subuser.getIps(), Subuser.class, credential);
         response.setId(subuser.getId());
         response.setUsername(subuser.getUsername());

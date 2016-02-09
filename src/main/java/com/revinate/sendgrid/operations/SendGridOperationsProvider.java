@@ -15,6 +15,10 @@ public abstract class SendGridOperationsProvider {
         return new ApiKeyOperations(getUrl(), getClient(), getCredential());
     }
 
+    public IpOperations ips() {
+        return new IpOperations(getUrl(), getClient(), getCredential());
+    }
+
     public SubuserOperations subusers() {
         return new SubuserOperations(getUrl(), getClient(), getCredential());
     }

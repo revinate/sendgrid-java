@@ -1,0 +1,10 @@
+{
+  "ip": "127.0.0.1",
+  "subusers": [
+    "test1"
+  ],
+  "pools": [],
+  "warmup": false,
+  "start_date": null,
+  "whitelabeled": false
+}

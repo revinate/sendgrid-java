@@ -3,7 +3,6 @@ package com.revinate.sendgrid.resource;
 import com.revinate.sendgrid.BaseSendGridTest;
 import com.revinate.sendgrid.exception.InvalidRequestException;
 import com.revinate.sendgrid.model.ApiKey;
-import com.revinate.sendgrid.model.ApiKeysResponse;
 import com.revinate.sendgrid.net.SendGridHttpClient;
 import com.revinate.sendgrid.net.auth.Credential;
 import com.revinate.sendgrid.util.JsonUtils;
@@ -17,7 +16,6 @@ import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import static org.hamcrest.Matchers.*;
@@ -77,7 +75,7 @@ public class ApiKeyResourceTest extends BaseSendGridTest {
     public void update_shouldPutAndReturnApiKey() throws Exception {
         ApiKey response = JsonUtils.fromJson(readFile("/responses/api-key.json"), ApiKey.class);
         ApiKey apiKey = new ApiKey();
-        apiKey.setApiKeyId(response.getApiKeyId());
+        apiKey.setApiKeyId(API_KEY_ID);
         apiKey.setName(response.getName());
         apiKey.setScopes(response.getScopes());
 
@@ -101,12 +99,20 @@ public class ApiKeyResourceTest extends BaseSendGridTest {
     }
 
     @Test
+    public void update_shouldHandleMissingId() throws Exception {
+        ApiKey apiKey = new ApiKey();
+        apiKey.setName("1st API key");
+        resource = new ApiKeyResource("https://api.sendgrid.com/v3/api_keys", client, credential, apiKey);
+
+        thrown.expect(InvalidRequestException.class);
+        thrown.expectMessage("Missing entity identifier");
+
+        resource.update(apiKey);
+    }
+
+    @Test
     public void partialUpdate_shouldPatchAndReturnApiKey() throws Exception {
         ApiKey response = JsonUtils.fromJson(readFile("/responses/api-key.json"), ApiKey.class);
-        ApiKey apiKey = new ApiKey();
-        apiKey.setApiKeyId(response.getApiKeyId());
-        apiKey.setName(response.getName());
-        apiKey.setScopes(response.getScopes());
         Map<String, Object> requestObject = new HashMap<String, Object>();
         requestObject.put("name", "3rd API key");
 
@@ -119,13 +125,35 @@ public class ApiKeyResourceTest extends BaseSendGridTest {
     }
 
     @Test
-    public void delete_shouldDeleteApiKey() throws Exception {
+    public void partialUpdate_shouldHandleMissingId() throws Exception {
         ApiKey apiKey = new ApiKey();
         apiKey.setName("1st API key");
-        apiKey.setApiKeyId(API_KEY_ID);
+        Map<String, Object> requestObject = new HashMap<String, Object>();
+        requestObject.put("name", "3rd API key");
+        resource = new ApiKeyResource("https://api.sendgrid.com/v3/api_keys", client, credential, apiKey);
 
+        thrown.expect(InvalidRequestException.class);
+        thrown.expectMessage("Missing entity identifier");
+
+        resource.partialUpdate(requestObject);
+    }
+
+    @Test
+    public void delete_shouldDeleteApiKey() throws Exception {
         resource.delete();
 
         verify(client).delete("https://api.sendgrid.com/v3/api_keys/" + API_KEY_ID, credential);
+    }
+
+    @Test
+    public void delete_shouldHandleMissingId() throws Exception {
+        ApiKey apiKey = new ApiKey();
+        apiKey.setName("1st API key");
+        resource = new ApiKeyResource("https://api.sendgrid.com/v3/api_keys", client, credential, apiKey);
+
+        thrown.expect(InvalidRequestException.class);
+        thrown.expectMessage("Missing entity identifier");
+
+        resource.delete();
     }
 }

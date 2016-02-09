@@ -3,7 +3,6 @@ package com.revinate.sendgrid.resource;
 import com.revinate.sendgrid.BaseSendGridTest;
 import com.revinate.sendgrid.exception.InvalidRequestException;
 import com.revinate.sendgrid.model.Subuser;
-import com.revinate.sendgrid.model.SubuserCollection;
 import com.revinate.sendgrid.net.SendGridHttpClient;
 import com.revinate.sendgrid.net.auth.Credential;
 import com.revinate.sendgrid.util.JsonUtils;
@@ -30,6 +29,8 @@ import static org.mockito.Mockito.when;
 @RunWith(MockitoJUnitRunner.class)
 public class SubuserResourceTest extends BaseSendGridTest {
 
+    private static final String USERNAME = "test1";
+
     @Rule
     public ExpectedException thrown = ExpectedException.none();
 
@@ -43,49 +44,31 @@ public class SubuserResourceTest extends BaseSendGridTest {
 
     @Before
     public void setUp() throws Exception {
-        resource = new SubuserResource("https://api.sendgrid.com/v3/subusers", client, credential);
-    }
-
-    @Test
-    public void list_shouldReturnSubusers() throws Exception {
-        SubuserCollection response = JsonUtils.fromJson(readFile("/responses/subusers.json"),
-                SubuserCollection.class);
-
-        when(client.get("https://api.sendgrid.com/v3/subusers", SubuserCollection.class, credential))
-                .thenReturn(response);
-
-        List<Subuser> subusers = resource.list();
-
-        assertThat(subusers, sameInstance(response.getData()));
+        resource = new SubuserResource("https://api.sendgrid.com/v3/subusers", client, credential, USERNAME);
     }
 
     @Test
     public void retrieve_shouldReturnSubuser() throws Exception {
         Subuser response = JsonUtils.fromJson(readFile("/responses/subuser.json"), Subuser.class);
 
-        when(client.get("https://api.sendgrid.com/v3/subusers/" + response.getUsername(),
+        when(client.get("https://api.sendgrid.com/v3/subusers/" + USERNAME,
                 Subuser.class, credential)).thenReturn(response);
 
-        Subuser subuser = resource.retrieve(response.getUsername());
+        Subuser subuser = resource.retrieve();
 
         assertThat(subuser, sameInstance(response));
     }
 
     @Test
-    public void create_shouldPostAndReturnSubuser() throws Exception {
-        Subuser response = JsonUtils.fromJson(readFile("/responses/subuser.json"), Subuser.class);
+    public void retrieve_shouldHandleMissingId() throws Exception {
         Subuser subuser = new Subuser();
-        subuser.setUsername("test1");
         subuser.setEmail("test1@email.com");
-        subuser.setPassword("testpassword");
-        subuser.addIp("127.0.0.1");
+        resource = new SubuserResource("https://api.sendgrid.com/v3/subusers", client, credential, subuser);
 
-        when(client.post("https://api.sendgrid.com/v3/subusers", subuser,
-                Subuser.class, credential)).thenReturn(response);
+        thrown.expect(InvalidRequestException.class);
+        thrown.expectMessage("Missing entity identifier");
 
-        Subuser subuser1 = resource.create(subuser);
-
-        assertThat(subuser1, sameInstance(response));
+        resource.retrieve();
     }
 
     @Test
@@ -93,7 +76,7 @@ public class SubuserResourceTest extends BaseSendGridTest {
     public void update_shouldPutIpsAndReturnSubuser() throws Exception {
         Subuser response = JsonUtils.fromJson(readFile("/responses/subuser-ips.json"), Subuser.class);
         Subuser subuser = new Subuser();
-        subuser.setUsername("test1");
+        subuser.setUsername(USERNAME);
         subuser.setEmail("test1@email.com");
         subuser.addIp("127.0.0.1");
 
@@ -103,12 +86,12 @@ public class SubuserResourceTest extends BaseSendGridTest {
         Subuser subuser1 = resource.update(subuser);
 
         assertThat(subuser1, notNullValue());
-        assertThat(subuser1.getUsername(), equalTo(subuser.getUsername()));
+        assertThat(subuser1.getUsername(), equalTo(USERNAME));
         assertThat(subuser1.getEmail(), equalTo(subuser.getEmail()));
         assertThat(subuser1.getIps(), contains("127.0.0.1"));
 
         ArgumentCaptor<List> captor = ArgumentCaptor.forClass(List.class);
-        verify(client).put(eq("https://api.sendgrid.com/v3/subusers/" + response.getUsername() + "/ips"),
+        verify(client).put(eq("https://api.sendgrid.com/v3/subusers/" + USERNAME + "/ips"),
                 captor.capture(), eq(Subuser.class), eq(credential));
 
         List<String> ips = captor.getValue();
@@ -120,6 +103,7 @@ public class SubuserResourceTest extends BaseSendGridTest {
     public void update_shouldHandleMissingId() throws Exception {
         Subuser subuser = new Subuser();
         subuser.setEmail("test1@email.com");
+        resource = new SubuserResource("https://api.sendgrid.com/v3/subusers", client, credential, subuser);
 
         thrown.expect(InvalidRequestException.class);
         thrown.expectMessage("Missing entity identifier");
@@ -129,18 +113,14 @@ public class SubuserResourceTest extends BaseSendGridTest {
 
     @Test
     public void partialUpdate_shouldPatchAndReturnSubuser() throws Exception {
-        Subuser subuser = new Subuser();
-        subuser.setUsername("test1");
-        subuser.setEmail("test1@email.com");
         Map<String, Object> requestObject = new HashMap<String, Object>();
         requestObject.put("disabled", true);
 
-        Subuser subuser1 = resource.partialUpdate(subuser, requestObject);
+        Subuser subuser1 = resource.partialUpdate(requestObject);
 
-        verify(client).patch("https://api.sendgrid.com/v3/subusers/" + subuser.getUsername(), requestObject, credential);
+        verify(client).patch("https://api.sendgrid.com/v3/subusers/" + USERNAME, requestObject, credential);
+
         assertThat(subuser1, notNullValue());
-        assertThat(subuser1.getUsername(), equalTo(subuser.getUsername()));
-        assertThat(subuser1.getEmail(), equalTo(subuser.getEmail()));
         assertThat(subuser1.getDisabled(), equalTo(true));
     }
 
@@ -150,32 +130,30 @@ public class SubuserResourceTest extends BaseSendGridTest {
         subuser.setEmail("test1@email.com");
         Map<String, Object> requestObject = new HashMap<String, Object>();
         requestObject.put("disabled", true);
+        resource = new SubuserResource("https://api.sendgrid.com/v3/subusers", client, credential, subuser);
 
         thrown.expect(InvalidRequestException.class);
         thrown.expectMessage("Missing entity identifier");
 
-        resource.partialUpdate(subuser, requestObject);
+        resource.partialUpdate(requestObject);
     }
 
     @Test
     public void delete_shouldDeleteSubuser() throws Exception {
-        Subuser subuser = new Subuser();
-        subuser.setUsername("test1");
-        subuser.setEmail("test1@email.com");
+        resource.delete();
 
-        resource.delete(subuser);
-
-        verify(client).delete("https://api.sendgrid.com/v3/subusers/" + subuser.getUsername(), credential);
+        verify(client).delete("https://api.sendgrid.com/v3/subusers/" + USERNAME, credential);
     }
 
     @Test
     public void delete_shouldHandleMissingId() throws Exception {
         Subuser subuser = new Subuser();
         subuser.setEmail("test1@email.com");
+        resource = new SubuserResource("https://api.sendgrid.com/v3/subusers", client, credential, subuser);
 
         thrown.expect(InvalidRequestException.class);
         thrown.expectMessage("Missing entity identifier");
 
-        resource.delete(subuser);
+        resource.delete();
     }
 }

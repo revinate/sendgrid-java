@@ -1,7 +1,7 @@
 package com.revinate.sendgrid.resource;
 
-import com.revinate.sendgrid.exception.InvalidRequestException;
 import com.revinate.sendgrid.model.ApiKey;
+import com.revinate.sendgrid.model.Subuser;
 import com.revinate.sendgrid.net.SendGridHttpClient;
 import com.revinate.sendgrid.net.auth.Credential;
 
@@ -15,11 +15,11 @@ public class RootResource extends SendGridResource {
         return new ApiKeysResource(getApiUrl(ApiKeysResource.API_VERSION), client, credential);
     }
 
-    public ApiKeyResource apiKey(ApiKey apiKey) throws InvalidRequestException {
+    public ApiKeyResource apiKey(ApiKey apiKey) {
         return apiKeys().entity(apiKey);
     }
 
-    public ApiKeyResource apiKey(String id) throws InvalidRequestException {
+    public ApiKeyResource apiKey(String id) {
         return apiKeys().entity(id);
     }
 
@@ -33,8 +33,15 @@ public class RootResource extends SendGridResource {
                 IpPoolResource.ENDPOINT), client, credential);
     }
 
-    public SubuserResource subusers() {
-        return new SubuserResource(getCollectionUrl(SubuserResource.API_VERSION,
-                SubuserResource.ENDPOINT), client, credential);
+    public SubusersResource subusers() {
+        return new SubusersResource(getApiUrl(SubusersResource.API_VERSION), client, credential);
+    }
+
+    public SubuserResource subuser(Subuser subuser) {
+        return subusers().entity(subuser);
+    }
+
+    public SubuserResource subuser(String id) {
+        return subusers().entity(id);
     }
 }

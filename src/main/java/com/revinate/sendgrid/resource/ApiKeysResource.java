@@ -1,6 +1,5 @@
 package com.revinate.sendgrid.resource;
 
-import com.revinate.sendgrid.exception.InvalidRequestException;
 import com.revinate.sendgrid.model.ApiKey;
 import com.revinate.sendgrid.model.ApiKeysResponse;
 import com.revinate.sendgrid.net.SendGridHttpClient;
@@ -15,11 +14,11 @@ public class ApiKeysResource extends CollectionResource<ApiKey, ApiKeysResponse>
         super(baseUrl, client, credential, ApiKey.class, ApiKeysResponse.class);
     }
 
-    public ApiKeyResource entity(ApiKey apiKey) throws InvalidRequestException {
+    public ApiKeyResource entity(ApiKey apiKey) {
         return new ApiKeyResource(getUrl(), client, credential, apiKey);
     }
 
-    public ApiKeyResource entity(String id) throws InvalidRequestException {
+    public ApiKeyResource entity(String id) {
         return new ApiKeyResource(getUrl(), client, credential, id);
     }
 

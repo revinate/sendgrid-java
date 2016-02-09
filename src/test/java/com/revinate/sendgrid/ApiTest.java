@@ -36,7 +36,7 @@ public class ApiTest {
         List<Subuser> subusers = sendGrid.subusers().list();
         assertThat(subusers, notNullValue());
 
-        Subuser subuser = sendGrid.subusers().retrieve("testsubuser123");
+        Subuser subuser = sendGrid.subuser("testsubuser123").retrieve();
         assertThat(subuser, notNullValue());
 
         List<Ip> ips = sendGrid.ips().list();
@@ -77,12 +77,12 @@ public class ApiTest {
 
         assertThat(subuser1.getUsername(), equalTo("testsubuser124"));
 
-        sendGrid.subusers().delete(subuser1);
+        sendGrid.subuser(subuser1).delete();
 
         thrown.expect(ResourceNotFoundException.class);
         thrown.expectMessage("Subuser not found");
 
-        sendGrid.subusers().retrieve(subuser1.getUsername());
+        sendGrid.subuser(subuser1.getUsername()).retrieve();
     }
 
     @Test

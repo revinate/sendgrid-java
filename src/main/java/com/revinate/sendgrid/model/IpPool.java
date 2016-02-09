@@ -5,7 +5,6 @@ import java.util.List;
 public class IpPool extends SendGridResource implements Identifiable {
 
     private String name;
-    private String poolName;
     private List<Ip> ips;
 
     @Override
@@ -21,12 +20,8 @@ public class IpPool extends SendGridResource implements Identifiable {
         this.name = name;
     }
 
-    public String getPoolName() {
-        return poolName;
-    }
-
-    public void setPoolName(String poolName) {
-        this.poolName = poolName;
+    public void setPoolName(String name) {
+        this.name = name;
     }
 
     public List<Ip> getIps() {

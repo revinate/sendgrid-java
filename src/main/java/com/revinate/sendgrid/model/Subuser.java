@@ -6,7 +6,6 @@ import java.util.List;
 public class Subuser extends SendGridResource implements Identifiable {
 
     private Integer id;
-    private Integer userId;
     private String username;
     private String email;
     private String password;
@@ -28,12 +27,8 @@ public class Subuser extends SendGridResource implements Identifiable {
         this.id = id;
     }
 
-    public Integer getUserId() {
-        return userId;
-    }
-
-    public void setUserId(Integer userId) {
-        this.userId = userId;
+    public void setUserId(Integer id) {
+        this.id = id;
     }
 
     public String getUsername() {

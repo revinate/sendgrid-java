@@ -182,4 +182,17 @@ public class ApiTest {
 
         sendGrid.subuser("testsubuser123").monitor().retrieve();
     }
+
+    @Test
+    public void sendEmail_shouldSendEmail() throws Exception {
+        Email email = new Email();
+        email.setFrom("sender@test.com");
+        email.addTo("receiver@test.com");
+        email.setSubject("Test");
+        email.setText("This is a test.");
+
+        Response response = sendGrid.mail().send(email);
+
+        assertThat(response, notNullValue());
+    }
 }

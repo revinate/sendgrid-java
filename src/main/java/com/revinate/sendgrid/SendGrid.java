@@ -1,21 +1,14 @@
 package com.revinate.sendgrid;
 
-import com.revinate.sendgrid.exception.SendGridException;
-import com.revinate.sendgrid.model.Email;
-import com.revinate.sendgrid.model.Response;
-import com.revinate.sendgrid.net.SendGridApiClient;
 import com.revinate.sendgrid.net.SendGridHttpClient;
 import com.revinate.sendgrid.net.auth.ApiKeyCredential;
 import com.revinate.sendgrid.net.auth.Credential;
 import com.revinate.sendgrid.net.auth.OnBehalfOfCredential;
 import com.revinate.sendgrid.net.auth.UsernamePasswordCredential;
 import com.revinate.sendgrid.resource.RootResource;
-import org.apache.http.HttpResponse;
 import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.util.EntityUtils;
 
 import java.io.Closeable;
-import java.io.IOException;
 
 public final class SendGrid extends RootResource implements Closeable {
 
@@ -24,11 +17,8 @@ public final class SendGrid extends RootResource implements Closeable {
     public static final String LIVE_URL = "https://api.sendgrid.com";
     public static final int DEFAULT_MAX_CONNECTIONS = 20;
 
-    private SendGridApiClient v2Client;
-
     public SendGrid(String baseUrl, SendGridHttpClient client, Credential credential) {
         super(baseUrl, client, credential);
-        this.v2Client = new SendGridApiClient(USER_AGENT);
     }
 
     @Override
@@ -39,17 +29,6 @@ public final class SendGrid extends RootResource implements Closeable {
     public RootResource onBehalfOf(String username) {
         OnBehalfOfCredential onBehalfOfCredential = new OnBehalfOfCredential(credential, username);
         return new RootResource(baseUrl, client, onBehalfOfCredential);
-    }
-
-    public Response send(Email email) throws SendGridException {
-        try {
-            HttpResponse response = v2Client.postV2(email.toHttpEntity(credential),
-                    baseUrl + "/api/mail.send.json", credential);
-            return new Response(response.getStatusLine().getStatusCode(),
-                    EntityUtils.toString(response.getEntity()));
-        } catch (IOException e) {
-            throw new SendGridException(e);
-        }
     }
 
     public static Builder create(String username, String password) {

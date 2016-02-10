@@ -49,6 +49,10 @@ public class RootResource extends SendGridResource {
         return ipPools().entity(id);
     }
 
+    public MailResource mail() {
+        return new MailResource(getApiUrl(MailResource.API_VERSION), client, credential);
+    }
+
     public SubusersResource subusers() {
         return new SubusersResource(getApiUrl(SubusersResource.API_VERSION), client, credential);
     }

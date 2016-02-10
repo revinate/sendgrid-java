@@ -3,9 +3,12 @@ package com.revinate.sendgrid.net;
 import com.revinate.sendgrid.exception.*;
 import com.revinate.sendgrid.model.ApiError;
 import com.revinate.sendgrid.model.ApiErrorsResponse;
+import com.revinate.sendgrid.model.Email;
+import com.revinate.sendgrid.net.auth.ApiKeyCredential;
 import com.revinate.sendgrid.net.auth.Credential;
 import com.revinate.sendgrid.util.JsonUtils;
 import org.apache.http.Header;
+import org.apache.http.HttpResponse;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpResponseException;
 import org.apache.http.client.ResponseHandler;
@@ -13,6 +16,7 @@ import org.apache.http.client.entity.EntityBuilder;
 import org.apache.http.client.methods.*;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
+import org.apache.http.util.EntityUtils;
 
 import java.io.Closeable;
 import java.io.IOException;
@@ -65,6 +69,26 @@ public class SendGridHttpClient implements Closeable {
         return fromJson(responseBody, type);
     }
 
+    public <T> T post(String url, Email email, Class<T> type, Credential credential) throws SendGridException {
+        HttpPost httpPost = new HttpPost(url);
+        httpPost.setEntity(email.toHttpEntity(credential));
+        if (credential instanceof ApiKeyCredential) {
+            for (Header header : credential.toHttpHeaders()) {
+                httpPost.setHeader(header);
+            }
+        }
+
+        String responseBody;
+        try {
+            HttpResponse response = this.client.execute(httpPost);
+            responseBody = EntityUtils.toString(response.getEntity());
+        } catch (IOException e) {
+            throw new SendGridException(e);
+        }
+
+        return fromJson(responseBody, type);
+    }
+
     public <T> T put(String url, Object requestObject, Class<T> type, Credential credential) throws SendGridException {
         String requestBody = toJson(requestObject);
         String responseBody = execute(HttpPut.METHOD_NAME, url, credential, requestBody, "application/json");
@@ -99,7 +123,7 @@ public class SendGridHttpClient implements Closeable {
         }
 
         if (contentType != null) {
-            builder.setHeader("Content-Type", "application/json");
+            builder.setHeader("Content-Type", contentType);
         }
 
         try {

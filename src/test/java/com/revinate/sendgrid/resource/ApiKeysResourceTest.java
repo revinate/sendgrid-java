@@ -1,7 +1,6 @@
 package com.revinate.sendgrid.resource;
 
 import com.revinate.sendgrid.BaseSendGridTest;
-import com.revinate.sendgrid.exception.InvalidRequestException;
 import com.revinate.sendgrid.model.ApiKey;
 import com.revinate.sendgrid.model.ApiKeysResponse;
 import com.revinate.sendgrid.net.SendGridHttpClient;

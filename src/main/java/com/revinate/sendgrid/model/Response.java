@@ -1,26 +1,25 @@
 package com.revinate.sendgrid.model;
 
-public class Response {
+import java.util.List;
 
-    private int code;
-    private boolean success;
+public class Response extends SendGridModel {
+
     private String message;
-
-    public Response(int code, String msg) {
-        this.code = code;
-        this.success = code == 200;
-        this.message = msg;
-    }
-
-    public int getCode() {
-        return this.code;
-    }
-
-    public boolean getStatus() {
-        return this.success;
-    }
+    private List<String> errors;
 
     public String getMessage() {
-        return this.message;
+        return message;
+    }
+
+    public void setMessage(String message) {
+        this.message = message;
+    }
+
+    public List<String> getErrors() {
+        return errors;
+    }
+
+    public void setErrors(List<String> errors) {
+        this.errors = errors;
     }
 }

@@ -5,10 +5,7 @@ import com.revinate.sendgrid.net.auth.ApiKeyCredential;
 import com.revinate.sendgrid.net.auth.Credential;
 import com.revinate.sendgrid.net.auth.OnBehalfOfCredential;
 import com.revinate.sendgrid.net.auth.UsernamePasswordCredential;
-import com.revinate.sendgrid.resource.ApiKeysResource;
-import com.revinate.sendgrid.resource.IpPoolsResource;
-import com.revinate.sendgrid.resource.IpsResource;
-import com.revinate.sendgrid.resource.SubusersResource;
+import com.revinate.sendgrid.resource.*;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.junit.Before;
 import org.junit.Test;
@@ -122,6 +119,16 @@ public class SendGridTest {
 
         assertThat(resource, notNullValue());
         assertThat(resource.getBaseUrl(), equalTo(BASE_URL + "/v3"));
+        assertThat(resource.getClient(), sameInstance(client));
+        assertThat(resource.getCredential(), sameInstance(sendGrid.getCredential()));
+    }
+
+    @Test
+    public void mail_shouldReturnResource() throws Exception {
+        MailResource resource = sendGrid.mail();
+
+        assertThat(resource, notNullValue());
+        assertThat(resource.getBaseUrl(), equalTo(BASE_URL + "/api"));
         assertThat(resource.getClient(), sameInstance(client));
         assertThat(resource.getCredential(), sameInstance(sendGrid.getCredential()));
     }

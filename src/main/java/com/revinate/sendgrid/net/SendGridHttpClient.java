@@ -70,6 +70,10 @@ public class SendGridHttpClient implements Closeable {
     }
 
     public <T> T post(String url, Email email, Class<T> type, Credential credential) throws SendGridException {
+        if (email == null) {
+            throw new InvalidRequestException("Request object is null");
+        }
+
         HttpPost httpPost = new HttpPost(url);
         httpPost.setEntity(email.toHttpEntity(credential));
         if (credential instanceof ApiKeyCredential) {

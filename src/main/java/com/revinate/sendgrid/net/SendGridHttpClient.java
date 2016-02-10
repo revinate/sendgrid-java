@@ -41,6 +41,10 @@ public class SendGridHttpClient implements Closeable {
         this.responseHandler = responseHandler;
     }
 
+    public CloseableHttpClient getClient() {
+        return client;
+    }
+
     @Override
     public void close() {
         try {

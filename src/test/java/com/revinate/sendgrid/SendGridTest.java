@@ -9,6 +9,7 @@ import com.revinate.sendgrid.resource.ApiKeysResource;
 import com.revinate.sendgrid.resource.IpPoolsResource;
 import com.revinate.sendgrid.resource.IpsResource;
 import com.revinate.sendgrid.resource.SubusersResource;
+import org.apache.http.impl.client.CloseableHttpClient;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -169,6 +170,15 @@ public class SendGridTest {
 
     @Test
     public void builder_shouldAcceptCustomHttpClient() throws Exception {
+        CloseableHttpClient httpClient = mock(CloseableHttpClient.class);
+        sendGrid = SendGrid.create(API_KEY).setHttpClient(httpClient).build();
+
+        assertThat(sendGrid, notNullValue());
+        assertThat(sendGrid.getClient().getClient(), sameInstance(httpClient));
+    }
+
+    @Test
+    public void builder_shouldAcceptCustomClient() throws Exception {
         sendGrid = SendGrid.create(API_KEY).setClient(client).build();
 
         assertThat(sendGrid, notNullValue());

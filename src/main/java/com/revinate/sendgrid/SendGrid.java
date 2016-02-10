@@ -11,6 +11,7 @@ import com.revinate.sendgrid.net.auth.OnBehalfOfCredential;
 import com.revinate.sendgrid.net.auth.UsernamePasswordCredential;
 import com.revinate.sendgrid.resource.RootResource;
 import org.apache.http.HttpResponse;
+import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.util.EntityUtils;
 
 import java.io.Closeable;
@@ -67,6 +68,7 @@ public final class SendGrid extends RootResource implements Closeable {
 
         private String baseUrl = LIVE_URL;
         private int maxConnections = DEFAULT_MAX_CONNECTIONS;
+        private CloseableHttpClient httpClient;
         private SendGridHttpClient client;
         private final Credential credential;
 
@@ -97,10 +99,19 @@ public final class SendGrid extends RootResource implements Closeable {
             return this;
         }
 
+        public Builder setHttpClient(CloseableHttpClient httpClient) {
+            this.httpClient = httpClient;
+            return this;
+        }
+
         public SendGrid build() {
             SendGridHttpClient finalClient = client;
             if (finalClient == null) {
-                finalClient = new SendGridHttpClient(USER_AGENT, maxConnections);
+                if (httpClient != null) {
+                    finalClient = new SendGridHttpClient(httpClient);
+                } else {
+                    finalClient = new SendGridHttpClient(USER_AGENT, maxConnections);
+                }
             }
             return new SendGrid(baseUrl, finalClient, credential);
         }

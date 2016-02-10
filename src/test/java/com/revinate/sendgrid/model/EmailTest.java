@@ -5,11 +5,15 @@ import org.junit.Before;
 import org.junit.Test;
 import org.skyscreamer.jsonassert.JSONAssert;
 
+import java.io.File;
+import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 
+import static org.hamcrest.Matchers.hasKey;
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThat;
 
 public class EmailTest {
 
@@ -167,5 +171,16 @@ public class EmailTest {
         String result = email.getIpPool();
 
         assertEquals(expected, result);
+    }
+
+    @Test
+    public void addAttachment_shouldSetAttachments() throws Exception {
+        File file = new File(getClass().getResource("/test.txt").getFile());
+        email.addAttachment("test.txt", file);
+        InputStream inputStream = getClass().getResourceAsStream("/image.png");
+        email.addAttachment("image.png", inputStream);
+
+        assertThat(email.getAttachments(), hasKey("test.txt"));
+        assertThat(email.getAttachments(), hasKey("image.png"));
     }
 }

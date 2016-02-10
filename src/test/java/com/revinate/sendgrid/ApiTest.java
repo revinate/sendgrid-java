@@ -190,6 +190,8 @@ public class ApiTest {
         email.addTo("sendgridjava@mailinator.com");
         email.setSubject("Test");
         email.setText("This is a test.");
+        email.addAttachment("test.txt", getClass().getResourceAsStream("/test.txt"));
+        email.addAttachment("image.png", getClass().getResourceAsStream("/image.png"));
 
         Response response = sendGrid.mail().send(email);
 

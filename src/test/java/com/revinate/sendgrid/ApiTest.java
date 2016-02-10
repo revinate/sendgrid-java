@@ -18,7 +18,7 @@ import static org.junit.Assume.assumeThat;
 
 public class ApiTest {
 
-    private static final String API_KEY = System.getenv("SENDGRID_API_KEYs");
+    private static final String API_KEY = System.getenv("SENDGRID_API_KEY");
 
     @Rule
     public ExpectedException thrown = ExpectedException.none();
@@ -51,7 +51,7 @@ public class ApiTest {
         List<IpPool> ipPools = sendGrid.onBehalfOf("testsubuser123").ipPools().list();
         assertThat(ipPools, notNullValue());
 
-        IpPool ipPool = sendGrid.onBehalfOf("testsubuser123").ipPools().retrieve("transactional");
+        IpPool ipPool = sendGrid.onBehalfOf("testsubuser123").ipPool("transactional").retrieve();
         assertThat(ipPool, notNullValue());
 
         List<ApiKey> apiKeys = sendGrid.onBehalfOf("testsubuser123").apiKeys().list();

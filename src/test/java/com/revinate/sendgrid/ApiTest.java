@@ -138,4 +138,26 @@ public class ApiTest {
         // SendGrid does not throw a 404 here, so we get an API key with unset fields
         assertThat(apiKey3.getApiKeyId(), nullValue());
     }
+
+    @Test
+    public void createIpPool_shouldReturnIpPool() throws Exception {
+        IpPool ipPool = new IpPool();
+        ipPool.setName("testpool");
+
+        IpPool ipPool1 = sendGrid.ipPools().create(ipPool);
+
+        assertThat(ipPool1, notNullValue());
+        assertThat(ipPool1.getName(), equalTo(ipPool.getName()));
+
+        IpPool ipPool2 = sendGrid.ipPool(ipPool1.getName()).retrieve();
+
+        assertThat(ipPool2, notNullValue());
+        assertThat(ipPool2.getName(), equalTo(ipPool1.getName()));
+        assertThat(ipPool2.getIps(), emptyCollectionOf(Ip.class));
+        sendGrid.ipPool(ipPool1).delete();
+
+        thrown.expect(ResourceNotFoundException.class);
+
+        sendGrid.ipPool(ipPool1.getName()).retrieve();
+    }
 }

@@ -47,6 +47,27 @@ public class IpPoolResourceTest extends BaseSendGridTest {
     }
 
     @Test
+    public void ips_shouldReturnResource() throws Exception {
+        IpsResource subresource = resource.ips();
+
+        assertThat(subresource, notNullValue());
+        assertThat(subresource.getBaseUrl(), equalTo(resource.getBaseUrl() + "/" + POOL_NAME));
+        assertThat(subresource.getClient(), sameInstance(client));
+        assertThat(subresource.getCredential(), sameInstance(resource.getCredential()));
+    }
+
+    @Test
+    public void ips_shouldHandleMissingId() throws Exception {
+        IpPool ipPool = new IpPool();
+        resource = new IpPoolResource("https://api.sendgrid.com/v3/ips/pools", client, credential, ipPool);
+
+        thrown.expect(InvalidRequestException.class);
+        thrown.expectMessage("Missing entity identifier");
+
+        resource.ips();
+    }
+
+    @Test
     public void retrieve_shouldReturnIpPool() throws Exception {
         IpPool response = JsonUtils.fromJson(readFile("/responses/ip-pool.json"), IpPool.class);
 

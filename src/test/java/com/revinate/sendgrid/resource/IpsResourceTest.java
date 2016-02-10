@@ -68,13 +68,18 @@ public class IpsResourceTest extends BaseSendGridTest {
     }
 
     @Test
-    public void create_shouldThrowUnsupported() throws Exception {
+    public void create_shouldPostAndReturnIp() throws Exception {
+        Ip response = JsonUtils.fromJson(readFile("/responses/ip.json"), Ip.class);
         Ip ip = new Ip();
         ip.setIp("127.0.0.1");
+        resource = new IpPoolResource("https://api.sendgrid.com/v3/ips/pools",
+                client, credential, "transactional").ips();
 
-        thrown.expect(InvalidRequestException.class);
-        thrown.expectMessage("Operation not supported on this resource");
+        when(client.post("https://api.sendgrid.com/v3/ips/pools/transactional/ips",
+                ip, Ip.class, credential)).thenReturn(response);
 
-        resource.create(ip);
+        Ip ip1 = resource.create(ip);
+
+        assertThat(ip1, sameInstance(response));
     }
 }

@@ -1,6 +1,8 @@
 package com.revinate.sendgrid.resource;
 
+import com.revinate.sendgrid.exception.InvalidRequestException;
 import com.revinate.sendgrid.exception.SendGridException;
+import com.revinate.sendgrid.model.Ip;
 import com.revinate.sendgrid.model.IpPool;
 import com.revinate.sendgrid.net.SendGridHttpClient;
 import com.revinate.sendgrid.net.auth.Credential;
@@ -15,6 +17,18 @@ public class IpPoolResource extends EntityResource<IpPool> {
 
     public IpPoolResource(String baseUrl, SendGridHttpClient client, Credential credential, String id) {
         super(baseUrl, client, credential, IpPool.class, id);
+    }
+
+    public IpsResource ips() throws InvalidRequestException {
+        return new IpsResource(getUrl(), client, credential);
+    }
+
+    public IpResource ip(Ip ip) throws InvalidRequestException {
+        return ips().entity(ip);
+    }
+
+    public IpResource ip(String id) throws InvalidRequestException {
+        return ips().entity(id);
     }
 
     @Override

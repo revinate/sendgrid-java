@@ -1,6 +1,5 @@
 package com.revinate.sendgrid.resource;
 
-import com.revinate.sendgrid.exception.SendGridException;
 import com.revinate.sendgrid.model.Ip;
 import com.revinate.sendgrid.model.IpCollection;
 import com.revinate.sendgrid.net.SendGridHttpClient;
@@ -21,11 +20,6 @@ public class IpsResource extends CollectionResource<Ip, IpCollection> {
 
     public IpResource entity(String id) {
         return new IpResource(getUrl(), client, credential, id);
-    }
-
-    @Override
-    public Ip create(Ip requestObject) throws SendGridException {
-        throw unsupported();
     }
 
     @Override

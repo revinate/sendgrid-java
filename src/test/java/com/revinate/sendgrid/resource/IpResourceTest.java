@@ -14,8 +14,12 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import static org.hamcrest.Matchers.sameInstance;
 import static org.junit.Assert.assertThat;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -70,5 +74,26 @@ public class IpResourceTest extends BaseSendGridTest {
         thrown.expectMessage("Operation not supported on this resource");
 
         resource.update(ip);
+    }
+
+    @Test
+    public void partialUpdate_shouldThrowUnsupported() throws Exception {
+        Map<String, Object> requestObject = new HashMap<String, Object>();
+
+        thrown.expect(InvalidRequestException.class);
+        thrown.expectMessage("Operation not supported on this resource");
+
+        resource.partialUpdate(requestObject);
+    }
+
+    @Test
+    public void delete_shouldDeleteIp() throws Exception {
+        resource = new IpPoolResource("https://api.sendgrid.com/v3/ips/pools",
+                client, credential, "transactional").ip("127.0.0.1");
+
+        resource.delete();
+
+        verify(client).delete("https://api.sendgrid.com/v3/ips/pools/transactional/ips/127.0.0.1",
+                credential);
     }
 }

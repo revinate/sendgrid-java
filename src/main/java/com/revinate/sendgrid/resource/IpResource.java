@@ -26,9 +26,4 @@ public class IpResource extends EntityResource<Ip> {
     public Ip partialUpdate(Map<String, Object> requestObject) throws SendGridException {
         throw unsupported();
     }
-
-    @Override
-    public void delete() throws SendGridException {
-        throw unsupported();
-    }
 }

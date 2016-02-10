@@ -1,10 +1,7 @@
 package com.revinate.sendgrid;
 
 import com.revinate.sendgrid.exception.ResourceNotFoundException;
-import com.revinate.sendgrid.model.ApiKey;
-import com.revinate.sendgrid.model.Ip;
-import com.revinate.sendgrid.model.IpPool;
-import com.revinate.sendgrid.model.Subuser;
+import com.revinate.sendgrid.model.*;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -159,5 +156,30 @@ public class ApiTest {
         thrown.expect(ResourceNotFoundException.class);
 
         sendGrid.ipPool(ipPool1.getName()).retrieve();
+    }
+
+    @Test
+    public void createMonitor_shouldReturnMonitor() throws Exception {
+        Monitor monitor = new Monitor();
+        monitor.setEmail("monitor@test.com");
+        monitor.setFrequency(5000);
+
+        Monitor monitor1 = sendGrid.subuser("testsubuser123").monitor().create(monitor);
+
+        assertThat(monitor1, notNullValue());
+        assertThat(monitor1.getEmail(), equalTo(monitor.getEmail()));
+        assertThat(monitor1.getFrequency(), equalTo(monitor.getFrequency()));
+
+        Monitor monitor2 = sendGrid.subuser("testsubuser123").monitor().retrieve();
+
+        assertThat(monitor2, notNullValue());
+        assertThat(monitor2.getEmail(), equalTo(monitor.getEmail()));
+        assertThat(monitor2.getFrequency(), equalTo(monitor.getFrequency()));
+
+        sendGrid.subuser("testsubuser123").monitor().delete();
+
+        thrown.expect(ResourceNotFoundException.class);
+
+        sendGrid.subuser("testsubuser123").monitor().retrieve();
     }
 }

@@ -48,6 +48,27 @@ public class SubuserResourceTest extends BaseSendGridTest {
     }
 
     @Test
+    public void monitor_shouldReturnResource() throws Exception {
+        MonitorResource subresource = resource.monitor();
+
+        assertThat(subresource, notNullValue());
+        assertThat(subresource.getBaseUrl(), equalTo(resource.getBaseUrl() + "/" + USERNAME));
+        assertThat(subresource.getClient(), sameInstance(client));
+        assertThat(subresource.getCredential(), sameInstance(resource.getCredential()));
+    }
+
+    @Test
+    public void monitor_shouldHandleMissingId() throws Exception {
+        Subuser subuser = new Subuser();
+        resource = new SubuserResource("https://api.sendgrid.com/v3/subusers", client, credential, subuser);
+
+        thrown.expect(InvalidRequestException.class);
+        thrown.expectMessage("Missing entity identifier");
+
+        resource.monitor();
+    }
+
+    @Test
     public void retrieve_shouldReturnSubuser() throws Exception {
         Subuser response = JsonUtils.fromJson(readFile("/responses/subuser.json"), Subuser.class);
 

@@ -1,5 +1,6 @@
 package com.revinate.sendgrid.resource;
 
+import com.revinate.sendgrid.exception.InvalidRequestException;
 import com.revinate.sendgrid.exception.SendGridException;
 import com.revinate.sendgrid.model.Subuser;
 import com.revinate.sendgrid.net.SendGridHttpClient;
@@ -15,6 +16,10 @@ public class SubuserResource extends EntityResource<Subuser> {
 
     public SubuserResource(String baseUrl, SendGridHttpClient client, Credential credential, String id) {
         super(baseUrl, client, credential, Subuser.class, id);
+    }
+
+    public MonitorResource monitor() throws InvalidRequestException {
+        return new MonitorResource(getUrl(), client, credential);
     }
 
     @Override

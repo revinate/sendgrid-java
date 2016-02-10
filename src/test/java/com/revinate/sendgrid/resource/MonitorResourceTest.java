@@ -56,7 +56,7 @@ public class MonitorResourceTest extends BaseSendGridTest {
     public void create_shouldPostAndReturnMonitor() throws Exception {
         Monitor response = JsonUtils.fromJson(readFile("/responses/monitor.json"), Monitor.class);
         Monitor monitor = new Monitor();
-        monitor.setEmail("monitor@test.com");
+        monitor.setEmail("monitor@email.com");
         monitor.setFrequency(1000);
 
         when(client.post("https://api.sendgrid.com/v3/subusers/test1/monitor", monitor,
@@ -72,7 +72,7 @@ public class MonitorResourceTest extends BaseSendGridTest {
     public void update_shouldPutAndReturnMonitor() throws Exception {
         Monitor response = JsonUtils.fromJson(readFile("/responses/monitor.json"), Monitor.class);
         Monitor monitor = new Monitor();
-        monitor.setEmail("monitor@test.com");
+        monitor.setEmail("monitor@email.com");
         monitor.setFrequency(1000);
 
         when(client.put(any(String.class), any(Monitor.class), any(Class.class),

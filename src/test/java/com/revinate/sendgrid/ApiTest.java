@@ -60,7 +60,7 @@ public class ApiTest {
         Subuser subuser = new Subuser();
         subuser.setUsername("testsubuser124");
         subuser.setPassword("secretpasswordfortesting124");
-        subuser.setEmail("no-reply@email.com");
+        subuser.setEmail("sendgridjava@mailinator.com");
 
         List<Ip> ips = sendGrid.ips().list();
         for (Ip ip : ips) {
@@ -161,7 +161,7 @@ public class ApiTest {
     @Test
     public void createMonitor_shouldReturnMonitor() throws Exception {
         Monitor monitor = new Monitor();
-        monitor.setEmail("monitor@test.com");
+        monitor.setEmail("sendgridjava@mailinator.com");
         monitor.setFrequency(5000);
 
         Monitor monitor1 = sendGrid.subuser("testsubuser123").monitor().create(monitor);
@@ -186,8 +186,8 @@ public class ApiTest {
     @Test
     public void sendEmail_shouldSendEmail() throws Exception {
         Email email = new Email();
-        email.setFrom("sender@test.com");
-        email.addTo("receiver@test.com");
+        email.setFrom("sendgridjava@mailinator.com");
+        email.addTo("sendgridjava@mailinator.com");
         email.setSubject("Test");
         email.setText("This is a test.");
 

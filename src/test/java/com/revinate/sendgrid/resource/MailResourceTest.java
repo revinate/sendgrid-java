@@ -41,8 +41,8 @@ public class MailResourceTest extends BaseSendGridTest {
     public void send_shouldPostEmailAndReturnResponse() throws Exception {
         Response response = JsonUtils.fromJson(readFile("/responses/response.json"), Response.class);
         Email email = new Email();
-        email.setFrom("test@test.com");
-        email.addTo("test@test.com");
+        email.setFrom("test1@email.com");
+        email.addTo("test1@email.com");
 
         when(client.post("https://api.sendgrid.com/api/mail.send.json", email,
                 Response.class, credential)).thenReturn(response);

@@ -29,15 +29,14 @@ public class SendGridHttpClient implements Closeable {
                 .setUserAgent(userAgent)
                 .setMaxConnTotal(maxConnections)
                 .setMaxConnPerRoute(maxConnections)
-                .build(),
-                new StringResponseHandler());
+                .build());
     }
 
     public SendGridHttpClient(CloseableHttpClient client) {
         this(client, new StringResponseHandler());
     }
 
-    public SendGridHttpClient(CloseableHttpClient client, ResponseHandler<String> responseHandler) {
+    SendGridHttpClient(CloseableHttpClient client, ResponseHandler<String> responseHandler) {
         this.client = client;
         this.responseHandler = responseHandler;
     }

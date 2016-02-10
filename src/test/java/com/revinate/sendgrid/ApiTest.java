@@ -28,7 +28,7 @@ public class ApiTest {
     @Before
     public void setUp() throws Exception {
         assumeThat(API_KEY, notNullValue());
-        sendGrid = new SendGrid(API_KEY);
+        sendGrid = SendGrid.create(API_KEY).build();
     }
 
     @Test

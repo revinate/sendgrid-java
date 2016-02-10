@@ -25,35 +25,6 @@ public final class SendGrid extends RootResource implements Closeable {
 
     private SendGridApiClient v2Client;
 
-    // TODO: change secondary constructors into builder
-    public SendGrid(String username, String password) {
-        this(username, password, DEFAULT_MAX_CONNECTIONS);
-    }
-
-    public SendGrid(String username, String password, int maxConnections) {
-        this(new UsernamePasswordCredential(username, password), maxConnections);
-    }
-
-    public SendGrid(String apiKey) {
-        this(apiKey, DEFAULT_MAX_CONNECTIONS);
-    }
-
-    public SendGrid(String apiKey, int maxConnections) {
-        this(new ApiKeyCredential(apiKey), maxConnections);
-    }
-
-    public SendGrid(Credential credential) {
-        this(credential, DEFAULT_MAX_CONNECTIONS);
-    }
-
-    public SendGrid(Credential credential, int maxConnections) {
-        this(LIVE_URL, new SendGridHttpClient(USER_AGENT, maxConnections), credential);
-    }
-
-    public SendGrid(String baseUrl, SendGridHttpClient client, String apiKey) {
-        this(baseUrl, client, new ApiKeyCredential(apiKey));
-    }
-
     public SendGrid(String baseUrl, SendGridHttpClient client, Credential credential) {
         super(baseUrl, client, credential);
         this.v2Client = new SendGridApiClient(USER_AGENT);
@@ -77,6 +48,61 @@ public final class SendGrid extends RootResource implements Closeable {
                     EntityUtils.toString(response.getEntity()));
         } catch (IOException e) {
             throw new SendGridException(e);
+        }
+    }
+
+    public static Builder create(String username, String password) {
+        return new Builder(username, password);
+    }
+
+    public static Builder create(String apiKey) {
+        return new Builder(apiKey);
+    }
+
+    public static Builder create(Credential credential) {
+        return new Builder(credential);
+    }
+
+    public static class Builder {
+
+        private String baseUrl = LIVE_URL;
+        private int maxConnections = DEFAULT_MAX_CONNECTIONS;
+        private SendGridHttpClient client;
+        private final Credential credential;
+
+        public Builder(String username, String password) {
+            this.credential = new UsernamePasswordCredential(username, password);
+        }
+
+        public Builder(String apiKey) {
+            this.credential = new ApiKeyCredential(apiKey);
+        }
+
+        public Builder(Credential credential) {
+            this.credential = credential;
+        }
+
+        public Builder setBaseUrl(String baseUrl) {
+            this.baseUrl = baseUrl;
+            return this;
+        }
+
+        public Builder setClient(SendGridHttpClient client) {
+            this.client = client;
+            return this;
+        }
+
+        public Builder setMaxConnections(int maxConnections) {
+            this.maxConnections = maxConnections;
+            return this;
+        }
+
+        public SendGrid build() {
+            SendGridHttpClient finalClient = client;
+            if (finalClient == null) {
+                finalClient = new SendGridHttpClient(USER_AGENT, maxConnections);
+            }
+            return new SendGrid(baseUrl, finalClient, credential);
         }
     }
 }

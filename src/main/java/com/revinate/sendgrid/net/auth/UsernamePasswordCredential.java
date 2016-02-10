@@ -34,4 +34,22 @@ public class UsernamePasswordCredential implements Credential {
     private String base64Credential() {
         return Base64.encodeBase64String((username + ":" + password).getBytes());
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof UsernamePasswordCredential)) return false;
+
+        UsernamePasswordCredential that = (UsernamePasswordCredential) o;
+
+        if (username == null ? that.username != null : !username.equals(that.username)) return false;
+        return password == null ? that.password == null : password.equals(that.password);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = username == null ? 0 : username.hashCode();
+        result = 31 * result + (password == null ? 0 : password.hashCode());
+        return result;
+    }
 }

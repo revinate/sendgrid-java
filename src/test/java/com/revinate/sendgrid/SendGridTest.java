@@ -9,6 +9,7 @@ import com.revinate.sendgrid.resource.ApiKeysResource;
 import com.revinate.sendgrid.resource.IpPoolsResource;
 import com.revinate.sendgrid.resource.IpsResource;
 import com.revinate.sendgrid.resource.SubusersResource;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -22,6 +23,7 @@ import java.io.IOException;
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -35,6 +37,13 @@ public class SendGridTest {
 
     @Mock
     SendGridHttpClient client;
+
+    SendGrid sendGrid;
+
+    @Before
+    public void setUp() throws Exception {
+        sendGrid = new SendGrid(BASE_URL, client, new ApiKeyCredential(API_KEY));
+    }
 
     @Test
     public void version_shouldMatchGradleVersion() throws Exception {
@@ -60,43 +69,7 @@ public class SendGridTest {
     }
 
     @Test
-    public void usernamePasswordConstructor_shouldConstructInstance() throws Exception {
-        SendGrid sendGrid = new SendGrid(USERNAME, PASSWORD);
-
-        Credential credential = sendGrid.getCredential();
-        assertThat(credential, instanceOf(UsernamePasswordCredential.class));
-
-        UsernamePasswordCredential usernamePasswordCredential = (UsernamePasswordCredential) credential;
-        assertThat(usernamePasswordCredential.getUsername(), equalTo(USERNAME));
-        assertThat(usernamePasswordCredential.getPassword(), equalTo(PASSWORD));
-    }
-
-    @Test
-    public void apiKeyConstructor_shouldConstructInstance() throws Exception {
-        SendGrid sendGrid = new SendGrid(API_KEY);
-
-        Credential credential = sendGrid.getCredential();
-        assertThat(credential, instanceOf(ApiKeyCredential.class));
-
-        ApiKeyCredential apiKeyCredential = (ApiKeyCredential) credential;
-        assertThat(apiKeyCredential.getApiKey(), equalTo(API_KEY));
-    }
-
-    @Test
-    public void maxConnectionsConstructor_shouldConstructInstance() throws Exception {
-        SendGrid sendGrid = new SendGrid(API_KEY, MAX_CONNECTIONS);
-
-        Credential credential = sendGrid.getCredential();
-        assertThat(credential, instanceOf(ApiKeyCredential.class));
-
-        ApiKeyCredential apiKeyCredential = (ApiKeyCredential) credential;
-        assertThat(apiKeyCredential.getApiKey(), equalTo(API_KEY));
-    }
-
-    @Test
     public void onBehalfOf_shouldOverlayCredential() throws Exception {
-        SendGrid sendGrid = new SendGrid(BASE_URL, client, API_KEY);
-
         ApiKeysResource resource = sendGrid.onBehalfOf("username2").apiKeys();
 
         assertThat(resource, notNullValue());
@@ -114,8 +87,6 @@ public class SendGridTest {
 
     @Test
     public void apiKeys_shouldReturnResource() throws Exception {
-        SendGrid sendGrid = new SendGrid(BASE_URL, client, API_KEY);
-
         ApiKeysResource resource = sendGrid.apiKeys();
 
         assertThat(resource, notNullValue());
@@ -126,8 +97,6 @@ public class SendGridTest {
 
     @Test
     public void subusers_shouldReturnResource() throws Exception {
-        SendGrid sendGrid = new SendGrid(BASE_URL, client, API_KEY);
-
         SubusersResource resource = sendGrid.subusers();
 
         assertThat(resource, notNullValue());
@@ -138,8 +107,6 @@ public class SendGridTest {
 
     @Test
     public void ips_shouldReturnResource() throws Exception {
-        SendGrid sendGrid = new SendGrid(BASE_URL, client, API_KEY);
-
         IpsResource resource = sendGrid.ips();
 
         assertThat(resource, notNullValue());
@@ -150,8 +117,6 @@ public class SendGridTest {
 
     @Test
     public void ipPools_shouldReturnResource() throws Exception {
-        SendGrid sendGrid = new SendGrid(BASE_URL, client, API_KEY);
-
         IpPoolsResource resource = sendGrid.ipPools();
 
         assertThat(resource, notNullValue());
@@ -162,10 +127,59 @@ public class SendGridTest {
 
     @Test
     public void close_shouldCloseUnderlyingClient() throws Exception {
-        SendGrid sendGrid = new SendGrid(BASE_URL, client, API_KEY);
-
         sendGrid.close();
 
         verify(client).close();
+    }
+
+    @Test
+    public void builder_shouldAcceptApiKey() throws Exception {
+        sendGrid = SendGrid.create(API_KEY).build();
+
+        assertThat(sendGrid, notNullValue());
+        assertThat(sendGrid.getCredential(), equalTo(
+                (Credential) new ApiKeyCredential(API_KEY)));
+    }
+
+    @Test
+    public void builder_shouldAcceptUsernamePassword() throws Exception {
+        sendGrid = SendGrid.create(USERNAME, PASSWORD).build();
+
+        assertThat(sendGrid, notNullValue());
+        assertThat(sendGrid.getCredential(), equalTo(
+                (Credential) new UsernamePasswordCredential(USERNAME, PASSWORD)));
+    }
+
+    @Test
+    public void builder_shouldAcceptCustomCredential() throws Exception {
+        Credential credential = mock(Credential.class);
+        sendGrid = SendGrid.create(credential).build();
+
+        assertThat(sendGrid, notNullValue());
+        assertThat(sendGrid.getCredential(), sameInstance(credential));
+    }
+
+    @Test
+    public void builder_shouldAcceptMaxConnections() throws Exception {
+        sendGrid = SendGrid.create(API_KEY).setMaxConnections(MAX_CONNECTIONS).build();
+
+        assertThat(sendGrid, notNullValue());
+        assertThat(sendGrid.getClient(), notNullValue());
+    }
+
+    @Test
+    public void builder_shouldAcceptCustomHttpClient() throws Exception {
+        sendGrid = SendGrid.create(API_KEY).setClient(client).build();
+
+        assertThat(sendGrid, notNullValue());
+        assertThat(sendGrid.getClient(), sameInstance(client));
+    }
+
+    @Test
+    public void builder_shouldAcceptCustomBaseUrl() throws Exception {
+        sendGrid = SendGrid.create(API_KEY).setBaseUrl(BASE_URL).build();
+
+        assertThat(sendGrid, notNullValue());
+        assertThat(sendGrid.getBaseUrl(), equalTo(BASE_URL));
     }
 }

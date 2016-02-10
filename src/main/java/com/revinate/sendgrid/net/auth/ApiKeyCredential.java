@@ -22,4 +22,19 @@ public class ApiKeyCredential implements Credential {
     public List<Header> toHttpHeaders() {
         return Collections.<Header>singletonList(new BasicHeader("Authorization", "Bearer " + apiKey));
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof ApiKeyCredential)) return false;
+
+        ApiKeyCredential that = (ApiKeyCredential) o;
+
+        return apiKey == null ? that.apiKey == null : apiKey.equals(that.apiKey);
+    }
+
+    @Override
+    public int hashCode() {
+        return apiKey == null ? 0 : apiKey.hashCode();
+    }
 }

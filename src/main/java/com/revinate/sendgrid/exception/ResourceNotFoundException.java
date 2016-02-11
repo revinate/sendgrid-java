@@ -6,10 +6,6 @@ import java.util.List;
 
 public class ResourceNotFoundException extends InvalidRequestException {
 
-    public ResourceNotFoundException(String message) {
-        super(message);
-    }
-
     public ResourceNotFoundException(String message, List<ApiError> errors) {
         super(message, errors);
     }

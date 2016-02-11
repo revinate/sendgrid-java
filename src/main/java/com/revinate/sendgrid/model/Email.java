@@ -3,7 +3,6 @@ package com.revinate.sendgrid.model;
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.revinate.sendgrid.net.HttpEntityBuilder;
 import com.revinate.sendgrid.smtpapi.SMTPAPI;
 import org.json.JSONObject;
 

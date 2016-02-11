@@ -28,7 +28,7 @@ public class Response extends SendGridModel {
         if (errors == null || errors.isEmpty()) {
             return message;
         } else if (errors.size() == 1) {
-            return message + ":" + errors.get(0);
+            return message + ": " + errors.get(0);
         } else {
             StringBuilder sb = new StringBuilder();
             sb.append(message).append(":\n");

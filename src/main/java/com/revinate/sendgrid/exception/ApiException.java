@@ -9,10 +9,6 @@ public class ApiException extends SendGridException {
 
     private List<ApiError> errors = Collections.emptyList();
 
-    public ApiException(String message) {
-        super(message);
-    }
-
     public ApiException(String message, List<ApiError> errors) {
         super(message);
         this.errors = errors;

@@ -5,6 +5,14 @@ public class ApiError extends SendGridModel {
     private String field;
     private String message;
 
+    public ApiError() {
+
+    }
+
+    public ApiError(String message) {
+        this.message = message;
+    }
+
     public String getField() {
         return field;
     }

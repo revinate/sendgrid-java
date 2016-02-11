@@ -3,12 +3,16 @@ package com.revinate.sendgrid.net;
 import com.revinate.sendgrid.BaseSendGridTest;
 import com.revinate.sendgrid.exception.ApiConnectionException;
 import com.revinate.sendgrid.exception.InvalidRequestException;
+import com.revinate.sendgrid.model.ApiErrorsResponse;
 import com.revinate.sendgrid.model.ApiKey;
+import com.revinate.sendgrid.model.Response;
 import com.revinate.sendgrid.net.SendGridHttpClient.RequestType;
 import com.revinate.sendgrid.net.auth.ApiKeyCredential;
 import com.revinate.sendgrid.util.JsonUtils;
 import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.HttpResponseException;
 import org.apache.http.client.methods.HttpEntityEnclosingRequestBase;
+import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.util.EntityUtils;
@@ -114,6 +118,21 @@ public class SendGridHttpClientTest extends BaseSendGridTest {
     public void get_shouldHandleEmptyResponse() throws Exception {
         thrown.expect(ApiConnectionException.class);
         thrown.expectMessage("Response contains no content");
+
+        client.get("http://sendgrid", ApiKey.class, new ApiKeyCredential("token"));
+    }
+
+    @Test
+    public void get_shouldHandleV2ErrorResponse() throws Exception {
+        String response = readFile("/responses/response-error.json");
+        String errorMessage = JsonUtils.fromJson(response, Response.class).toString();
+
+        when(httpClient.execute(any(HttpGet.class), any(StringResponseHandler.class)))
+                .thenThrow(new HttpResponseException(400, response));
+
+        thrown.expect(InvalidRequestException.class);
+        thrown.expectMessage(errorMessage);
+        thrown.expect(hasProperty("errors", iterableWithSize(1)));
 
         client.get("http://sendgrid", ApiKey.class, new ApiKeyCredential("token"));
     }

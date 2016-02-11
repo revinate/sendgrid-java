@@ -1,6 +1,3 @@
 {
-  "errors": [
-    "Permission denied, wrong credentials"
-  ],
-  "message": "error"
+  "message": "success"
 }

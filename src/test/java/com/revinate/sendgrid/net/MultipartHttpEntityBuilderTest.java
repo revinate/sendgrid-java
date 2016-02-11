@@ -4,6 +4,7 @@ import com.revinate.sendgrid.model.ApiKey;
 import com.revinate.sendgrid.model.Email;
 import com.revinate.sendgrid.net.SendGridHttpClient.RequestType;
 import com.revinate.sendgrid.net.auth.Credential;
+import com.revinate.sendgrid.net.auth.UsernamePasswordCredential;
 import org.apache.http.Header;
 import org.apache.http.HttpEntity;
 import org.junit.Before;
@@ -11,7 +12,6 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
-import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import java.io.IOException;
@@ -28,9 +28,6 @@ public class MultipartHttpEntityBuilderTest {
 
     @Rule
     public ExpectedException thrown = ExpectedException.none();
-
-    @Mock
-    Credential credential;
 
     MultipartHttpEntityBuilder builder;
 
@@ -53,6 +50,7 @@ public class MultipartHttpEntityBuilderTest {
         email.setFrom("test1@email.com");
         email.addTo("test1@email.com");
         email.setText("test");
+        Credential credential = new UsernamePasswordCredential("username", "password");
 
         HttpEntity entity = builder.setCredential(credential).setEmail(email).build();
 

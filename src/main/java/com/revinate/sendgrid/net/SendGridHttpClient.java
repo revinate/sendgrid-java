@@ -3,6 +3,7 @@ package com.revinate.sendgrid.net;
 import com.revinate.sendgrid.exception.*;
 import com.revinate.sendgrid.model.ApiError;
 import com.revinate.sendgrid.model.ApiErrorsResponse;
+import com.revinate.sendgrid.model.Response;
 import com.revinate.sendgrid.model.SendGridModel;
 import com.revinate.sendgrid.net.auth.Credential;
 import com.revinate.sendgrid.util.JsonUtils;
@@ -159,12 +160,19 @@ public class SendGridHttpClient implements Closeable {
         String message;
         List<ApiError> errors = new ArrayList<ApiError>();
         try {
-            // TODO: for API v2, responseBody is a Response, not an ApiErrorsResponse
             ApiErrorsResponse apiErrorsResponse = JsonUtils.fromJson(responseBody, ApiErrorsResponse.class);
             message = apiErrorsResponse.toString();
             errors.addAll(apiErrorsResponse.getErrors());
-        } catch (IOException ex) {
-            message = responseBody;
+        } catch (IOException e2) {
+            try {
+                Response response = JsonUtils.fromJson(responseBody, Response.class);
+                message = response.toString();
+                for (String error : response.getErrors()) {
+                    errors.add(new ApiError(error));
+                }
+            } catch (IOException e3) {
+                message = responseBody;
+            }
         }
 
         switch (e.getStatusCode()) {

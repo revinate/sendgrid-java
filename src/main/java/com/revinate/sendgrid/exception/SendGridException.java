@@ -6,10 +6,6 @@ public class SendGridException extends Exception {
         super(message);
     }
 
-    public SendGridException(Throwable e) {
-        super(e);
-    }
-
     public SendGridException(String message, Throwable e) {
         super(message, e);
     }

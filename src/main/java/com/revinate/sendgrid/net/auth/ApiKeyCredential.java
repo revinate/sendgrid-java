@@ -1,6 +1,7 @@
 package com.revinate.sendgrid.net.auth;
 
 import org.apache.http.Header;
+import org.apache.http.HttpHeaders;
 import org.apache.http.message.BasicHeader;
 
 import java.util.Collections;
@@ -20,7 +21,8 @@ public class ApiKeyCredential implements Credential {
 
     @Override
     public List<Header> toHttpHeaders() {
-        return Collections.<Header>singletonList(new BasicHeader("Authorization", "Bearer " + apiKey));
+        return Collections.<Header>singletonList(
+                new BasicHeader(HttpHeaders.AUTHORIZATION, "Bearer " + apiKey));
     }
 
     @Override

@@ -1,7 +1,6 @@
 package com.revinate.sendgrid.net;
 
 import com.revinate.sendgrid.net.auth.UsernamePasswordCredential;
-import org.apache.http.Header;
 import org.apache.http.HttpEntity;
 import org.apache.http.entity.ContentType;
 import org.apache.http.entity.mime.MultipartEntityBuilder;
@@ -9,8 +8,6 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Collections;
-import java.util.List;
 import java.util.Map;
 
 public class MultipartHttpEntityBuilder extends HttpEntityBuilder {
@@ -45,11 +42,6 @@ public class MultipartHttpEntityBuilder extends HttpEntityBuilder {
         }
 
         throw new IOException("Content is null");
-    }
-
-    @Override
-    public List<Header> getHeaders() {
-        return Collections.emptyList();
     }
 
     private MultipartEntityBuilder multipartEntityBuilder() {

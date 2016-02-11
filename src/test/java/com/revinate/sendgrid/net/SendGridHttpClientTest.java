@@ -3,9 +3,10 @@ package com.revinate.sendgrid.net;
 import com.revinate.sendgrid.BaseSendGridTest;
 import com.revinate.sendgrid.exception.ApiConnectionException;
 import com.revinate.sendgrid.exception.InvalidRequestException;
-import com.revinate.sendgrid.model.ApiErrorsResponse;
 import com.revinate.sendgrid.model.ApiKey;
+import com.revinate.sendgrid.model.Email;
 import com.revinate.sendgrid.model.Response;
+import com.revinate.sendgrid.model.Subuser;
 import com.revinate.sendgrid.net.SendGridHttpClient.RequestType;
 import com.revinate.sendgrid.net.auth.ApiKeyCredential;
 import com.revinate.sendgrid.util.JsonUtils;
@@ -26,7 +27,9 @@ import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import static org.hamcrest.Matchers.*;
@@ -168,11 +171,36 @@ public class SendGridHttpClientTest extends BaseSendGridTest {
         assertThat(httpRequest.getAllHeaders(), hasItemInArray(
                 hasProperty("name", equalTo("Authorization"))
         ));
+    }
+
+    @Test
+    public void post_shouldMakeMultipartRequestAndReturnResponse() throws Exception {
+        String response = readFile("/responses/response.json");
+        Email email = new Email();
+        email.setFrom("test1@email.com");
+        email.addTo("test1@email.com");
+        email.setText("test");
+
+        when(httpClient.execute(any(HttpUriRequest.class), any(StringResponseHandler.class)))
+                .thenReturn(response);
+
+        Response response1 = client.post("http://sendgrid", Response.class,
+                new ApiKeyCredential("token"), email, RequestType.MULTIPART);
+
+        assertThat(response1, notNullValue());
+        assertThat(response1.getMessage(), equalTo("success"));
+
+        ArgumentCaptor<HttpEntityEnclosingRequestBase> captor = ArgumentCaptor
+                .forClass(HttpEntityEnclosingRequestBase.class);
+        verify(httpClient).execute(captor.capture(), eq(handler));
+
+        HttpEntityEnclosingRequestBase httpRequest = captor.getValue();
+
+        assertThat(httpRequest, notNullValue());
+        assertThat(httpRequest.getMethod(), equalTo("POST"));
+        assertThat(httpRequest.getURI(), hasToString("http://sendgrid"));
         assertThat(httpRequest.getAllHeaders(), hasItemInArray(
-                allOf(
-                        hasProperty("name", equalTo("Content-Type")),
-                        hasProperty("value", equalTo("application/json"))
-                )
+                hasProperty("name", equalTo("Authorization"))
         ));
     }
 
@@ -214,11 +242,35 @@ public class SendGridHttpClientTest extends BaseSendGridTest {
         assertThat(httpRequest.getAllHeaders(), hasItemInArray(
                 hasProperty("name", equalTo("Authorization"))
         ));
+    }
+
+    @Test
+    public void put_shouldMakeListRequestAndReturnResponse() throws Exception {
+        String response = readFile("/responses/subuser.json");
+        List<String> ips = new ArrayList<String>();
+        ips.add("127.0.0.1");
+        String request = JsonUtils.toJson(ips);
+
+        when(httpClient.execute(any(HttpUriRequest.class), any(StringResponseHandler.class)))
+                .thenReturn(response);
+
+        Subuser subuser = client.put("http://sendgrid", Subuser.class,
+                new ApiKeyCredential("token"), ips, RequestType.JSON);
+
+        assertThat(subuser, notNullValue());
+
+        ArgumentCaptor<HttpEntityEnclosingRequestBase> captor = ArgumentCaptor
+                .forClass(HttpEntityEnclosingRequestBase.class);
+        verify(httpClient).execute(captor.capture(), eq(handler));
+
+        HttpEntityEnclosingRequestBase httpRequest = captor.getValue();
+
+        assertThat(httpRequest, notNullValue());
+        assertThat(httpRequest.getMethod(), equalTo("PUT"));
+        assertThat(EntityUtils.toString(httpRequest.getEntity()), equalTo(request));
+        assertThat(httpRequest.getURI(), hasToString("http://sendgrid"));
         assertThat(httpRequest.getAllHeaders(), hasItemInArray(
-                allOf(
-                        hasProperty("name", equalTo("Content-Type")),
-                        hasProperty("value", equalTo("application/json"))
-                )
+                hasProperty("name", equalTo("Authorization"))
         ));
     }
 
@@ -252,12 +304,6 @@ public class SendGridHttpClientTest extends BaseSendGridTest {
         assertThat(httpRequest.getAllHeaders(), hasItemInArray(
                 hasProperty("name", equalTo("Authorization"))
         ));
-        assertThat(httpRequest.getAllHeaders(), hasItemInArray(
-                allOf(
-                        hasProperty("name", equalTo("Content-Type")),
-                        hasProperty("value", equalTo("application/json"))
-                )
-        ));
     }
 
     @Test
@@ -280,12 +326,6 @@ public class SendGridHttpClientTest extends BaseSendGridTest {
         assertThat(httpRequest.getURI(), hasToString("http://sendgrid"));
         assertThat(httpRequest.getAllHeaders(), hasItemInArray(
                 hasProperty("name", equalTo("Authorization"))
-        ));
-        assertThat(httpRequest.getAllHeaders(), hasItemInArray(
-                allOf(
-                        hasProperty("name", equalTo("Content-Type")),
-                        hasProperty("value", equalTo("application/json"))
-                )
         ));
     }
 

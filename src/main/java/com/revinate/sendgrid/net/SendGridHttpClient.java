@@ -8,6 +8,7 @@ import com.revinate.sendgrid.model.SendGridModel;
 import com.revinate.sendgrid.net.auth.Credential;
 import com.revinate.sendgrid.util.JsonUtils;
 import org.apache.http.Header;
+import org.apache.http.HttpEntity;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpResponseException;
 import org.apache.http.client.ResponseHandler;
@@ -67,67 +68,48 @@ public class SendGridHttpClient implements Closeable {
 
     public <T> T post(String url, Class<T> type, Credential credential, SendGridModel requestObject,
                       RequestType requestType) throws SendGridException {
-        HttpEntityBuilder builder = httpEntityBuilder(requestObject, requestType, credential);
-        String responseBody = execute(HttpPost.METHOD_NAME, url, credential, builder);
+        HttpEntity requestEntity = toEntity(requestObject, requestType, credential);
+        String responseBody = execute(HttpPost.METHOD_NAME, url, credential, requestEntity);
         return fromJson(responseBody, type);
     }
 
     public <T> T put(String url, Class<T> type, Credential credential, SendGridModel requestObject,
                      RequestType requestType) throws SendGridException {
-        HttpEntityBuilder builder = httpEntityBuilder(requestObject, requestType, credential);
-        String responseBody = execute(HttpPut.METHOD_NAME, url, credential, builder);
+        HttpEntity requestEntity = toEntity(requestObject, requestType, credential);
+        String responseBody = execute(HttpPut.METHOD_NAME, url, credential, requestEntity);
         return fromJson(responseBody, type);
     }
 
     public <T> T put(String url, Class<T> type, Credential credential, List<String> requestObject,
                      RequestType requestType) throws SendGridException {
-        HttpEntityBuilder builder = HttpEntityBuilder.create(requestType).setCredential(credential).setList(requestObject);
-        String responseBody = execute(HttpPut.METHOD_NAME, url, credential, builder);
+        HttpEntity requestEntity = toEntity(requestObject, requestType, credential);
+        String responseBody = execute(HttpPut.METHOD_NAME, url, credential, requestEntity);
         return fromJson(responseBody, type);
     }
 
     public <T> T patch(String url, Class<T> type, Credential credential, Map<String, Object> requestObject,
                        RequestType requestType) throws SendGridException {
-        HttpEntityBuilder builder = HttpEntityBuilder.create(requestType).setCredential(credential).setMap(requestObject);;
-        String responseBody = execute(HttpPatch.METHOD_NAME, url, credential, builder);
+        HttpEntity requestEntity = toEntity(requestObject, requestType, credential);
+        String responseBody = execute(HttpPatch.METHOD_NAME, url, credential, requestEntity);
         return fromJson(responseBody, type);
     }
 
     public void patch(String url, Credential credential, Map<String, Object> requestObject,
                       RequestType requestType) throws SendGridException {
-        HttpEntityBuilder builder = HttpEntityBuilder.create(requestType).setCredential(credential).setMap(requestObject);;
-        execute(HttpPatch.METHOD_NAME, url, credential, builder);
+        HttpEntity requestEntity = toEntity(requestObject, requestType, credential);
+        execute(HttpPatch.METHOD_NAME, url, credential, requestEntity);
     }
 
     public void delete(String url, Credential credential) throws SendGridException {
         execute(HttpDelete.METHOD_NAME, url, credential, null);
     }
 
-    private HttpEntityBuilder httpEntityBuilder(SendGridModel requestObject, RequestType requestType, Credential credential) {
-        HttpEntityBuilder builder = HttpEntityBuilder.create(requestType).setCredential(credential);
-        if (requestObject != null) {
-            requestObject.accept(builder);
-        }
-        return builder;
-    }
-
-    private String execute(String method, String url, Credential credential, HttpEntityBuilder entityBuilder) throws SendGridException {
-        RequestBuilder builder = RequestBuilder.create(method).setUri(url);
+    private String execute(String method, String url, Credential credential,
+                           HttpEntity entity) throws SendGridException {
+        RequestBuilder builder = RequestBuilder.create(method).setUri(url).setEntity(entity);
 
         for (Header header : credential.toHttpHeaders()) {
             builder.setHeader(header);
-        }
-
-        if (entityBuilder != null) {
-            try {
-                builder.setEntity(entityBuilder.build());
-            } catch (IOException e) {
-                throw new InvalidRequestException("Error while creating request entity", e);
-            }
-
-            for (Header header: entityBuilder.getHeaders()) {
-                builder.setHeader(header);
-            }
         }
 
         HttpUriRequest request = builder.build();
@@ -155,12 +137,47 @@ public class SendGridHttpClient implements Closeable {
         }
     }
 
+    private HttpEntity toEntity(SendGridModel requestObject, RequestType requestType,
+                                Credential credential) throws InvalidRequestException {
+        HttpEntityBuilder builder = HttpEntityBuilder.create(requestType).setCredential(credential);
+        if (requestObject != null) {
+            requestObject.accept(builder);
+        }
+
+        try {
+            return builder.build();
+        } catch (IOException e) {
+            throw new InvalidRequestException("Error while creating request entity", e);
+        }
+    }
+
+    private HttpEntity toEntity(Map<String, Object> requestObject, RequestType requestType,
+                                Credential credential) throws InvalidRequestException {
+        try {
+            return HttpEntityBuilder.create(requestType).setCredential(credential)
+                    .setMap(requestObject).build();
+        } catch (IOException e) {
+            throw new InvalidRequestException("Error while creating request entity", e);
+        }
+    }
+
+    private HttpEntity toEntity(List<String> requestObject, RequestType requestType,
+                                Credential credential) throws InvalidRequestException {
+        try {
+            return HttpEntityBuilder.create(requestType).setCredential(credential)
+                    .setList(requestObject).build();
+        } catch (IOException e) {
+            throw new InvalidRequestException("Error while creating request entity", e);
+        }
+    }
+
     private SendGridException handleResponseException(HttpResponseException e) {
         String responseBody = e.getMessage();
         String message;
         List<ApiError> errors = new ArrayList<ApiError>();
         try {
-            ApiErrorsResponse apiErrorsResponse = JsonUtils.fromJson(responseBody, ApiErrorsResponse.class);
+            ApiErrorsResponse apiErrorsResponse = JsonUtils.fromJson(
+                    responseBody, ApiErrorsResponse.class);
             message = apiErrorsResponse.toString();
             errors.addAll(apiErrorsResponse.getErrors());
         } catch (IOException e2) {

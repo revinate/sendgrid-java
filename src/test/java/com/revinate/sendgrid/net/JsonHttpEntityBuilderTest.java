@@ -96,12 +96,4 @@ public class JsonHttpEntityBuilderTest {
 
         builder.build();
     }
-
-    @Test
-    public void getHeaders_shouldGenerateContentType() throws Exception {
-        assertThat(builder.getHeaders(), contains(allOf(
-                hasProperty("name", equalTo("Content-Type")),
-                hasProperty("value", equalTo("application/json"))
-        )));
-    }
 }

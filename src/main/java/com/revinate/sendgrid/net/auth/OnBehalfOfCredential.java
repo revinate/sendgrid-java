@@ -8,6 +8,8 @@ import java.util.List;
 
 public class OnBehalfOfCredential implements Credential {
 
+    public static final String ON_BEHALF_OF = "On-Behalf-Of";
+
     private final Credential credential;
     private final String username;
 
@@ -27,7 +29,7 @@ public class OnBehalfOfCredential implements Credential {
     @Override
     public List<Header> toHttpHeaders() {
         List<Header> headers = new ArrayList<Header>(credential.toHttpHeaders());
-        headers.add(new BasicHeader("On-Behalf-Of", username));
+        headers.add(new BasicHeader(ON_BEHALF_OF, username));
         return headers;
     }
 }

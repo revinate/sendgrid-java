@@ -5,7 +5,6 @@ import com.revinate.sendgrid.model.SendGridModel;
 import com.revinate.sendgrid.model.SendGridModelVisitor;
 import com.revinate.sendgrid.net.SendGridHttpClient.RequestType;
 import com.revinate.sendgrid.net.auth.Credential;
-import org.apache.http.Header;
 import org.apache.http.HttpEntity;
 
 import java.io.IOException;
@@ -69,8 +68,6 @@ public abstract class HttpEntityBuilder implements SendGridModelVisitor {
     }
 
     public abstract HttpEntity build() throws IOException;
-
-    public abstract List<Header> getHeaders();
 
     private void clearContent() {
         this.email = null;

@@ -5,7 +5,6 @@ import com.revinate.sendgrid.model.Email;
 import com.revinate.sendgrid.net.SendGridHttpClient.RequestType;
 import com.revinate.sendgrid.net.auth.Credential;
 import com.revinate.sendgrid.net.auth.UsernamePasswordCredential;
-import org.apache.http.Header;
 import org.apache.http.HttpEntity;
 import org.junit.Before;
 import org.junit.Rule;
@@ -20,7 +19,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static org.hamcrest.Matchers.*;
+import static org.hamcrest.Matchers.instanceOf;
+import static org.hamcrest.Matchers.notNullValue;
 import static org.junit.Assert.assertThat;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -107,10 +107,5 @@ public class MultipartHttpEntityBuilderTest {
         thrown.expectMessage("Content is null");
 
         builder.build();
-    }
-
-    @Test
-    public void getHeaders_shouldBeEmpty() throws Exception {
-        assertThat(builder.getHeaders(), emptyCollectionOf(Header.class));
     }
 }

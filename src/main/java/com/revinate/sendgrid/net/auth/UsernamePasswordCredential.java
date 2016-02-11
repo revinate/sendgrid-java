@@ -2,6 +2,7 @@ package com.revinate.sendgrid.net.auth;
 
 import org.apache.commons.codec.binary.Base64;
 import org.apache.http.Header;
+import org.apache.http.HttpHeaders;
 import org.apache.http.message.BasicHeader;
 
 import java.util.Collections;
@@ -28,7 +29,7 @@ public class UsernamePasswordCredential implements Credential {
     @Override
     public List<Header> toHttpHeaders() {
         return Collections.<Header>singletonList(
-                new BasicHeader("Authorization", "Basic " + base64Credential()));
+                new BasicHeader(HttpHeaders.AUTHORIZATION, "Basic " + base64Credential()));
     }
 
     private String base64Credential() {

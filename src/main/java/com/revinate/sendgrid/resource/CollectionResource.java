@@ -3,12 +3,14 @@ package com.revinate.sendgrid.resource;
 import com.revinate.sendgrid.exception.SendGridException;
 import com.revinate.sendgrid.model.SendGridCollection;
 import com.revinate.sendgrid.model.SendGridEntity;
+import com.revinate.sendgrid.model.SendGridModel;
 import com.revinate.sendgrid.net.SendGridHttpClient;
+import com.revinate.sendgrid.net.SendGridHttpClient.RequestType;
 import com.revinate.sendgrid.net.auth.Credential;
 
 import java.util.List;
 
-public abstract class CollectionResource<T extends SendGridEntity, U extends SendGridCollection<T>> extends SendGridResource {
+public abstract class CollectionResource<T extends SendGridModel & SendGridEntity, U extends SendGridCollection<T>> extends SendGridResource {
 
     protected final Class<T> entityType;
     protected final Class<U> collectionType;
@@ -23,8 +25,8 @@ public abstract class CollectionResource<T extends SendGridEntity, U extends Sen
         return client.get(getUrl(), collectionType, credential).getData();
     }
 
-    public T create(T requestObject) throws SendGridException {
-        return client.post(getUrl(), entityType, credential, requestObject, SendGridHttpClient.RequestType.JSON);
+    public T create(T entity) throws SendGridException {
+        return client.post(getUrl(), entityType, credential, entity, RequestType.JSON);
     }
 
     protected String getUrl() {

@@ -1,6 +1,5 @@
 package com.revinate.sendgrid.net;
 
-import com.revinate.sendgrid.model.Email;
 import com.revinate.sendgrid.util.JsonUtils;
 import org.apache.http.Header;
 import org.apache.http.HttpEntity;
@@ -11,28 +10,20 @@ import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
 
-public class JsonHttpEntityBuilder implements HttpEntityBuilder {
-
-    private Object content;
-
-    public static JsonHttpEntityBuilder create() {
-        return new JsonHttpEntityBuilder();
-    }
-
-    @Override
-    public JsonHttpEntityBuilder setContent(Email email) {
-        this.content = email;
-        return this;
-    }
-
-    @Override
-    public JsonHttpEntityBuilder setContent(Object content) {
-        this.content = content;
-        return this;
-    }
+public class JsonHttpEntityBuilder extends HttpEntityBuilder {
 
     @Override
     public HttpEntity build() throws IOException {
+        Object content = email;
+        if (content == null) {
+            content = model;
+        }
+        if (content == null) {
+            content = map;
+        }
+        if (content == null) {
+            content = list;
+        }
         if (content == null) {
             throw new IOException("Content is null");
         }

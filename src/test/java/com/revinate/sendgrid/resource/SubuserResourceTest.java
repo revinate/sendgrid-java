@@ -103,7 +103,7 @@ public class SubuserResourceTest extends BaseSendGridTest {
         subuser.addIp("127.0.0.1");
 
         when(client.put(any(String.class), any(Class.class), any(Credential.class),
-                any(Subuser.class), eq(RequestType.JSON))).thenReturn(response);
+                any(List.class), any(RequestType.class))).thenReturn(response);
 
         Subuser subuser1 = resource.update(subuser);
 

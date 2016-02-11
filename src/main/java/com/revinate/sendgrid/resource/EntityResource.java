@@ -3,13 +3,14 @@ package com.revinate.sendgrid.resource;
 import com.revinate.sendgrid.exception.InvalidRequestException;
 import com.revinate.sendgrid.exception.SendGridException;
 import com.revinate.sendgrid.model.SendGridEntity;
+import com.revinate.sendgrid.model.SendGridModel;
 import com.revinate.sendgrid.net.SendGridHttpClient;
 import com.revinate.sendgrid.net.SendGridHttpClient.RequestType;
 import com.revinate.sendgrid.net.auth.Credential;
 
 import java.util.Map;
 
-public abstract class EntityResource<T extends SendGridEntity> extends SendGridResource {
+public abstract class EntityResource<T extends SendGridModel & SendGridEntity> extends SendGridResource {
 
     protected final Class<T> entityType;
     protected final String id;

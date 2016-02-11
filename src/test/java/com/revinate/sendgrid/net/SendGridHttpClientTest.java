@@ -22,6 +22,8 @@ import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.assertThat;
@@ -204,15 +206,15 @@ public class SendGridHttpClientTest extends BaseSendGridTest {
     @Test
     public void patch_shouldMakeRequestAndReturnResponse() throws Exception {
         String response = readFile("/responses/api-key.json");
-        ApiKey apiKey = new ApiKey();
-        apiKey.setName("1st API key");
-        String request = JsonUtils.toJson(apiKey);
+        Map<String, Object> requestObject = new HashMap<String, Object>();
+        requestObject.put("name", "1st API key");
+        String request = JsonUtils.toJson(requestObject);
 
         when(httpClient.execute(any(HttpUriRequest.class), any(StringResponseHandler.class)))
                 .thenReturn(response);
 
         ApiKey apiKey1 = client.patch("http://sendgrid", ApiKey.class,
-                new ApiKeyCredential("token"), apiKey, RequestType.JSON);
+                new ApiKeyCredential("token"), requestObject, RequestType.JSON);
 
         assertThat(apiKey1, notNullValue());
         assertThat(apiKey1.getName(), equalTo("1st API key"));
@@ -241,11 +243,11 @@ public class SendGridHttpClientTest extends BaseSendGridTest {
 
     @Test
     public void patch_shouldMakeRequest() throws Exception {
-        ApiKey apiKey = new ApiKey();
-        apiKey.setName("1st API key");
-        String request = JsonUtils.toJson(apiKey);
+        Map<String, Object> requestObject = new HashMap<String, Object>();
+        requestObject.put("name", "1st API key");
+        String request = JsonUtils.toJson(requestObject);
 
-        client.patch("http://sendgrid", new ApiKeyCredential("token"), apiKey, RequestType.JSON);
+        client.patch("http://sendgrid", new ApiKeyCredential("token"), requestObject, RequestType.JSON);
 
         ArgumentCaptor<HttpEntityEnclosingRequestBase> captor = ArgumentCaptor
                 .forClass(HttpEntityEnclosingRequestBase.class);

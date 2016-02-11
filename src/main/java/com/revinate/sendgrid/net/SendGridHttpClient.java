@@ -3,6 +3,7 @@ package com.revinate.sendgrid.net;
 import com.revinate.sendgrid.exception.*;
 import com.revinate.sendgrid.model.ApiError;
 import com.revinate.sendgrid.model.ApiErrorsResponse;
+import com.revinate.sendgrid.model.SendGridModel;
 import com.revinate.sendgrid.net.auth.Credential;
 import com.revinate.sendgrid.util.JsonUtils;
 import org.apache.http.Header;
@@ -17,6 +18,7 @@ import java.io.Closeable;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public class SendGridHttpClient implements Closeable {
 
@@ -62,30 +64,37 @@ public class SendGridHttpClient implements Closeable {
         return fromJson(responseBody, type);
     }
 
-    public <T> T post(String url, Class<T> type, Credential credential, Object requestObject,
+    public <T> T post(String url, Class<T> type, Credential credential, SendGridModel requestObject,
                       RequestType requestType) throws SendGridException {
         HttpEntityBuilder builder = httpEntityBuilder(requestObject, requestType, credential);
         String responseBody = execute(HttpPost.METHOD_NAME, url, credential, builder);
         return fromJson(responseBody, type);
     }
 
-    public <T> T put(String url, Class<T> type, Credential credential, Object requestObject,
+    public <T> T put(String url, Class<T> type, Credential credential, SendGridModel requestObject,
                      RequestType requestType) throws SendGridException {
         HttpEntityBuilder builder = httpEntityBuilder(requestObject, requestType, credential);
         String responseBody = execute(HttpPut.METHOD_NAME, url, credential, builder);
         return fromJson(responseBody, type);
     }
 
-    public <T> T patch(String url, Class<T> type, Credential credential, Object requestObject,
+    public <T> T put(String url, Class<T> type, Credential credential, List<String> requestObject,
+                     RequestType requestType) throws SendGridException {
+        HttpEntityBuilder builder = HttpEntityBuilder.create(requestType).setCredential(credential).setList(requestObject);
+        String responseBody = execute(HttpPut.METHOD_NAME, url, credential, builder);
+        return fromJson(responseBody, type);
+    }
+
+    public <T> T patch(String url, Class<T> type, Credential credential, Map<String, Object> requestObject,
                        RequestType requestType) throws SendGridException {
-        HttpEntityBuilder builder = httpEntityBuilder(requestObject, requestType, credential);
+        HttpEntityBuilder builder = HttpEntityBuilder.create(requestType).setCredential(credential).setMap(requestObject);;
         String responseBody = execute(HttpPatch.METHOD_NAME, url, credential, builder);
         return fromJson(responseBody, type);
     }
 
-    public void patch(String url, Credential credential, Object requestObject,
+    public void patch(String url, Credential credential, Map<String, Object> requestObject,
                       RequestType requestType) throws SendGridException {
-        HttpEntityBuilder builder = httpEntityBuilder(requestObject, requestType, credential);
+        HttpEntityBuilder builder = HttpEntityBuilder.create(requestType).setCredential(credential).setMap(requestObject);;
         execute(HttpPatch.METHOD_NAME, url, credential, builder);
     }
 
@@ -93,23 +102,11 @@ public class SendGridHttpClient implements Closeable {
         execute(HttpDelete.METHOD_NAME, url, credential, null);
     }
 
-    private HttpEntityBuilder httpEntityBuilder(Object requestObject, RequestType requestType, Credential credential) {
-        HttpEntityBuilder builder;
-        switch (requestType) {
-            case MULTIPART:
-                builder = MultipartHttpEntityBuilder.create(credential);
-                break;
-            default:
-                builder = JsonHttpEntityBuilder.create();
-                break;
+    private HttpEntityBuilder httpEntityBuilder(SendGridModel requestObject, RequestType requestType, Credential credential) {
+        HttpEntityBuilder builder = HttpEntityBuilder.create(requestType).setCredential(credential);
+        if (requestObject != null) {
+            requestObject.accept(builder);
         }
-
-        if (requestObject instanceof AcceptsHttpEntityBuilder) {
-            ((AcceptsHttpEntityBuilder) requestObject).accept(builder);
-        } else {
-            builder.setContent(requestObject);
-        }
-
         return builder;
     }
 
@@ -154,18 +151,6 @@ public class SendGridHttpClient implements Closeable {
             return JsonUtils.fromJson(content, type);
         } catch (IOException e) {
             throw new ApiConnectionException("Error while mapping response", e);
-        }
-    }
-
-    private String toJson(Object object) throws InvalidRequestException {
-        if (object == null) {
-            throw new InvalidRequestException("Request object is null");
-        }
-
-        try {
-            return JsonUtils.toJson(object);
-        } catch (IOException e) {
-            throw new InvalidRequestException("Error while mapping request", e);
         }
     }
 

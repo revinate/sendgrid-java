@@ -1,7 +1,5 @@
 package com.revinate.sendgrid.net;
 
-import com.revinate.sendgrid.model.Email;
-import com.revinate.sendgrid.net.auth.Credential;
 import com.revinate.sendgrid.net.auth.UsernamePasswordCredential;
 import org.apache.http.Header;
 import org.apache.http.HttpEntity;
@@ -15,7 +13,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-public class MultipartHttpEntityBuilder implements HttpEntityBuilder {
+public class MultipartHttpEntityBuilder extends HttpEntityBuilder {
 
     private static final String PARAM_TO = "to[]";
     private static final String PARAM_TONAME = "toname[]";
@@ -36,35 +34,13 @@ public class MultipartHttpEntityBuilder implements HttpEntityBuilder {
 
     private static final ContentType TEXT_PLAIN_UTF8 = ContentType.create("text/plain", "UTF-8");
 
-    private final Credential credential;
-    private Email email;
-    private Object content;
-
-    public static MultipartHttpEntityBuilder create(Credential credential) {
-        return new MultipartHttpEntityBuilder(credential);
-    }
-
-    public MultipartHttpEntityBuilder(Credential credential) {
-        this.credential = credential;
-    }
-
-    @Override
-    public MultipartHttpEntityBuilder setContent(Email email) {
-        this.email = email;
-        return this;
-    }
-
-    @Override
-    public MultipartHttpEntityBuilder setContent(Object content) {
-        this.content = content;
-        return this;
-    }
-
     @Override
     public HttpEntity build() throws IOException {
         if (email != null) {
             return buildEmail();
-        } else if (content != null) {
+        } else if (map != null) {
+            return buildMap();
+        } else if (model != null || list != null) {
             throw new IOException("Content is of unsupported type");
         }
 
@@ -76,7 +52,7 @@ public class MultipartHttpEntityBuilder implements HttpEntityBuilder {
         return Collections.emptyList();
     }
 
-    private HttpEntity buildEmail() {
+    private MultipartEntityBuilder multipartEntityBuilder() {
         MultipartEntityBuilder builder = MultipartEntityBuilder.create();
 
         if (credential != null && credential instanceof UsernamePasswordCredential) {
@@ -84,6 +60,20 @@ public class MultipartHttpEntityBuilder implements HttpEntityBuilder {
             builder.addTextBody("api_user", usernamePasswordCredential.getUsername());
             builder.addTextBody("api_key", usernamePasswordCredential.getPassword());
         }
+
+        return builder;
+    }
+
+    private HttpEntity buildMap() {
+        MultipartEntityBuilder builder = multipartEntityBuilder();
+        for (Map.Entry<String, Object> entry : map.entrySet()) {
+            builder.addTextBody(entry.getKey(), entry.getValue().toString());
+        }
+        return builder.build();
+    }
+
+    private HttpEntity buildEmail() {
+        MultipartEntityBuilder builder = multipartEntityBuilder();
 
         String[] tos = email.getTos();
         String[] tonames = email.getToNames();

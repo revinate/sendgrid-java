@@ -313,7 +313,7 @@ public class Email extends SendGridModel {
     }
 
     @Override
-    public void accept(HttpEntityBuilder builder) {
-        builder.setContent(this);
+    public void accept(SendGridModelVisitor visitor) {
+        visitor.visit(this);
     }
 }

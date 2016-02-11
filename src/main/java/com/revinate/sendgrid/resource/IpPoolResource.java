@@ -5,6 +5,7 @@ import com.revinate.sendgrid.exception.SendGridException;
 import com.revinate.sendgrid.model.Ip;
 import com.revinate.sendgrid.model.IpPool;
 import com.revinate.sendgrid.net.SendGridHttpClient;
+import com.revinate.sendgrid.net.SendGridHttpClient.RequestType;
 import com.revinate.sendgrid.net.auth.Credential;
 
 import java.util.Map;
@@ -35,7 +36,7 @@ public class IpPoolResource extends EntityResource<IpPool> {
     public IpPool update(IpPool ipPool) throws SendGridException {
         IpPool requestObject = new IpPool();
         requestObject.setName(ipPool.getName());
-        return client.put(getUrl(), requestObject, IpPool.class, credential);
+        return client.put(getUrl(), IpPool.class, credential, requestObject, RequestType.JSON);
     }
 
     @Override

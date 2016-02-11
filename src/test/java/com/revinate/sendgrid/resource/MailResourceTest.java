@@ -4,6 +4,7 @@ import com.revinate.sendgrid.BaseSendGridTest;
 import com.revinate.sendgrid.model.Email;
 import com.revinate.sendgrid.model.Response;
 import com.revinate.sendgrid.net.SendGridHttpClient;
+import com.revinate.sendgrid.net.SendGridHttpClient.RequestType;
 import com.revinate.sendgrid.net.auth.Credential;
 import com.revinate.sendgrid.util.JsonUtils;
 import org.junit.Assert;
@@ -44,8 +45,8 @@ public class MailResourceTest extends BaseSendGridTest {
         email.setFrom("test1@email.com");
         email.addTo("test1@email.com");
 
-        when(client.post("https://api.sendgrid.com/api/mail.send.json", email,
-                Response.class, credential)).thenReturn(response);
+        when(client.post("https://api.sendgrid.com/api/mail.send.json", Response.class,
+                credential, email, RequestType.MULTIPART)).thenReturn(response);
 
         Response response1 = resource.send(email);
 

@@ -3,6 +3,7 @@ package com.revinate.sendgrid.resource;
 import com.revinate.sendgrid.BaseSendGridTest;
 import com.revinate.sendgrid.model.Monitor;
 import com.revinate.sendgrid.net.SendGridHttpClient;
+import com.revinate.sendgrid.net.SendGridHttpClient.RequestType;
 import com.revinate.sendgrid.net.auth.Credential;
 import com.revinate.sendgrid.util.JsonUtils;
 import org.junit.Before;
@@ -59,8 +60,8 @@ public class MonitorResourceTest extends BaseSendGridTest {
         monitor.setEmail("monitor@email.com");
         monitor.setFrequency(1000);
 
-        when(client.post("https://api.sendgrid.com/v3/subusers/test1/monitor", monitor,
-                Monitor.class, credential)).thenReturn(response);
+        when(client.post("https://api.sendgrid.com/v3/subusers/test1/monitor",
+                Monitor.class, credential, monitor, RequestType.JSON)).thenReturn(response);
 
         Monitor monitor1 = resource.create(monitor);
 
@@ -75,8 +76,8 @@ public class MonitorResourceTest extends BaseSendGridTest {
         monitor.setEmail("monitor@email.com");
         monitor.setFrequency(1000);
 
-        when(client.put(any(String.class), any(Monitor.class), any(Class.class),
-                any(Credential.class))).thenReturn(response);
+        when(client.put(any(String.class), any(Class.class),
+                any(Credential.class), any(Monitor.class), any(RequestType.class))).thenReturn(response);
 
         Monitor monitor1 = resource.update(monitor);
 
@@ -84,7 +85,7 @@ public class MonitorResourceTest extends BaseSendGridTest {
 
         ArgumentCaptor<Monitor> captor = ArgumentCaptor.forClass(Monitor.class);
         verify(client).put(eq("https://api.sendgrid.com/v3/subusers/test1/monitor"),
-                captor.capture(), eq(Monitor.class), eq(credential));
+                eq(Monitor.class), eq(credential), captor.capture(), eq(RequestType.JSON));
 
         Monitor monitor2 = captor.getValue();
 

@@ -4,6 +4,7 @@ import com.revinate.sendgrid.BaseSendGridTest;
 import com.revinate.sendgrid.model.Subuser;
 import com.revinate.sendgrid.model.SubuserCollection;
 import com.revinate.sendgrid.net.SendGridHttpClient;
+import com.revinate.sendgrid.net.SendGridHttpClient.RequestType;
 import com.revinate.sendgrid.net.auth.Credential;
 import com.revinate.sendgrid.util.JsonUtils;
 import org.junit.Before;
@@ -75,8 +76,8 @@ public class SubusersResourceTest extends BaseSendGridTest {
         subuser.setPassword("testpassword");
         subuser.addIp("127.0.0.1");
 
-        when(client.post("https://api.sendgrid.com/v3/subusers", subuser,
-                Subuser.class, credential)).thenReturn(response);
+        when(client.post("https://api.sendgrid.com/v3/subusers",
+                Subuser.class, credential, subuser, RequestType.JSON)).thenReturn(response);
 
         Subuser subuser1 = resource.create(subuser);
 

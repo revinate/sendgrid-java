@@ -24,7 +24,7 @@ public abstract class CollectionResource<T extends SendGridEntity, U extends Sen
     }
 
     public T create(T requestObject) throws SendGridException {
-        return client.post(getUrl(), requestObject, entityType, credential);
+        return client.post(getUrl(), entityType, credential, requestObject, SendGridHttpClient.RequestType.JSON);
     }
 
     protected String getUrl() {

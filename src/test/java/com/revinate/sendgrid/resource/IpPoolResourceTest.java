@@ -4,6 +4,7 @@ import com.revinate.sendgrid.BaseSendGridTest;
 import com.revinate.sendgrid.exception.InvalidRequestException;
 import com.revinate.sendgrid.model.IpPool;
 import com.revinate.sendgrid.net.SendGridHttpClient;
+import com.revinate.sendgrid.net.SendGridHttpClient.RequestType;
 import com.revinate.sendgrid.net.auth.Credential;
 import com.revinate.sendgrid.util.JsonUtils;
 import org.junit.Before;
@@ -97,8 +98,8 @@ public class IpPoolResourceTest extends BaseSendGridTest {
         IpPool ipPool = new IpPool();
         ipPool.setName(POOL_NAME);
 
-        when(client.put(any(String.class), any(IpPool.class), any(Class.class),
-                any(Credential.class))).thenReturn(response);
+        when(client.put(any(String.class), any(Class.class),
+                any(Credential.class), any(IpPool.class), any(RequestType.class))).thenReturn(response);
 
         IpPool ipPool1 = resource.update(ipPool);
 
@@ -106,7 +107,7 @@ public class IpPoolResourceTest extends BaseSendGridTest {
 
         ArgumentCaptor<IpPool> captor = ArgumentCaptor.forClass(IpPool.class);
         verify(client).put(eq("https://api.sendgrid.com/v3/ips/pools/" + POOL_NAME),
-                captor.capture(), eq(IpPool.class), eq(credential));
+                eq(IpPool.class), eq(credential), captor.capture(), eq(RequestType.JSON));
 
         IpPool ipPool2 = captor.getValue();
 

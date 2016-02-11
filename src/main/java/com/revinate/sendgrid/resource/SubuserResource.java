@@ -4,6 +4,7 @@ import com.revinate.sendgrid.exception.InvalidRequestException;
 import com.revinate.sendgrid.exception.SendGridException;
 import com.revinate.sendgrid.model.Subuser;
 import com.revinate.sendgrid.net.SendGridHttpClient;
+import com.revinate.sendgrid.net.SendGridHttpClient.RequestType;
 import com.revinate.sendgrid.net.auth.Credential;
 
 import java.util.Map;
@@ -26,7 +27,7 @@ public class SubuserResource extends EntityResource<Subuser> {
     public Subuser update(Subuser subuser) throws SendGridException {
         // TODO: fix this URL, and do a better job of copying the subuser
         Subuser response = client.put(getUrl() + "/" + IpsResource.ENDPOINT,
-                subuser.getIps(), Subuser.class, credential);
+                Subuser.class, credential, subuser.getIps(), RequestType.JSON);
         response.setId(subuser.getId());
         response.setUsername(subuser.getUsername());
         response.setEmail(subuser.getEmail());
@@ -37,7 +38,7 @@ public class SubuserResource extends EntityResource<Subuser> {
     @Override
     public Subuser partialUpdate(Map<String, Object> requestObject) throws SendGridException {
         // TODO: get the rest of the subuser
-        client.patch(getUrl(), requestObject, credential);
+        client.patch(getUrl(), credential, requestObject, RequestType.JSON);
         Subuser response = new Subuser();
         response.setDisabled((Boolean) requestObject.get("disabled"));
         return response;

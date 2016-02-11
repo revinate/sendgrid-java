@@ -4,6 +4,7 @@ import com.revinate.sendgrid.exception.InvalidRequestException;
 import com.revinate.sendgrid.exception.SendGridException;
 import com.revinate.sendgrid.model.SendGridEntity;
 import com.revinate.sendgrid.net.SendGridHttpClient;
+import com.revinate.sendgrid.net.SendGridHttpClient.RequestType;
 import com.revinate.sendgrid.net.auth.Credential;
 
 import java.util.Map;
@@ -32,11 +33,11 @@ public abstract class EntityResource<T extends SendGridEntity> extends SendGridR
     }
 
     public T update(T entity) throws SendGridException {
-        return client.put(getUrl(), entity, entityType, credential);
+        return client.put(getUrl(), entityType, credential, entity, RequestType.JSON);
     }
 
     public T partialUpdate(Map<String, Object> requestObject) throws SendGridException {
-        return client.patch(getUrl(), requestObject, entityType, credential);
+        return client.patch(getUrl(), entityType, credential, requestObject, RequestType.JSON);
     }
 
     public void delete() throws SendGridException {

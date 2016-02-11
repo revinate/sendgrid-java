@@ -4,6 +4,7 @@ import com.revinate.sendgrid.BaseSendGridTest;
 import com.revinate.sendgrid.exception.InvalidRequestException;
 import com.revinate.sendgrid.model.ApiKey;
 import com.revinate.sendgrid.net.SendGridHttpClient;
+import com.revinate.sendgrid.net.SendGridHttpClient.RequestType;
 import com.revinate.sendgrid.net.auth.Credential;
 import com.revinate.sendgrid.util.JsonUtils;
 import org.junit.Before;
@@ -79,8 +80,8 @@ public class ApiKeyResourceTest extends BaseSendGridTest {
         apiKey.setName(response.getName());
         apiKey.setScopes(response.getScopes());
 
-        when(client.put(any(String.class), any(ApiKey.class), any(Class.class),
-                any(Credential.class))).thenReturn(response);
+        when(client.put(any(String.class), any(Class.class),
+                any(Credential.class), any(ApiKey.class), any(RequestType.class))).thenReturn(response);
 
         ApiKey apiKey1 = resource.update(apiKey);
 
@@ -88,7 +89,7 @@ public class ApiKeyResourceTest extends BaseSendGridTest {
 
         ArgumentCaptor<ApiKey> captor = ArgumentCaptor.forClass(ApiKey.class);
         verify(client).put(eq("https://api.sendgrid.com/v3/api_keys/" + API_KEY_ID),
-                captor.capture(), eq(ApiKey.class), eq(credential));
+                eq(ApiKey.class), eq(credential), captor.capture(), eq(RequestType.JSON));
 
         ApiKey apiKey2 = captor.getValue();
 
@@ -117,7 +118,7 @@ public class ApiKeyResourceTest extends BaseSendGridTest {
         requestObject.put("name", "3rd API key");
 
         when(client.patch("https://api.sendgrid.com/v3/api_keys/" + API_KEY_ID,
-                requestObject, ApiKey.class, credential)).thenReturn(response);
+                ApiKey.class, credential, requestObject, RequestType.JSON)).thenReturn(response);
 
         ApiKey apiKey1 = resource.partialUpdate(requestObject);
 

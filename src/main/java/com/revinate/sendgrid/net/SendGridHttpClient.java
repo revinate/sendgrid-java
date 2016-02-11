@@ -3,20 +3,15 @@ package com.revinate.sendgrid.net;
 import com.revinate.sendgrid.exception.*;
 import com.revinate.sendgrid.model.ApiError;
 import com.revinate.sendgrid.model.ApiErrorsResponse;
-import com.revinate.sendgrid.model.Email;
-import com.revinate.sendgrid.net.auth.ApiKeyCredential;
 import com.revinate.sendgrid.net.auth.Credential;
 import com.revinate.sendgrid.util.JsonUtils;
 import org.apache.http.Header;
-import org.apache.http.HttpResponse;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpResponseException;
 import org.apache.http.client.ResponseHandler;
-import org.apache.http.client.entity.EntityBuilder;
 import org.apache.http.client.methods.*;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
-import org.apache.http.util.EntityUtils;
 
 import java.io.Closeable;
 import java.io.IOException;
@@ -24,6 +19,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class SendGridHttpClient implements Closeable {
+
+    public enum RequestType {
+        JSON, MULTIPART
+    }
 
     private final CloseableHttpClient client;
     private final ResponseHandler<String> responseHandler;
@@ -59,79 +58,84 @@ public class SendGridHttpClient implements Closeable {
     }
 
     public <T> T get(String url, Class<T> type, Credential credential) throws SendGridException {
-        String responseBody = execute(HttpGet.METHOD_NAME, url, credential, null, null);
+        String responseBody = execute(HttpGet.METHOD_NAME, url, credential, null);
         return fromJson(responseBody, type);
     }
 
-    public <T> T post(String url, Object requestObject, Class<T> type, Credential credential) throws SendGridException {
-        String requestBody = toJson(requestObject);
-        String responseBody = execute(HttpPost.METHOD_NAME, url, credential, requestBody, "application/json");
+    public <T> T post(String url, Class<T> type, Credential credential, Object requestObject,
+                      RequestType requestType) throws SendGridException {
+        HttpEntityBuilder builder = httpEntityBuilder(requestObject, requestType, credential);
+        String responseBody = execute(HttpPost.METHOD_NAME, url, credential, builder);
         return fromJson(responseBody, type);
     }
 
-    public <T> T post(String url, Email email, Class<T> type, Credential credential) throws SendGridException {
-        if (email == null) {
-            throw new InvalidRequestException("Request object is null");
-        }
-
-        HttpPost httpPost = new HttpPost(url);
-        httpPost.setEntity(email.toHttpEntity(credential));
-        if (credential instanceof ApiKeyCredential) {
-            for (Header header : credential.toHttpHeaders()) {
-                httpPost.setHeader(header);
-            }
-        }
-
-        String responseBody;
-        try {
-            HttpResponse response = this.client.execute(httpPost);
-            responseBody = EntityUtils.toString(response.getEntity());
-        } catch (IOException e) {
-            throw new SendGridException(e);
-        }
-
+    public <T> T put(String url, Class<T> type, Credential credential, Object requestObject,
+                     RequestType requestType) throws SendGridException {
+        HttpEntityBuilder builder = httpEntityBuilder(requestObject, requestType, credential);
+        String responseBody = execute(HttpPut.METHOD_NAME, url, credential, builder);
         return fromJson(responseBody, type);
     }
 
-    public <T> T put(String url, Object requestObject, Class<T> type, Credential credential) throws SendGridException {
-        String requestBody = toJson(requestObject);
-        String responseBody = execute(HttpPut.METHOD_NAME, url, credential, requestBody, "application/json");
+    public <T> T patch(String url, Class<T> type, Credential credential, Object requestObject,
+                       RequestType requestType) throws SendGridException {
+        HttpEntityBuilder builder = httpEntityBuilder(requestObject, requestType, credential);
+        String responseBody = execute(HttpPatch.METHOD_NAME, url, credential, builder);
         return fromJson(responseBody, type);
     }
 
-    public <T> T patch(String url, Object requestObject, Class<T> type, Credential credential) throws SendGridException {
-        String requestBody = toJson(requestObject);
-        String responseBody = execute(HttpPatch.METHOD_NAME, url, credential, requestBody, "application/json");
-        return fromJson(responseBody, type);
-    }
-
-    public void patch(String url, Object requestObject, Credential credential) throws SendGridException {
-        String requestBody = toJson(requestObject);
-        execute(HttpPatch.METHOD_NAME, url, credential, requestBody, "application/json");
+    public void patch(String url, Credential credential, Object requestObject,
+                      RequestType requestType) throws SendGridException {
+        HttpEntityBuilder builder = httpEntityBuilder(requestObject, requestType, credential);
+        execute(HttpPatch.METHOD_NAME, url, credential, builder);
     }
 
     public void delete(String url, Credential credential) throws SendGridException {
-        execute(HttpDelete.METHOD_NAME, url, credential, null, null);
+        execute(HttpDelete.METHOD_NAME, url, credential, null);
     }
 
-    private String execute(String method, String url, Credential credential,
-                           String requestBody, String contentType) throws SendGridException {
+    private HttpEntityBuilder httpEntityBuilder(Object requestObject, RequestType requestType, Credential credential) {
+        HttpEntityBuilder builder;
+        switch (requestType) {
+            case MULTIPART:
+                builder = MultipartHttpEntityBuilder.create(credential);
+                break;
+            default:
+                builder = JsonHttpEntityBuilder.create();
+                break;
+        }
+
+        if (requestObject instanceof AcceptsHttpEntityBuilder) {
+            ((AcceptsHttpEntityBuilder) requestObject).accept(builder);
+        } else {
+            builder.setContent(requestObject);
+        }
+
+        return builder;
+    }
+
+    private String execute(String method, String url, Credential credential, HttpEntityBuilder entityBuilder) throws SendGridException {
         RequestBuilder builder = RequestBuilder.create(method).setUri(url);
 
         for (Header header : credential.toHttpHeaders()) {
             builder.setHeader(header);
         }
 
-        if (requestBody != null) {
-            builder.setEntity(EntityBuilder.create().setText(requestBody).build());
+        if (entityBuilder != null) {
+            try {
+                builder.setEntity(entityBuilder.build());
+            } catch (IOException e) {
+                throw new InvalidRequestException("Error while creating request entity", e);
+            }
+
+            for (Header header: entityBuilder.getHeaders()) {
+                builder.setHeader(header);
+            }
         }
 
-        if (contentType != null) {
-            builder.setHeader("Content-Type", contentType);
-        }
+        HttpUriRequest request = builder.build();
 
         try {
-            return client.execute(builder.build(), responseHandler);
+            return client.execute(request, responseHandler);
         } catch (HttpResponseException e) {
             throw handleResponseException(e);
         } catch (ClientProtocolException e) {
@@ -170,6 +174,7 @@ public class SendGridHttpClient implements Closeable {
         String message;
         List<ApiError> errors = new ArrayList<ApiError>();
         try {
+            // TODO: for API v2, responseBody is a Response, not an ApiErrorsResponse
             ApiErrorsResponse apiErrorsResponse = JsonUtils.fromJson(responseBody, ApiErrorsResponse.class);
             message = apiErrorsResponse.toString();
             errors.addAll(apiErrorsResponse.getErrors());

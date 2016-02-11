@@ -4,6 +4,7 @@ import com.revinate.sendgrid.BaseSendGridTest;
 import com.revinate.sendgrid.exception.InvalidRequestException;
 import com.revinate.sendgrid.model.Subuser;
 import com.revinate.sendgrid.net.SendGridHttpClient;
+import com.revinate.sendgrid.net.SendGridHttpClient.RequestType;
 import com.revinate.sendgrid.net.auth.Credential;
 import com.revinate.sendgrid.util.JsonUtils;
 import org.junit.Before;
@@ -101,8 +102,8 @@ public class SubuserResourceTest extends BaseSendGridTest {
         subuser.setEmail("test1@email.com");
         subuser.addIp("127.0.0.1");
 
-        when(client.put(any(String.class), any(Subuser.class), any(Class.class),
-                any(Credential.class))).thenReturn(response);
+        when(client.put(any(String.class), any(Class.class), any(Credential.class),
+                any(Subuser.class), eq(RequestType.JSON))).thenReturn(response);
 
         Subuser subuser1 = resource.update(subuser);
 
@@ -113,7 +114,7 @@ public class SubuserResourceTest extends BaseSendGridTest {
 
         ArgumentCaptor<List> captor = ArgumentCaptor.forClass(List.class);
         verify(client).put(eq("https://api.sendgrid.com/v3/subusers/" + USERNAME + "/ips"),
-                captor.capture(), eq(Subuser.class), eq(credential));
+                eq(Subuser.class), eq(credential), captor.capture(), eq(RequestType.JSON));
 
         List<String> ips = captor.getValue();
 
@@ -139,7 +140,8 @@ public class SubuserResourceTest extends BaseSendGridTest {
 
         Subuser subuser1 = resource.partialUpdate(requestObject);
 
-        verify(client).patch("https://api.sendgrid.com/v3/subusers/" + USERNAME, requestObject, credential);
+        verify(client).patch("https://api.sendgrid.com/v3/subusers/" + USERNAME,
+                credential, requestObject, RequestType.JSON);
 
         assertThat(subuser1, notNullValue());
         assertThat(subuser1.getDisabled(), equalTo(true));

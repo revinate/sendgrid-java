@@ -22,4 +22,20 @@ public class Response extends SendGridModel {
     public void setErrors(List<String> errors) {
         this.errors = errors;
     }
+
+    @Override
+    public String toString() {
+        if (errors == null || errors.isEmpty()) {
+            return message;
+        } else if (errors.size() == 1) {
+            return message + ":" + errors.get(0);
+        } else {
+            StringBuilder sb = new StringBuilder();
+            sb.append(message).append(":\n");
+            for (String error : errors) {
+                sb.append("\t").append(error).append("\n");
+            }
+            return sb.toString();
+        }
+    }
 }

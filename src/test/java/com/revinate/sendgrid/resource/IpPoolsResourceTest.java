@@ -4,6 +4,7 @@ import com.revinate.sendgrid.BaseSendGridTest;
 import com.revinate.sendgrid.model.IpPool;
 import com.revinate.sendgrid.model.IpPoolCollection;
 import com.revinate.sendgrid.net.SendGridHttpClient;
+import com.revinate.sendgrid.net.SendGridHttpClient.RequestType;
 import com.revinate.sendgrid.net.auth.Credential;
 import com.revinate.sendgrid.util.JsonUtils;
 import org.junit.Before;
@@ -72,8 +73,8 @@ public class IpPoolsResourceTest extends BaseSendGridTest {
         IpPool ipPool = new IpPool();
         ipPool.setName("transactional");
 
-        when(client.post("https://api.sendgrid.com/v3/ips/pools", ipPool,
-                IpPool.class, credential)).thenReturn(response);
+        when(client.post("https://api.sendgrid.com/v3/ips/pools", IpPool.class,
+                credential, ipPool, RequestType.JSON)).thenReturn(response);
 
         IpPool ipPool1 = resource.create(ipPool);
 

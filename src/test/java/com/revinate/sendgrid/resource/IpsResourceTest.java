@@ -5,6 +5,7 @@ import com.revinate.sendgrid.exception.InvalidRequestException;
 import com.revinate.sendgrid.model.Ip;
 import com.revinate.sendgrid.model.IpCollection;
 import com.revinate.sendgrid.net.SendGridHttpClient;
+import com.revinate.sendgrid.net.SendGridHttpClient.RequestType;
 import com.revinate.sendgrid.net.auth.Credential;
 import com.revinate.sendgrid.util.JsonUtils;
 import org.junit.Before;
@@ -76,7 +77,7 @@ public class IpsResourceTest extends BaseSendGridTest {
                 client, credential, "transactional").ips();
 
         when(client.post("https://api.sendgrid.com/v3/ips/pools/transactional/ips",
-                ip, Ip.class, credential)).thenReturn(response);
+                Ip.class, credential, ip, RequestType.JSON)).thenReturn(response);
 
         Ip ip1 = resource.create(ip);
 

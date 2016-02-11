@@ -1,36 +1,23 @@
 package com.revinate.sendgrid.model;
 
-import com.revinate.sendgrid.net.auth.Credential;
-import com.revinate.sendgrid.net.auth.UsernamePasswordCredential;
+import com.fasterxml.jackson.annotation.JsonAutoDetect;
+import com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.revinate.sendgrid.net.HttpEntityBuilder;
 import com.revinate.sendgrid.smtpapi.SMTPAPI;
-import org.apache.http.HttpEntity;
-import org.apache.http.entity.ContentType;
-import org.apache.http.entity.mime.MultipartEntityBuilder;
 import org.json.JSONObject;
 
 import java.io.*;
 import java.util.*;
 
-public class Email {
+@JsonAutoDetect(
+        fieldVisibility = Visibility.ANY,
+        getterVisibility = Visibility.NONE,
+        setterVisibility = Visibility.NONE
+)
+public class Email extends SendGridModel {
 
-    private static final String PARAM_TO = "to[]";
-    private static final String PARAM_TONAME = "toname[]";
-    private static final String PARAM_CC = "cc[]";
-    private static final String PARAM_BCC = "bcc[]";
-
-    private static final String PARAM_FROM = "from";
-    private static final String PARAM_FROMNAME = "fromname";
-    private static final String PARAM_REPLYTO = "replyto";
-    private static final String PARAM_SUBJECT = "subject";
-    private static final String PARAM_HTML = "html";
-    private static final String PARAM_TEXT = "text";
-    private static final String PARAM_FILES = "files[%s]";
-    private static final String PARAM_CONTENTS = "content[%s]";
-    private static final String PARAM_XSMTPAPI = "x-smtpapi";
-    private static final String PARAM_HEADERS = "headers";
-    private static final String TEXT_PLAIN = "text/plain";
-    private static final String UTF_8 = "UTF-8";
-
+    @JsonIgnore
     private SMTPAPI smtpapi;
     private List<String> to;
     private List<String> toname;
@@ -325,88 +312,8 @@ public class Email {
         return this.smtpapi;
     }
 
-    public HttpEntity toHttpEntity(Credential credential) {
-        MultipartEntityBuilder builder = MultipartEntityBuilder.create();
-
-        if (credential != null && credential instanceof UsernamePasswordCredential) {
-            UsernamePasswordCredential usernamePasswordCredential = (UsernamePasswordCredential) credential;
-            builder.addTextBody("api_user", usernamePasswordCredential.getUsername());
-            builder.addTextBody("api_key", usernamePasswordCredential.getPassword());
-        }
-
-        String[] tos = getTos();
-        String[] tonames = getToNames();
-        String[] ccs = getCcs();
-        String[] bccs = getBccs();
-
-        // If SMTPAPI Header is used, To is still required. #workaround.
-        if (tos.length == 0) {
-            builder.addTextBody(PARAM_TO, getFrom(), ContentType.create(TEXT_PLAIN, UTF_8));
-        }
-
-        for (String to : tos) {
-            builder.addTextBody(PARAM_TO, to, ContentType.create(TEXT_PLAIN, UTF_8));
-        }
-
-        for (String toname : tonames) {
-            builder.addTextBody(PARAM_TONAME, toname, ContentType.create(TEXT_PLAIN, UTF_8));
-        }
-
-        for (String cc : ccs) {
-            builder.addTextBody(PARAM_CC, cc, ContentType.create(TEXT_PLAIN, UTF_8));
-        }
-
-        for (String bcc : bccs) {
-            builder.addTextBody(PARAM_BCC, bcc, ContentType.create(TEXT_PLAIN, UTF_8));
-        }
-
-        // Files
-        if (getAttachments().size() > 0) {
-            for (Map.Entry<String, InputStream> entry : getAttachments().entrySet()) {
-                builder.addBinaryBody(String.format(PARAM_FILES, entry.getKey()), entry.getValue());
-            }
-        }
-
-        if (getContentIds().size() > 0) {
-            for (Map.Entry<String, String> entry : getContentIds().entrySet()) {
-                builder.addTextBody(String.format(PARAM_CONTENTS, entry.getKey()), entry.getValue());
-            }
-        }
-
-        if (getHeaders().size() > 0) {
-            builder.addTextBody(PARAM_HEADERS, new JSONObject(getHeaders()).toString(),
-                    ContentType.create(TEXT_PLAIN, UTF_8));
-        }
-
-        if (getFrom() != null && !getFrom().isEmpty()) {
-            builder.addTextBody(PARAM_FROM, getFrom(), ContentType.create(TEXT_PLAIN, UTF_8));
-        }
-
-        if (getFromName() != null && !getFromName().isEmpty()) {
-            builder.addTextBody(PARAM_FROMNAME, getFromName(), ContentType.create(TEXT_PLAIN, UTF_8));
-        }
-
-        if (getReplyTo() != null && !getReplyTo().isEmpty()) {
-            builder.addTextBody(PARAM_REPLYTO, getReplyTo(), ContentType.create(TEXT_PLAIN, UTF_8));
-        }
-
-        if (getSubject() != null && !getSubject().isEmpty()) {
-            builder.addTextBody(PARAM_SUBJECT, getSubject(), ContentType.create(TEXT_PLAIN, UTF_8));
-        }
-
-        if (getHtml() != null && !getHtml().isEmpty()) {
-            builder.addTextBody(PARAM_HTML, getHtml(), ContentType.create(TEXT_PLAIN, UTF_8));
-        }
-
-        if (getText() != null && !getText().isEmpty()) {
-            builder.addTextBody(PARAM_TEXT, getText(), ContentType.create(TEXT_PLAIN, UTF_8));
-        }
-
-        String tmpString = smtpapi.jsonString();
-        if (!tmpString.equals("{}")) {
-            builder.addTextBody(PARAM_XSMTPAPI, tmpString, ContentType.create(TEXT_PLAIN, UTF_8));
-        }
-
-        return builder.build();
+    @Override
+    public void accept(HttpEntityBuilder builder) {
+        builder.setContent(this);
     }
 }

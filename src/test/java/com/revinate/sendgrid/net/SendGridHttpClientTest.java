@@ -4,6 +4,7 @@ import com.revinate.sendgrid.BaseSendGridTest;
 import com.revinate.sendgrid.exception.ApiConnectionException;
 import com.revinate.sendgrid.exception.InvalidRequestException;
 import com.revinate.sendgrid.model.ApiKey;
+import com.revinate.sendgrid.net.SendGridHttpClient.RequestType;
 import com.revinate.sendgrid.net.auth.ApiKeyCredential;
 import com.revinate.sendgrid.util.JsonUtils;
 import org.apache.http.client.ClientProtocolException;
@@ -126,8 +127,8 @@ public class SendGridHttpClientTest extends BaseSendGridTest {
         when(httpClient.execute(any(HttpUriRequest.class), any(StringResponseHandler.class)))
                 .thenReturn(response);
 
-        ApiKey apiKey1 = client.post("http://sendgrid", apiKey, ApiKey.class,
-                new ApiKeyCredential("token"));
+        ApiKey apiKey1 = client.post("http://sendgrid", ApiKey.class,
+                new ApiKeyCredential("token"), apiKey, RequestType.JSON);
 
         assertThat(apiKey1, notNullValue());
         assertThat(apiKey1.getName(), equalTo("1st API key"));
@@ -157,8 +158,8 @@ public class SendGridHttpClientTest extends BaseSendGridTest {
     @Test
     public void post_shouldHandleEmptyRequest() throws Exception {
         thrown.expect(InvalidRequestException.class);
-        thrown.expectMessage("Request object is null");
-        client.post("http://sendgrid", null, ApiKey.class, new ApiKeyCredential("token"));
+        thrown.expectMessage("Error while creating request entity");
+        client.post("http://sendgrid", ApiKey.class, new ApiKeyCredential("token"), null, RequestType.JSON);
     }
 
     @Test
@@ -172,8 +173,8 @@ public class SendGridHttpClientTest extends BaseSendGridTest {
         when(httpClient.execute(any(HttpUriRequest.class), any(StringResponseHandler.class)))
                 .thenReturn(response);
 
-        ApiKey apiKey1 = client.put("http://sendgrid", apiKey, ApiKey.class,
-                new ApiKeyCredential("token"));
+        ApiKey apiKey1 = client.put("http://sendgrid", ApiKey.class,
+                new ApiKeyCredential("token"), apiKey, RequestType.JSON);
 
         assertThat(apiKey1, notNullValue());
         assertThat(apiKey1.getName(), equalTo("1st API key"));
@@ -210,8 +211,8 @@ public class SendGridHttpClientTest extends BaseSendGridTest {
         when(httpClient.execute(any(HttpUriRequest.class), any(StringResponseHandler.class)))
                 .thenReturn(response);
 
-        ApiKey apiKey1 = client.patch("http://sendgrid", apiKey, ApiKey.class,
-                new ApiKeyCredential("token"));
+        ApiKey apiKey1 = client.patch("http://sendgrid", ApiKey.class,
+                new ApiKeyCredential("token"), apiKey, RequestType.JSON);
 
         assertThat(apiKey1, notNullValue());
         assertThat(apiKey1.getName(), equalTo("1st API key"));
@@ -244,7 +245,7 @@ public class SendGridHttpClientTest extends BaseSendGridTest {
         apiKey.setName("1st API key");
         String request = JsonUtils.toJson(apiKey);
 
-        client.patch("http://sendgrid", apiKey, new ApiKeyCredential("token"));
+        client.patch("http://sendgrid", new ApiKeyCredential("token"), apiKey, RequestType.JSON);
 
         ArgumentCaptor<HttpEntityEnclosingRequestBase> captor = ArgumentCaptor
                 .forClass(HttpEntityEnclosingRequestBase.class);

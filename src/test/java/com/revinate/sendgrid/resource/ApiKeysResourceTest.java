@@ -4,6 +4,7 @@ import com.revinate.sendgrid.BaseSendGridTest;
 import com.revinate.sendgrid.model.ApiKey;
 import com.revinate.sendgrid.model.ApiKeysResponse;
 import com.revinate.sendgrid.net.SendGridHttpClient;
+import com.revinate.sendgrid.net.SendGridHttpClient.RequestType;
 import com.revinate.sendgrid.net.auth.Credential;
 import com.revinate.sendgrid.util.JsonUtils;
 import org.junit.Before;
@@ -74,8 +75,8 @@ public class ApiKeysResourceTest extends BaseSendGridTest {
         apiKey.setName("1st API key");
         apiKey.addScope("mail.send");
 
-        when(client.post("https://api.sendgrid.com/v3/api_keys", apiKey,
-                ApiKey.class, credential)).thenReturn(response);
+        when(client.post("https://api.sendgrid.com/v3/api_keys",
+                ApiKey.class, credential, apiKey, RequestType.JSON)).thenReturn(response);
 
         ApiKey apiKey1 = resource.create(apiKey);
 

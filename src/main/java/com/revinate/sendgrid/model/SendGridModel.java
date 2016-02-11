@@ -1,10 +1,17 @@
 package com.revinate.sendgrid.model;
 
+import com.revinate.sendgrid.net.AcceptsHttpEntityBuilder;
+import com.revinate.sendgrid.net.HttpEntityBuilder;
 import com.revinate.sendgrid.util.JsonUtils;
 
 import java.io.IOException;
 
-public abstract class SendGridModel {
+public abstract class SendGridModel implements AcceptsHttpEntityBuilder {
+
+    @Override
+    public void accept(HttpEntityBuilder builder) {
+        builder.setContent(this);
+    }
 
     @Override
     public String toString() {

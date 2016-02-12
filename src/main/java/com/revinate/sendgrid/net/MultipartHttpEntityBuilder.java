@@ -1,10 +1,10 @@
 package com.revinate.sendgrid.net;
 
 import com.revinate.sendgrid.net.auth.UsernamePasswordCredential;
+import com.revinate.sendgrid.util.JsonUtils;
 import org.apache.http.HttpEntity;
 import org.apache.http.entity.ContentType;
 import org.apache.http.entity.mime.MultipartEntityBuilder;
-import org.json.JSONObject;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -22,8 +22,8 @@ public class MultipartHttpEntityBuilder extends HttpEntityBuilder {
     private static final String PARAM_FROMNAME = "fromname";
     private static final String PARAM_REPLYTO = "replyto";
     private static final String PARAM_SUBJECT = "subject";
-    private static final String PARAM_HTML = "html";
     private static final String PARAM_TEXT = "text";
+    private static final String PARAM_HTML = "html";
     private static final String PARAM_FILES = "files[%s]";
     private static final String PARAM_CONTENTS = "content[%s]";
     private static final String PARAM_HEADERS = "headers";
@@ -67,47 +67,33 @@ public class MultipartHttpEntityBuilder extends HttpEntityBuilder {
     private HttpEntity buildEmail() {
         MultipartEntityBuilder builder = multipartEntityBuilder();
 
-        String[] tos = email.getTos();
-        String[] tonames = email.getToNames();
-        String[] ccs = email.getCcs();
-        String[] bccs = email.getBccs();
-
-        // If SMTPAPI Header is used, To is still required. #workaround.
-        if (tos.length == 0) {
-            builder.addTextBody(PARAM_TO, email.getFrom(), TEXT_PLAIN_UTF8);
-        }
-
-        for (String to : tos) {
+        for (String to : email.getTos()) {
             builder.addTextBody(PARAM_TO, to, TEXT_PLAIN_UTF8);
         }
 
-        for (String toname : tonames) {
-            builder.addTextBody(PARAM_TONAME, toname, TEXT_PLAIN_UTF8);
+        // If SMTP API Header is used, To is still required. #workaround.
+        if (email.getTos().isEmpty()) {
+            builder.addTextBody(PARAM_TO, email.getFrom(), TEXT_PLAIN_UTF8);
         }
 
-        for (String cc : ccs) {
+        for (String toName : email.getToNames()) {
+            builder.addTextBody(PARAM_TONAME, toName, TEXT_PLAIN_UTF8);
+        }
+
+        for (String cc : email.getCcs()) {
             builder.addTextBody(PARAM_CC, cc, TEXT_PLAIN_UTF8);
         }
 
-        for (String bcc : bccs) {
+        for (String ccName : email.getCcNames()) {
+            builder.addTextBody(PARAM_CCNAME, ccName, TEXT_PLAIN_UTF8);
+        }
+
+        for (String bcc : email.getBccs()) {
             builder.addTextBody(PARAM_BCC, bcc, TEXT_PLAIN_UTF8);
         }
 
-        // Files
-        if (email.getAttachments().size() > 0) {
-            for (Map.Entry<String, InputStream> entry : email.getAttachments().entrySet()) {
-                builder.addBinaryBody(String.format(PARAM_FILES, entry.getKey()), entry.getValue());
-            }
-        }
-
-        if (email.getContentIds().size() > 0) {
-            for (Map.Entry<String, String> entry : email.getContentIds().entrySet()) {
-                builder.addTextBody(String.format(PARAM_CONTENTS, entry.getKey()), entry.getValue());
-            }
-        }
-
-        if (email.getHeaders().size() > 0) {
-            builder.addTextBody(PARAM_HEADERS, new JSONObject(email.getHeaders()).toString(), TEXT_PLAIN_UTF8);
+        for (String bccName : email.getBccNames()) {
+            builder.addTextBody(PARAM_BCCNAME, bccName, TEXT_PLAIN_UTF8);
         }
 
         if (email.getFrom() != null && !email.getFrom().isEmpty()) {
@@ -126,17 +112,37 @@ public class MultipartHttpEntityBuilder extends HttpEntityBuilder {
             builder.addTextBody(PARAM_SUBJECT, email.getSubject(), TEXT_PLAIN_UTF8);
         }
 
-        if (email.getHtml() != null && !email.getHtml().isEmpty()) {
-            builder.addTextBody(PARAM_HTML, email.getHtml(), TEXT_PLAIN_UTF8);
-        }
-
         if (email.getText() != null && !email.getText().isEmpty()) {
             builder.addTextBody(PARAM_TEXT, email.getText(), TEXT_PLAIN_UTF8);
         }
 
-        String tmpString = email.getSMTPAPI().jsonString();
-        if (!tmpString.equals("{}")) {
-            builder.addTextBody(PARAM_XSMTPAPI, tmpString, TEXT_PLAIN_UTF8);
+        if (email.getHtml() != null && !email.getHtml().isEmpty()) {
+            builder.addTextBody(PARAM_HTML, email.getHtml(), TEXT_PLAIN_UTF8);
+        }
+
+        if (email.getAttachments().size() > 0) {
+            for (Map.Entry<String, InputStream> entry : email.getAttachments().entrySet()) {
+                builder.addBinaryBody(String.format(PARAM_FILES, entry.getKey()), entry.getValue());
+            }
+        }
+
+        if (email.getContentIds().size() > 0) {
+            for (Map.Entry<String, String> entry : email.getContentIds().entrySet()) {
+                builder.addTextBody(String.format(PARAM_CONTENTS, entry.getKey()), entry.getValue());
+            }
+        }
+
+        if (email.getHeaders().size() > 0) {
+            try {
+                builder.addTextBody(PARAM_HEADERS, JsonUtils.toJson(email.getHeaders()), TEXT_PLAIN_UTF8);
+            } catch (IOException e) {
+                // do nothing
+            }
+        }
+
+        String smtpApiHeader = email.toSmtpApiHeader();
+        if (!"{}".equals(smtpApiHeader)) {
+            builder.addTextBody(PARAM_XSMTPAPI, smtpApiHeader, TEXT_PLAIN_UTF8);
         }
 
         return builder.build();

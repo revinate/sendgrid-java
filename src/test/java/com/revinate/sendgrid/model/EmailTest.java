@@ -1,21 +1,19 @@
 package com.revinate.sendgrid.model;
 
-import org.json.JSONObject;
 import org.junit.Before;
 import org.junit.Test;
-import org.skyscreamer.jsonassert.JSONAssert;
 
 import java.io.File;
 import java.io.InputStream;
-import java.util.HashMap;
 import java.util.Map;
 
-import static org.hamcrest.Matchers.hasKey;
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
+import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.assertThat;
 
 public class EmailTest {
+
+    private static final String ADDRESS = "test@email.com";
+    private static final String NAME = "Test User";
 
     Email email;
 
@@ -25,162 +23,134 @@ public class EmailTest {
     }
 
     @Test
-    public void testAddTo() {
-        String address = "email@example.com";
-        String address2 = "email2@example.com";
-        email.addTo(address);
-        email.addTo(address2);
-
-        String[] correct = {address, address2};
-
-        assertArrayEquals(correct, email.getTos());
+    public void addTo_shouldAddTo() {
+        email.addTo(ADDRESS);
+        assertThat(email.getTos(), contains(ADDRESS));
     }
 
     @Test
-    public void testAddToWithAFrom() {
-        String address = "email@example.com";
-        String fromaddress = "from@mailinator.com";
-        email.addTo(address);
-        email.setFrom(fromaddress);
-
-        String[] correct = {address};
-
-        assertArrayEquals(correct, email.getTos());
-        assertEquals(fromaddress, email.getFrom());
+    public void addToName_shouldAddToName() {
+        email.addToName(NAME);
+        assertThat(email.getToNames(), contains(NAME));
     }
 
     @Test
-    public void testAddToName() {
-        String name = "John";
-        email.addToName(name);
-
-        String[] correct = {name};
-
-        assertArrayEquals(correct, email.getToNames());
+    public void addCc_shouldAddCc() {
+        email.addCc(ADDRESS);
+        assertThat(email.getCcs(), contains(ADDRESS));
     }
 
     @Test
-    public void testAddCc() {
-        String address = "email@example.com";
-        email.addCc(address);
-
-        String[] correct = {address};
-
-        assertArrayEquals(correct, email.getCcs());
+    public void addCcName_shouldAddCcName() {
+        email.addCcName(NAME);
+        assertThat(email.getCcNames(), contains(NAME));
     }
 
     @Test
-    public void testSetFrom() {
-        String address = "email@example.com";
-        email.setFrom(address);
-
-        assertEquals(address, email.getFrom());
+    public void addBcc_shouldAddBcc() {
+        email.addBcc(ADDRESS);
+        assertThat(email.getBccs(), contains(ADDRESS));
     }
 
     @Test
-    public void testSetFromName() {
-        String fromname = "Uncle Bob";
-        email.setFromName(fromname);
-
-        assertEquals(fromname, email.getFromName());
+    public void addBccName_shouldAddBccName() {
+        email.addBccName(NAME);
+        assertThat(email.getBccNames(), contains(NAME));
     }
 
     @Test
-    public void testSetReplyTo() {
-        String address = "email@example.com";
-        email.setReplyTo(address);
-
-        assertEquals(address, email.getReplyTo());
+    public void setFrom_shouldSetFrom() {
+        email.setFrom(ADDRESS);
+        assertThat(email.getFrom(), equalTo(ADDRESS));
     }
 
     @Test
-    public void testAddBcc() {
-        String address = "email@example.com";
-        email.addBcc(address);
-
-        String[] correct = {address};
-
-        assertArrayEquals(correct, email.getBccs());
+    public void setFromName_shouldSetFromName() {
+        email.setFromName(NAME);
+        assertThat(email.getFromName(), equalTo(NAME));
     }
 
     @Test
-    public void testSetSubject() {
+    public void setReplyTo_shouldSetReplyTo() {
+        email.setReplyTo(ADDRESS);
+        assertThat(email.getReplyTo(), equalTo(ADDRESS));
+    }
+
+    @Test
+    public void setSubject_shouldSetSubject() {
         String subject = "This is a subject";
         email.setSubject(subject);
-
-        assertEquals(subject, email.getSubject());
+        assertThat(email.getSubject(), equalTo(subject));
     }
 
     @Test
-    public void testSetText() {
+    public void setText_shouldSetText() {
         String text = "This is some email text.";
         email.setText(text);
-
-        assertEquals(text, email.getText());
+        assertThat(email.getText(), equalTo(text));
     }
 
     @Test
-    public void testSetHtml() {
+    public void setHtml_shouldSetHtml() {
         String html = "This is some email text.";
         email.setHtml(html);
-
-        assertEquals(html, email.getHtml());
+        assertThat(email.getHtml(), equalTo(html));
     }
 
     @Test
-    public void testAddHeader() {
-        email.addHeader("key", "value");
-        email.addHeader("other", "other-value");
-
-        Map<String, String> correct = new HashMap<String, String>();
-        correct.put("key", "value");
-        correct.put("other", "other-value");
-
-        assertEquals(correct, email.getHeaders());
-    }
-
-    @Test
-    public void testSetTemplateId() {
-        email.setTemplateId("abc-123");
-
-        String filters = email.getSMTPAPI().jsonString();
-
-        JSONObject obj = new JSONObject();
-        obj.put("filters", new JSONObject().put("templates", new JSONObject()
-                .put("settings", new JSONObject().put("enable", 1)
-                        .put("template_id", "abc-123"))));
-
-        JSONAssert.assertEquals(filters, obj.toString(), false);
-    }
-
-    @Test
-    public void testSmtpapiToHeader() {
-        String[] expected = {"example@email.com"};
-
-        email.getSMTPAPI().addTo(expected[0]);
-        String[] result = email.getSMTPAPI().getTos();
-
-        assertArrayEquals(expected, result);
-    }
-
-    @Test
-    public void testSetIpPool() {
-        String expected = "transactional";
-
-        email.setIpPool(expected);
-        String result = email.getIpPool();
-
-        assertEquals(expected, result);
-    }
-
-    @Test
-    public void addAttachment_shouldSetAttachments() throws Exception {
+    public void setAttachment_shouldSetAttachment() throws Exception {
         File file = new File(getClass().getResource("/test.txt").getFile());
-        email.addAttachment("test.txt", file);
-        InputStream inputStream = getClass().getResourceAsStream("/image.png");
-        email.addAttachment("image.png", inputStream);
+        email.setAttachment("test.txt", file);
 
+        InputStream inputStream = getClass().getResourceAsStream("/image.png");
+        email.setAttachment("image.png", inputStream);
+
+        assertThat(email.getAttachments(), notNullValue());
+        assertThat(email.getAttachments().size(), equalTo(2));
         assertThat(email.getAttachments(), hasKey("test.txt"));
         assertThat(email.getAttachments(), hasKey("image.png"));
+    }
+
+    @Test
+    public void setHeader_shouldSetHeader() throws Exception {
+        email.setHeader("key", "value");
+        email.setHeader("key2", "value2");
+
+        assertThat(email.getHeaders(), notNullValue());
+        assertThat(email.getHeaders().size(), equalTo(2));
+        assertThat(email.getHeaders(), hasEntry("key", "value"));
+        assertThat(email.getHeaders(), hasEntry("key2", "value2"));
+    }
+
+    @Test
+    public void setContentId_shouldSetContentId() throws Exception {
+        email.setContentId("key", "value");
+
+        assertThat(email.getContentIds(), notNullValue());
+        assertThat(email.getContentIds().size(), equalTo(1));
+        assertThat(email.getContentIds(), hasEntry("key", "value"));
+    }
+
+    @Test
+    public void setTemplateId_shouldSetFilter() throws Exception {
+        email.setTemplateId("abc-123");
+        Map<String, Object> filter = email.getFilter("templates");
+
+        assertThat(filter, notNullValue());
+        assertThat(filter.size(), equalTo(2));
+        assertThat(filter, hasEntry("enable", (Object) 1));
+        assertThat(filter, hasEntry("template_id", (Object) "abc-123"));
+    }
+
+    @Test
+    public void addSmtpApiTo_shouldAddSmtpApiTo() throws Exception {
+        email.addSmtpApiTo(ADDRESS);
+        assertThat(email.getSmtpApiTos(), contains(ADDRESS));
+    }
+
+    @Test
+    public void setIpPool_shouldSetIpPool() throws Exception {
+        email.setIpPool("transactional");
+        assertThat(email.getIpPool(), equalTo("transactional"));
     }
 }

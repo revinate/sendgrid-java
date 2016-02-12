@@ -3,116 +3,133 @@ package com.revinate.sendgrid.model;
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.revinate.sendgrid.smtpapi.SMTPAPI;
-import org.json.JSONObject;
+import com.revinate.sendgrid.smtpapi.SmtpApi;
+import com.revinate.sendgrid.smtpapi.SmtpApiException;
+import com.revinate.sendgrid.smtpapi.SmtpApiImpl;
 
 import java.io.*;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @JsonAutoDetect(
         fieldVisibility = Visibility.ANY,
         getterVisibility = Visibility.NONE,
         setterVisibility = Visibility.NONE
 )
-public class Email extends SendGridModel {
+public class Email extends SendGridModel implements SmtpApi {
 
-    @JsonIgnore
-    private SMTPAPI smtpapi;
-    private List<String> to;
-    private List<String> toname;
-    private List<String> cc;
+    private List<String> tos = new ArrayList<String>();
+    private List<String> toNames = new ArrayList<String>();
+    private List<String> ccs = new ArrayList<String>();
+    private List<String> ccNames = new ArrayList<String>();
+    private List<String> bccs = new ArrayList<String>();
+    private List<String> bccNames = new ArrayList<String>();
     private String from;
-    private String fromname;
-    private String replyto;
+    private String fromName;
+    private String replyTo;
     private String subject;
     private String text;
     private String html;
-    private List<String> bcc;
-    private Map<String, InputStream> attachments;
-    private Map<String, String> contents;
-    private Map<String, String> headers;
+    private Map<String, InputStream> attachments = new HashMap<String, InputStream>();
+    private Map<String, String> contentIds = new HashMap<String, String>();
+    private Map<String, String> headers = new HashMap<String, String>();
 
-    public Email() {
-        this.smtpapi = new SMTPAPI();
-        this.to = new ArrayList<String>();
-        this.toname = new ArrayList<String>();
-        this.cc = new ArrayList<String>();
-        this.bcc = new ArrayList<String>();
-        this.attachments = new HashMap<String, InputStream>();
-        this.contents = new HashMap<String, String>();
-        this.headers = new HashMap<String, String>();
+    @JsonIgnore
+    private SmtpApi smtpApi = new SmtpApiImpl();
+
+    public List<String> getTos() {
+        return new ArrayList<String>(tos);
     }
 
-    public Email addTo(String to) {
-        this.to.add(to);
+    public Email setTos(List<String> tos) {
+        this.tos = new ArrayList<String>(tos);
         return this;
     }
 
-    public Email addTo(String[] tos) {
-        this.to.addAll(Arrays.asList(tos));
+    public Email addTo(String to) {
+        tos.add(to);
         return this;
     }
 
     public Email addTo(String to, String name) {
-        this.addTo(to);
-        return this.addToName(name);
+        addTo(to);
+        return addToName(name);
     }
 
-    public Email setTo(String[] tos) {
-        this.to = new ArrayList<String>(Arrays.asList(tos));
+    public List<String> getToNames() {
+        return new ArrayList<String>(toNames);
+    }
+
+    public Email setToNames(List<String> toNames) {
+        this.toNames = new ArrayList<String>(toNames);
         return this;
     }
 
-    public String[] getTos() {
-        return this.to.toArray(new String[this.to.size()]);
-    }
-
-    public Email addSmtpApiTo(String to) {
-        this.smtpapi.addTo(to);
+    public Email addToName(String toName) {
+        toNames.add(toName);
         return this;
     }
 
-    public Email addSmtpApiTo(String[] to) {
-        this.smtpapi.addTos(to);
-        return this;
+    public List<String> getCcs() {
+        return new ArrayList<String>(ccs);
     }
 
-    public Email addToName(String toname) {
-        this.toname.add(toname);
+    public Email setCcs(List<String> ccs) {
+        this.ccs = new ArrayList<String>(ccs);
         return this;
-    }
-
-    public Email addToName(String[] tonames) {
-        this.toname.addAll(Arrays.asList(tonames));
-        return this;
-    }
-
-    public Email setToName(String[] tonames) {
-        this.toname = new ArrayList<String>(Arrays.asList(tonames));
-        return this;
-    }
-
-    public String[] getToNames() {
-        return this.toname.toArray(new String[this.toname.size()]);
     }
 
     public Email addCc(String cc) {
-        this.cc.add(cc);
+        ccs.add(cc);
         return this;
     }
 
-    public Email addCc(String[] ccs) {
-        this.cc.addAll(Arrays.asList(ccs));
+    public List<String> getCcNames() {
+        return new ArrayList<String>(ccNames);
+    }
+
+    public Email setCcNames(List<String> ccNames) {
+        this.ccNames = new ArrayList<String>(ccNames);
         return this;
     }
 
-    public Email setCc(String[] ccs) {
-        this.cc = new ArrayList<String>(Arrays.asList(ccs));
+    public Email addCcName(String ccName) {
+        ccNames.add(ccName);
         return this;
     }
 
-    public String[] getCcs() {
-        return this.cc.toArray(new String[this.cc.size()]);
+    public List<String> getBccs() {
+        return new ArrayList<String>(bccs);
+    }
+
+    public Email setBccs(List<String> bccs) {
+        this.bccs = new ArrayList<String>(bccs);
+        return this;
+    }
+
+    public Email addBcc(String bcc) {
+        bccs.add(bcc);
+        return this;
+    }
+
+    public List<String> getBccNames() {
+        return new ArrayList<String>(bccNames);
+    }
+
+    public Email setBccNames(List<String> bccNames) {
+        this.bccNames = new ArrayList<String>(bccNames);
+        return this;
+    }
+
+    public Email addBccName(String bccName) {
+        bccNames.add(bccName);
+        return this;
+    }
+
+    public String getFrom() {
+        return from;
     }
 
     public Email setFrom(String from) {
@@ -120,45 +137,26 @@ public class Email extends SendGridModel {
         return this;
     }
 
-    public String getFrom() {
-        return this.from;
-    }
-
-    public Email setFromName(String fromname) {
-        this.fromname = fromname;
-        return this;
-    }
-
     public String getFromName() {
-        return this.fromname;
+        return fromName;
     }
 
-    public Email setReplyTo(String replyto) {
-        this.replyto = replyto;
+    public Email setFromName(String fromName) {
+        this.fromName = fromName;
         return this;
     }
 
     public String getReplyTo() {
-        return this.replyto;
+        return replyTo;
     }
 
-    public Email addBcc(String bcc) {
-        this.bcc.add(bcc);
+    public Email setReplyTo(String replyTo) {
+        this.replyTo = replyTo;
         return this;
     }
 
-    public Email addBcc(String[] bccs) {
-        this.bcc.addAll(Arrays.asList(bccs));
-        return this;
-    }
-
-    public Email setBcc(String[] bccs) {
-        this.bcc = new ArrayList<String>(Arrays.asList(bccs));
-        return this;
-    }
-
-    public String[] getBccs() {
-        return this.bcc.toArray(new String[this.bcc.size()]);
+    public String getSubject() {
+        return subject;
     }
 
     public Email setSubject(String subject) {
@@ -166,8 +164,8 @@ public class Email extends SendGridModel {
         return this;
     }
 
-    public String getSubject() {
-        return this.subject;
+    public String getText() {
+        return text;
     }
 
     public Email setText(String text) {
@@ -175,8 +173,8 @@ public class Email extends SendGridModel {
         return this;
     }
 
-    public String getText() {
-        return this.text;
+    public String getHtml() {
+        return html;
     }
 
     public Email setHtml(String html) {
@@ -184,80 +182,66 @@ public class Email extends SendGridModel {
         return this;
     }
 
-    public String getHtml() {
-        return this.html;
+    public Map<String, InputStream> getAttachments() {
+        return new HashMap<String, InputStream>(attachments);
     }
 
-    public Email addSubstitution(String key, String[] val) {
-        this.smtpapi.addSubstitutions(key, val);
+    public Email setAttachments(Map<String, InputStream> attachments) {
+        this.attachments = new HashMap<String, InputStream>(attachments);
         return this;
     }
 
-    public JSONObject getSubstitutions() {
-        return this.smtpapi.getSubstitutions();
+    public InputStream getAttachment(String name) {
+        return attachments.get(name);
     }
 
-    public Email addUniqueArg(String key, String val) {
-        this.smtpapi.addUniqueArg(key, val);
+    public Email setAttachment(String name, InputStream file) {
+        attachments.put(name, file);
         return this;
     }
 
-    public JSONObject getUniqueArgs() {
-        return this.smtpapi.getUniqueArgs();
+    public Email setAttachment(String name, File file) throws IOException {
+        return setAttachment(name, new FileInputStream(file));
     }
 
-    public Email addCategory(String category) {
-        this.smtpapi.addCategory(category);
+    public Email setAttachment(String name, String file) throws IOException {
+        return setAttachment(name, new ByteArrayInputStream(file.getBytes()));
+    }
+
+    public Map<String, String> getContentIds() {
+        return new HashMap<String, String>(contentIds);
+    }
+
+    public Email setContentIds(Map<String, String> contentIds) {
+        this.contentIds = new HashMap<String, String>(contentIds);
         return this;
     }
 
-    public String[] getCategories() {
-        return this.smtpapi.getCategories();
+    public String getContentId(String key) {
+        return contentIds.get(key);
     }
 
-    public Email addSection(String key, String val) {
-        this.smtpapi.addSection(key, val);
+    public Email setContentId(String key, String val) {
+        contentIds.put(key, val);
         return this;
     }
 
-    public JSONObject getSections() {
-        return this.smtpapi.getSections();
+    public Map<String, String> getHeaders() {
+        return new HashMap<String, String>(headers);
     }
 
-    public Email addFilter(String filterName, String parameterName, String parameterValue) {
-        this.smtpapi.addFilter(filterName, parameterName, parameterValue);
+    public Email setHeaders(Map<String, String> headers) {
+        this.headers = new HashMap<String, String>(headers);
         return this;
     }
 
-    public JSONObject getFilters() {
-        return this.smtpapi.getFilters();
+    public String getHeader(String key) {
+        return headers.get(key);
     }
 
-    public Email setASMGroupId(int val) {
-        this.smtpapi.setASMGroupId(val);
+    public Email setHeader(String key, String val) {
+        headers.put(key, val);
         return this;
-    }
-
-    public Integer getASMGroupId() {
-        return this.smtpapi.getASMGroupId();
-    }
-
-    public Email setSendAt(int sendAt) {
-        this.smtpapi.setSendAt(sendAt);
-        return this;
-    }
-
-    public int getSendAt() {
-        return this.smtpapi.getSendAt();
-    }
-
-    public Email setIpPool(String ipPool) {
-        this.smtpapi.setIpPool(ipPool);
-        return this;
-    }
-
-    public String getIpPool() {
-        return this.smtpapi.getIpPool();
     }
 
     /**
@@ -267,49 +251,204 @@ public class Email extends SendGridModel {
      * @return this
      */
     public Email setTemplateId(String templateId) {
-        this.getSMTPAPI().addFilter("templates", "enable", 1);
-        this.getSMTPAPI().addFilter("templates", "template_id", templateId);
+        Map<String, Object> filter = new HashMap<String, Object>();
+        filter.put("enable", 1);
+        filter.put("template_id", templateId);
+        setFilter("templates", filter);
         return this;
     }
 
-    public Email addAttachment(String name, File file) throws IOException {
-        return this.addAttachment(name, new FileInputStream(file));
+    // Implementations of SMTP API methods: delegate to the SmtpApiImpl
+
+    @Override
+    public String getVersion() {
+        return smtpApi.getVersion();
     }
 
-    public Email addAttachment(String name, String file) throws IOException {
-        return this.addAttachment(name, new ByteArrayInputStream(file.getBytes()));
+    @Override
+    public String toSmtpApiHeader() {
+        return smtpApi.toSmtpApiHeader();
     }
 
-    public Email addAttachment(String name, InputStream file) {
-        this.attachments.put(name, file);
+    @Override
+    public String toRawSmtpApiHeader() {
+        return smtpApi.toRawSmtpApiHeader();
+    }
+
+    @Override
+    public Integer getAsmGroupId() {
+        return smtpApi.getAsmGroupId();
+    }
+
+    @Override
+    public Email setAsmGroupId(Integer val) {
+        smtpApi.setAsmGroupId(val);
         return this;
     }
 
-    public Map<String, InputStream> getAttachments() {
-        return this.attachments;
+    @Override
+    public Integer getSendAt() {
+        return smtpApi.getSendAt();
     }
 
-    public Email addContentId(String attachmentName, String cid) {
-        this.contents.put(attachmentName, cid);
+    @Override
+    public Email setSendAt(Integer val) {
+        smtpApi.setSendAt(val);
         return this;
     }
 
-    public Map<String, String> getContentIds() {
-        return this.contents;
+    @Override
+    public String getIpPool() {
+        return smtpApi.getIpPool();
     }
 
-    public Email addHeader(String key, String val) {
-        this.headers.put(key, val);
+    @Override
+    public Email setIpPool(String ipPool) {
+        smtpApi.setIpPool(ipPool);
         return this;
     }
 
-    public Map<String, String> getHeaders() {
-        return this.headers;
+    @Override
+    public List<String> getSmtpApiTos() {
+        return smtpApi.getSmtpApiTos();
     }
 
-    public SMTPAPI getSMTPAPI() {
-        return this.smtpapi;
+    @Override
+    public Email setSmtpApiTos(List<String> tos) {
+        smtpApi.setSmtpApiTos(tos);
+        return this;
     }
+
+    @Override
+    public Email addSmtpApiTo(String to) {
+        smtpApi.addSmtpApiTo(to);
+        return this;
+    }
+
+    @Override
+    public Email addSmtpApiTo(String to, String name) {
+        smtpApi.addSmtpApiTo(to, name);
+        return this;
+    }
+
+    @Override
+    public List<String> getCategories() {
+        return smtpApi.getCategories();
+    }
+
+    @Override
+    public Email setCategories(List<String> categories) {
+        smtpApi.setCategories(categories);
+        return this;
+    }
+
+    @Override
+    public Email addCategory(String category) {
+        smtpApi.addCategory(category);
+        return this;
+    }
+
+    @Override
+    public Map<String, String> getUniqueArgs() {
+        return smtpApi.getUniqueArgs();
+    }
+
+    @Override
+    public Email setUniqueArgs(Map<String, String> args) {
+        smtpApi.setUniqueArgs(args);
+        return this;
+    }
+
+    @Override
+    public String getUniqueArg(String key) {
+        return smtpApi.getUniqueArg(key);
+    }
+
+    @Override
+    public Email setUniqueArg(String key, String val) {
+        smtpApi.setUniqueArg(key, val);
+        return this;
+    }
+
+    @Override
+    public Map<String, String> getSections() {
+        return smtpApi.getSections();
+    }
+
+    @Override
+    public Email setSections(Map<String, String> sections) {
+        smtpApi.setSections(sections);
+        return this;
+    }
+
+    @Override
+    public String getSection(String key) {
+        return smtpApi.getSection(key);
+    }
+
+    @Override
+    public Email setSection(String key, String val) {
+        smtpApi.setSection(key, val);
+        return this;
+    }
+
+    @Override
+    public Map<String, List<String>> getSubstitutions() {
+        return smtpApi.getSubstitutions();
+    }
+
+    @Override
+    public Email setSubstitutions(Map<String, List<String>> substitutions) {
+        smtpApi.setSubstitutions(substitutions);
+        return this;
+    }
+
+    @Override
+    public List<String> getSubstitution(String key) {
+        return smtpApi.getSubstitution(key);
+    }
+
+    @Override
+    public Email setSubstitution(String key, List<String> vals) {
+        smtpApi.setSubstitution(key, vals);
+        return this;
+    }
+
+    @Override
+    public Email addValueToSubstitution(String key, String val) {
+        smtpApi.addValueToSubstitution(key, val);
+        return this;
+    }
+
+    @Override
+    public Map<String, Map<String, Object>> getFilters() {
+        return smtpApi.getFilters();
+    }
+
+    @Override
+    public Email setFilters(Map<String, Map<String, Object>> filters) throws SmtpApiException {
+        smtpApi.setFilters(filters);
+        return this;
+    }
+
+    @Override
+    public Map<String, Object> getFilter(String filterName) {
+        return smtpApi.getFilter(filterName);
+    }
+
+    @Override
+    public Email setFilter(String filterName, Map<String, Object> filter) throws SmtpApiException {
+        smtpApi.setFilter(filterName, filter);
+        return this;
+    }
+
+    @Override
+    public Email setSettingInFilter(String filterName, String settingName, Object settingVal) throws SmtpApiException {
+        smtpApi.setSettingInFilter(filterName, settingName, settingVal);
+        return this;
+    }
+
+    // Override accept from SendGridModel - Email needs custom HttpEntity construction
 
     @Override
     public void accept(SendGridModelVisitor visitor) {

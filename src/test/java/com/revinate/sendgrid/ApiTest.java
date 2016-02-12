@@ -190,11 +190,26 @@ public class ApiTest {
         email.addTo("sendgridjava@mailinator.com");
         email.setSubject("Test");
         email.setText("This is a test.");
-        email.addAttachment("test.txt", getClass().getResourceAsStream("/test.txt"));
-        email.addAttachment("image.png", getClass().getResourceAsStream("/image.png"));
+        email.setAttachment("test.txt", getClass().getResourceAsStream("/test.txt"));
+        email.setAttachment("image.png", getClass().getResourceAsStream("/image.png"));
 
         Response response = sendGrid.mail().send(email);
 
         assertThat(response, notNullValue());
+        assertThat(response.getMessage(), equalTo("success"));
+    }
+
+    @Test
+    public void sendEmail_shouldSendEmailUsingSmtpApiTo() throws Exception {
+        Email email = new Email();
+        email.setFrom("sendgridjava@mailinator.com");
+        email.addSmtpApiTo("sendgridjava@mailinator.com", "SendGrid Java");
+        email.setSubject("Test");
+        email.setText("This is a test.");
+
+        Response response = sendGrid.mail().send(email);
+
+        assertThat(response, notNullValue());
+        assertThat(response.getMessage(), equalTo("success"));
     }
 }

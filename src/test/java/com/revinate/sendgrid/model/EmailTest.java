@@ -5,6 +5,7 @@ import org.junit.Test;
 
 import java.io.File;
 import java.io.InputStream;
+import java.util.Collections;
 import java.util.Map;
 
 import static org.hamcrest.Matchers.*;
@@ -23,9 +24,27 @@ public class EmailTest {
     }
 
     @Test
+    public void getTos_shouldBeEmpty() {
+        assertThat(email.getTos(), emptyCollectionOf(String.class));
+    }
+
+    @Test
+    public void setTos_shouldSetTos() {
+        email.setTos(Collections.singletonList(ADDRESS));
+        assertThat(email.getTos(), contains(ADDRESS));
+    }
+
+    @Test
     public void addTo_shouldAddTo() {
         email.addTo(ADDRESS);
         assertThat(email.getTos(), contains(ADDRESS));
+    }
+
+    @Test
+    public void addTo_shouldAddToAndToName() {
+        email.addTo(ADDRESS, NAME);
+        assertThat(email.getTos(), contains(ADDRESS));
+        assertThat(email.getToNames(), contains(NAME));
     }
 
     @Test
@@ -41,6 +60,13 @@ public class EmailTest {
     }
 
     @Test
+    public void addCc_shouldAddCcAndCcName() {
+        email.addCc(ADDRESS, NAME);
+        assertThat(email.getCcs(), contains(ADDRESS));
+        assertThat(email.getCcNames(), contains(NAME));
+    }
+
+    @Test
     public void addCcName_shouldAddCcName() {
         email.addCcName(NAME);
         assertThat(email.getCcNames(), contains(NAME));
@@ -53,6 +79,13 @@ public class EmailTest {
     }
 
     @Test
+    public void addBcc_shouldAddBccAndBccName() {
+        email.addBcc(ADDRESS, NAME);
+        assertThat(email.getBccs(), contains(ADDRESS));
+        assertThat(email.getBccNames(), contains(NAME));
+    }
+
+    @Test
     public void addBccName_shouldAddBccName() {
         email.addBccName(NAME);
         assertThat(email.getBccNames(), contains(NAME));
@@ -62,6 +95,13 @@ public class EmailTest {
     public void setFrom_shouldSetFrom() {
         email.setFrom(ADDRESS);
         assertThat(email.getFrom(), equalTo(ADDRESS));
+    }
+
+    @Test
+    public void setFrom_shouldSetFromAndFromName() {
+        email.setFrom(ADDRESS, NAME);
+        assertThat(email.getFrom(), equalTo(ADDRESS));
+        assertThat(email.getFromName(), equalTo(NAME));
     }
 
     @Test

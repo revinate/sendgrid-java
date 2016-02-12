@@ -35,32 +35,33 @@ public class Email extends SendGridModel implements SmtpApi {
         return new ArrayList<String>(tos);
     }
 
-    public Email setTos(List<String> tos) {
-        this.tos = new ArrayList<String>(tos);
+    public Email setTos(List<String> addresses) {
+        tos = new ArrayList<String>(addresses);
         return this;
     }
 
-    public Email addTo(String to) {
-        tos.add(to);
+    public Email addTo(String address) {
+        tos.add(address);
         return this;
     }
 
-    public Email addTo(String to, String name) {
-        addTo(to);
-        return addToName(name);
+    public Email addTo(String address, String name) {
+        addTo(address);
+        addToName(name);
+        return this;
     }
 
     public List<String> getToNames() {
         return new ArrayList<String>(toNames);
     }
 
-    public Email setToNames(List<String> toNames) {
-        this.toNames = new ArrayList<String>(toNames);
+    public Email setToNames(List<String> names) {
+        toNames = new ArrayList<String>(names);
         return this;
     }
 
-    public Email addToName(String toName) {
-        toNames.add(toName);
+    public Email addToName(String name) {
+        toNames.add(name);
         return this;
     }
 
@@ -68,13 +69,19 @@ public class Email extends SendGridModel implements SmtpApi {
         return new ArrayList<String>(ccs);
     }
 
-    public Email setCcs(List<String> ccs) {
-        this.ccs = new ArrayList<String>(ccs);
+    public Email setCcs(List<String> addresses) {
+        ccs = new ArrayList<String>(addresses);
         return this;
     }
 
-    public Email addCc(String cc) {
-        ccs.add(cc);
+    public Email addCc(String address) {
+        ccs.add(address);
+        return this;
+    }
+
+    public Email addCc(String address, String name) {
+        addCc(address);
+        addCcName(name);
         return this;
     }
 
@@ -82,13 +89,13 @@ public class Email extends SendGridModel implements SmtpApi {
         return new ArrayList<String>(ccNames);
     }
 
-    public Email setCcNames(List<String> ccNames) {
-        this.ccNames = new ArrayList<String>(ccNames);
+    public Email setCcNames(List<String> names) {
+        ccNames = new ArrayList<String>(names);
         return this;
     }
 
-    public Email addCcName(String ccName) {
-        ccNames.add(ccName);
+    public Email addCcName(String name) {
+        ccNames.add(name);
         return this;
     }
 
@@ -96,13 +103,19 @@ public class Email extends SendGridModel implements SmtpApi {
         return new ArrayList<String>(bccs);
     }
 
-    public Email setBccs(List<String> bccs) {
-        this.bccs = new ArrayList<String>(bccs);
+    public Email setBccs(List<String> addresses) {
+        bccs = new ArrayList<String>(addresses);
         return this;
     }
 
-    public Email addBcc(String bcc) {
-        bccs.add(bcc);
+    public Email addBcc(String address) {
+        bccs.add(address);
+        return this;
+    }
+
+    public Email addBcc(String address, String name) {
+        addBcc(address);
+        addBccName(name);
         return this;
     }
 
@@ -110,13 +123,13 @@ public class Email extends SendGridModel implements SmtpApi {
         return new ArrayList<String>(bccNames);
     }
 
-    public Email setBccNames(List<String> bccNames) {
-        this.bccNames = new ArrayList<String>(bccNames);
+    public Email setBccNames(List<String> names) {
+        bccNames = new ArrayList<String>(names);
         return this;
     }
 
-    public Email addBccName(String bccName) {
-        bccNames.add(bccName);
+    public Email addBccName(String name) {
+        bccNames.add(name);
         return this;
     }
 
@@ -124,8 +137,14 @@ public class Email extends SendGridModel implements SmtpApi {
         return from;
     }
 
-    public Email setFrom(String from) {
-        this.from = from;
+    public Email setFrom(String address) {
+        from = address;
+        return this;
+    }
+
+    public Email setFrom(String address, String name) {
+        setFrom(address);
+        setFromName(name);
         return this;
     }
 
@@ -133,8 +152,8 @@ public class Email extends SendGridModel implements SmtpApi {
         return fromName;
     }
 
-    public Email setFromName(String fromName) {
-        this.fromName = fromName;
+    public Email setFromName(String name) {
+        fromName = name;
         return this;
     }
 
@@ -142,8 +161,8 @@ public class Email extends SendGridModel implements SmtpApi {
         return replyTo;
     }
 
-    public Email setReplyTo(String replyTo) {
-        this.replyTo = replyTo;
+    public Email setReplyTo(String address) {
+        replyTo = address;
         return this;
     }
 
@@ -326,8 +345,8 @@ public class Email extends SendGridModel implements SmtpApi {
     }
 
     @Override
-    public Email addSmtpApiTo(String to, String name) {
-        smtpApi.addSmtpApiTo(to, name);
+    public Email addSmtpApiTo(String address, String name) {
+        smtpApi.addSmtpApiTo(address, name);
         return this;
     }
 

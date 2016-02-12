@@ -212,4 +212,21 @@ public class ApiTest {
         assertThat(response, notNullValue());
         assertThat(response.getMessage(), equalTo("success"));
     }
+
+    @Test
+    public void sendEmail_shouldSendEmailWithName() throws Exception {
+        Email email = new Email();
+        email.setFrom("sendgridjava@mailinator.com");
+        email.addTo("sendgridjava@mailinator.com");
+        email.addTo("sendgridjava2@mailinator.com");
+        email.addToName("SendGrid Java");
+        email.addToName("no name");
+        email.setSubject("Test");
+        email.setText("This is a test.");
+
+        Response response = sendGrid.mail().send(email);
+
+        assertThat(response, notNullValue());
+        assertThat(response.getMessage(), equalTo("success"));
+    }
 }

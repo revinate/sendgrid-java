@@ -123,6 +123,11 @@ public class EmailTest {
     }
 
     @Test
+    public void toHeaders_shouldReturnJsonString() throws Exception {
+        assertThat(email.toHeaders(), equalTo("{}"));
+    }
+
+    @Test
     public void setContentId_shouldSetContentId() throws Exception {
         email.setContentId("key", "value");
 
@@ -152,5 +157,27 @@ public class EmailTest {
     public void setIpPool_shouldSetIpPool() throws Exception {
         email.setIpPool("transactional");
         assertThat(email.getIpPool(), equalTo("transactional"));
+    }
+
+    @Test
+    public void toSmtpApiHeader_shouldReturnJsonString() throws Exception {
+        assertThat(email.toSmtpApiHeader(), equalTo("{}"));
+    }
+
+    @Test
+    public void toString_shouldReturnJsonString() throws Exception {
+        email.addTo(ADDRESS);
+        email.addToName(NAME);
+        email.setFrom(ADDRESS);
+        email.setFromName(NAME);
+        email.setText("This is a test");
+        InputStream inputStream = getClass().getResourceAsStream("/image.png");
+        email.setAttachment("image.png", inputStream);
+        email.setHeader("key", "value");
+        email.setHeader("key2", "value2");
+        email.setTemplateId("abc-123");
+        email.addSmtpApiTo(ADDRESS);
+        email.setIpPool("transactional");
+        assertThat(email.toString(), notNullValue());
     }
 }

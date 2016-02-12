@@ -1,7 +1,6 @@
 package com.revinate.sendgrid.net;
 
 import com.revinate.sendgrid.net.auth.UsernamePasswordCredential;
-import com.revinate.sendgrid.util.JsonUtils;
 import org.apache.http.HttpEntity;
 import org.apache.http.entity.ContentType;
 import org.apache.http.entity.mime.MultipartEntityBuilder;
@@ -132,12 +131,9 @@ public class MultipartHttpEntityBuilder extends HttpEntityBuilder {
             }
         }
 
-        if (email.getHeaders().size() > 0) {
-            try {
-                builder.addTextBody(PARAM_HEADERS, JsonUtils.toJson(email.getHeaders()), TEXT_PLAIN_UTF8);
-            } catch (IOException e) {
-                // do nothing
-            }
+        String headers = email.toHeaders();
+        if (!"{}".equals(headers)) {
+            builder.addTextBody(PARAM_HEADERS, headers, TEXT_PLAIN_UTF8);
         }
 
         String smtpApiHeader = email.toSmtpApiHeader();

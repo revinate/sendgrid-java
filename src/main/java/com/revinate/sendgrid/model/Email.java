@@ -1,11 +1,9 @@
 package com.revinate.sendgrid.model;
 
-import com.fasterxml.jackson.annotation.JsonAutoDetect;
-import com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.revinate.sendgrid.smtpapi.SmtpApi;
 import com.revinate.sendgrid.smtpapi.SmtpApiException;
 import com.revinate.sendgrid.smtpapi.SmtpApiImpl;
+import com.revinate.sendgrid.util.JsonUtils;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -13,11 +11,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-@JsonAutoDetect(
-        fieldVisibility = Visibility.ANY,
-        getterVisibility = Visibility.NONE,
-        setterVisibility = Visibility.NONE
-)
 public class Email extends SendGridModel implements SmtpApi {
 
     private List<String> tos = new ArrayList<String>();
@@ -36,7 +29,6 @@ public class Email extends SendGridModel implements SmtpApi {
     private Map<String, String> contentIds = new HashMap<String, String>();
     private Map<String, String> headers = new HashMap<String, String>();
 
-    @JsonIgnore
     private SmtpApi smtpApi = new SmtpApiImpl();
 
     public List<String> getTos() {
@@ -242,6 +234,14 @@ public class Email extends SendGridModel implements SmtpApi {
     public Email setHeader(String key, String val) {
         headers.put(key, val);
         return this;
+    }
+
+    public String toHeaders() {
+        try {
+            return JsonUtils.toJson(headers);
+        } catch (IOException e) {
+            return "{}";
+        }
     }
 
     /**

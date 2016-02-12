@@ -31,6 +31,10 @@ public final class SendGrid extends RootResource implements Closeable {
         return new RootResource(baseUrl, client, onBehalfOfCredential);
     }
 
+    public RootResource onBehalfOf(Credential credentialOverride) {
+        return new RootResource(baseUrl, client, credentialOverride);
+    }
+
     public static Builder create(String username, String password) {
         return new Builder(username, password);
     }

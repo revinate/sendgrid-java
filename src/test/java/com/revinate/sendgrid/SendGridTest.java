@@ -84,6 +84,17 @@ public class SendGridTest {
     }
 
     @Test
+    public void onBehalfOf_shouldOverrideCredential() throws Exception {
+        Credential credential = mock(Credential.class);
+        ApiKeysResource resource = sendGrid.onBehalfOf(credential).apiKeys();
+
+        assertThat(resource, notNullValue());
+        assertThat(resource.getBaseUrl(), equalTo(BASE_URL + "/v3"));
+        assertThat(resource.getClient(), sameInstance(client));
+        assertThat(resource.getCredential(), sameInstance(credential));
+    }
+
+    @Test
     public void apiKeys_shouldReturnResource() throws Exception {
         ApiKeysResource resource = sendGrid.apiKeys();
 

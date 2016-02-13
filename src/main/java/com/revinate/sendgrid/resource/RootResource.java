@@ -13,6 +13,10 @@ public class RootResource extends SendGridResource {
         super(baseUrl, client, credential);
     }
 
+    public AccountResource account() {
+        return new AccountResource(getApiUrl(AccountResource.API_VERSION), client, credential);
+    }
+
     public ApiKeysResource apiKeys() {
         return new ApiKeysResource(getApiUrl(ApiKeysResource.API_VERSION), client, credential);
     }

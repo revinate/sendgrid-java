@@ -18,7 +18,7 @@ public class IpResource extends EntityResource<Ip> {
     }
 
     @Override
-    public Ip update (Ip ip) throws SendGridException {
+    public Ip update(Ip ip) throws SendGridException {
         throw unsupported();
     }
 

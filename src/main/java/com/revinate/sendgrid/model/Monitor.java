@@ -5,6 +5,15 @@ public class Monitor extends SendGridModel {
     private String email;
     private Integer frequency;
 
+    public Monitor() {
+        // no args constructor for Jackson
+    }
+
+    public Monitor(String email, Integer frequency) {
+        this.email = email;
+        this.frequency = frequency;
+    }
+
     public String getEmail() {
         return email;
     }

@@ -16,7 +16,7 @@ public class EventWebhookSettings extends SendGridModel {
     private Boolean unsubscribe;
 
     public EventWebhookSettings() {
-
+        // no args constructor for Jackson
     }
 
     public EventWebhookSettings(String url, Boolean enable) {

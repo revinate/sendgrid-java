@@ -42,9 +42,8 @@ public class ApiKeysResourceTest extends BaseSendGridTest {
 
     @Test
     public void entity_shouldReturnResource() throws Exception {
-        ApiKey apiKey = new ApiKey();
+        ApiKey apiKey = new ApiKey("1st API key");
         apiKey.setApiKeyId("test");
-        apiKey.setName("1st API key");
 
         ApiKeyResource subresource = resource.entity(apiKey);
 
@@ -71,8 +70,7 @@ public class ApiKeysResourceTest extends BaseSendGridTest {
     @Test
     public void create_shouldPostAndReturnApiKey() throws Exception {
         ApiKey response = JsonUtils.fromJson(readFile("/responses/api-key.json"), ApiKey.class);
-        ApiKey apiKey = new ApiKey();
-        apiKey.setName("1st API key");
+        ApiKey apiKey = new ApiKey("1st API key");
         apiKey.addScope("mail.send");
 
         when(client.post("https://api.sendgrid.com/v3/api_keys",

@@ -67,9 +67,7 @@ public class LinkWhitelabelsResourceTest extends BaseSendGridTest {
     @Test
     public void create_shouldPostAndReturnWhitelabel() throws Exception {
         Whitelabel response = JsonUtils.fromJson(readFile("/responses/link-whitelabel.json"), Whitelabel.class);
-        Whitelabel whitelabel = new Whitelabel();
-        whitelabel.setDomain("email.com");
-        whitelabel.setSubdomain("c");
+        Whitelabel whitelabel = new Whitelabel("email.com", "c");
         whitelabel.setDefault(true);
 
         when(client.post("https://api.sendgrid.com/v3/whitelabel/links",

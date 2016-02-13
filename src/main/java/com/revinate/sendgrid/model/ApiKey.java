@@ -10,6 +10,14 @@ public class ApiKey extends SendGridModel implements SendGridEntity {
     private String apiKey;
     private List<String> scopes;
 
+    public ApiKey() {
+        // no args constructor for Jackson
+    }
+
+    public ApiKey(String name) {
+        this.name = name;
+    }
+
     @Override
     public String getEntityId() {
         return apiKeyId;

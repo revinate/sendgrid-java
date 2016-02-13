@@ -6,7 +6,7 @@ public class ApiError extends SendGridModel {
     private String message;
 
     public ApiError() {
-
+        // no args constructor for Jackson
     }
 
     public ApiError(String message) {

@@ -18,6 +18,15 @@ public class Whitelabel extends SendGridModel implements SendGridEntity {
     private Boolean valid;
     private Map<String, DnsRecord> dns;
 
+    public Whitelabel() {
+        // no args constructor for Jackson
+    }
+
+    public Whitelabel(String domain, String subdomain) {
+        this.domain = domain;
+        this.subdomain = subdomain;
+    }
+
     @Override
     public String getEntityId() {
         return id.toString();

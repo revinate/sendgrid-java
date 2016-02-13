@@ -18,8 +18,7 @@ public class ApiKeyResource extends EntityResource<ApiKey> {
 
     @Override
     public ApiKey update(ApiKey apiKey) throws SendGridException {
-        ApiKey requestObject = new ApiKey();
-        requestObject.setName(apiKey.getName());
+        ApiKey requestObject = new ApiKey(apiKey.getName());
         requestObject.setScopes(apiKey.getScopes());
         return client.put(getUrl(), ApiKey.class, credential, requestObject, RequestType.JSON);
     }

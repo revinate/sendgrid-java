@@ -60,10 +60,7 @@ public class MailSettingResourceTest extends BaseSendGridTest {
     @SuppressWarnings("unchecked")
     public void update_shouldPatchAndReturnSetting() throws Exception {
         MailSetting response = JsonUtils.fromJson(readFile("/responses/mail-setting.json"), MailSetting.class);
-        MailSetting setting = new MailSetting();
-        setting.setName(NAME);
-        setting.setEmail("test1@email.com");
-        setting.setEnabled(true);
+        MailSetting setting = new MailSetting(NAME, true, "test1@email.com");
 
         when(client.patch(any(String.class), any(Class.class),
                 any(Credential.class), any(MailSetting.class), any(RequestType.class))).thenReturn(response);

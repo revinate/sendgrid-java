@@ -8,6 +8,16 @@ public class MailSetting extends SendGridModel implements SendGridEntity {
     private Boolean enabled;
     private String email;
 
+    public MailSetting() {
+        // no args constructor for Jackson
+    }
+
+    public MailSetting(String name, Boolean enabled, String email) {
+        this.name = name;
+        this.enabled = enabled;
+        this.email = email;
+    }
+
     @Override
     public String getEntityId() {
         return name;

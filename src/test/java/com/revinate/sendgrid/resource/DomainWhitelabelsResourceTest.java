@@ -67,9 +67,7 @@ public class DomainWhitelabelsResourceTest extends BaseSendGridTest {
     @Test
     public void create_shouldPostAndReturnWhitelabel() throws Exception {
         Whitelabel response = JsonUtils.fromJson(readFile("/responses/domain-whitelabel.json"), Whitelabel.class);
-        Whitelabel whitelabel = new Whitelabel();
-        whitelabel.setDomain("email.com");
-        whitelabel.setSubdomain("m");
+        Whitelabel whitelabel = new Whitelabel("email.com", "m");
         whitelabel.setAutomaticSecurity(true);
         whitelabel.setDefault(true);
 

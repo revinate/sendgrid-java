@@ -42,8 +42,7 @@ public class SubusersResourceTest extends BaseSendGridTest {
 
     @Test
     public void entity_shouldReturnResource() throws Exception {
-        Subuser subuser = new Subuser();
-        subuser.setUsername("test");
+        Subuser subuser = new Subuser("test");
 
         SubuserResource subresource = resource.entity(subuser);
 
@@ -70,10 +69,7 @@ public class SubusersResourceTest extends BaseSendGridTest {
     @Test
     public void create_shouldPostAndReturnSubuser() throws Exception {
         Subuser response = JsonUtils.fromJson(readFile("/responses/subuser.json"), Subuser.class);
-        Subuser subuser = new Subuser();
-        subuser.setUsername("test1");
-        subuser.setEmail("test1@email.com");
-        subuser.setPassword("testpassword");
+        Subuser subuser = new Subuser("test1", "test1@email.com", "testpassword");
         subuser.addIp("127.0.0.1");
 
         when(client.post("https://api.sendgrid.com/v3/subusers",

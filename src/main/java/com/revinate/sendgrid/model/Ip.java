@@ -13,6 +13,14 @@ public class Ip extends SendGridModel implements SendGridEntity {
     private Boolean warmup;
     private Boolean whitelabeled;
 
+    public Ip() {
+        // no args constructor for Jackson
+    }
+
+    public Ip(String ip) {
+        this.ip = ip;
+    }
+
     @Override
     public String getEntityId() {
         return ip;

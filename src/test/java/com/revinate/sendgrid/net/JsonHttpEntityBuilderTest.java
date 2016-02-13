@@ -58,8 +58,7 @@ public class JsonHttpEntityBuilderTest {
 
     @Test
     public void builder_shouldAcceptModel() throws Exception {
-        ApiKey apiKey = new ApiKey();
-        apiKey.setName("test");
+        ApiKey apiKey = new ApiKey("test");
 
         HttpEntity entity = builder.setModel(apiKey).build();
 

@@ -15,6 +15,20 @@ public class Subuser extends SendGridModel implements SendGridEntity {
     private CreditAllocation creditAllocation;
     private List<String> ips;
 
+    public Subuser() {
+        // no args constructor for Jackson
+    }
+
+    public Subuser(String username) {
+        this.username = username;
+    }
+
+    public Subuser(String username, String email, String password) {
+        this.username = username;
+        this.email = email;
+        this.password = password;
+    }
+
     @Override
     public String getEntityId() {
         return username;

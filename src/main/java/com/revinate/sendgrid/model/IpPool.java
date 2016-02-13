@@ -1,11 +1,20 @@
 package com.revinate.sendgrid.model;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class IpPool extends SendGridModel implements SendGridEntity {
 
     private String name;
     private List<Ip> ips;
+
+    public IpPool() {
+        // no args constructor for Jackson
+    }
+
+    public IpPool(String name) {
+        this.name = name;
+    }
 
     @Override
     public String getEntityId() {
@@ -30,5 +39,12 @@ public class IpPool extends SendGridModel implements SendGridEntity {
 
     public void setIps(List<Ip> ips) {
         this.ips = ips;
+    }
+
+    public void addIp(Ip ip) {
+        if (ips == null) {
+            ips = new ArrayList<Ip>();
+        }
+        ips.add(ip);
     }
 }

@@ -87,10 +87,7 @@ public class ApiTest {
 
     @Test
     public void createSubuser_shouldReturnSubuser() throws Exception {
-        Subuser subuser = new Subuser();
-        subuser.setUsername("testsubuser124");
-        subuser.setPassword("secretpasswordfortesting124");
-        subuser.setEmail("sendgridjava@mailinator.com");
+        Subuser subuser = new Subuser("testsubuser124", "sendgridjava@mailinator.com", "secretpasswordfortesting124");
 
         List<Ip> ips = sendGrid.ips().list();
         for (Ip ip : ips) {
@@ -114,8 +111,7 @@ public class ApiTest {
 
     @Test
     public void createApiKey_shouldReturnApiKey() throws Exception {
-        ApiKey apiKey = new ApiKey();
-        apiKey.setName("testapikey");
+        ApiKey apiKey = new ApiKey("testapikey");
         apiKey.addScope("mail.send");
 
         ApiKey apiKey1 = sendGrid.apiKeys().create(apiKey);
@@ -141,8 +137,7 @@ public class ApiTest {
 
     @Test
     public void createApiKeyOnBehalfOf_shouldReturnApiKey() throws Exception {
-        ApiKey apiKey = new ApiKey();
-        apiKey.setName("testapikey");
+        ApiKey apiKey = new ApiKey("testapikey");
         apiKey.addScope("mail.send");
 
         ApiKey apiKey1 = sendGrid.onBehalfOf("testsubuser123").apiKeys().create(apiKey);
@@ -168,9 +163,7 @@ public class ApiTest {
 
     @Test
     public void createDomainWhitelabelOnBehalfOf_shouldReturnWhitelabel() throws Exception {
-        Whitelabel whitelabel = new Whitelabel();
-        whitelabel.setDomain("email.com");
-        whitelabel.setSubdomain("m");
+        Whitelabel whitelabel = new Whitelabel("email.com", "m");
         whitelabel.setAutomaticSecurity(true);
         whitelabel.setDefault(true);
 
@@ -202,9 +195,7 @@ public class ApiTest {
 
     @Test
     public void createLinkWhitelabelOnBehalfOf_shouldReturnWhitelabel() throws Exception {
-        Whitelabel whitelabel = new Whitelabel();
-        whitelabel.setDomain("email.com");
-        whitelabel.setSubdomain("c");
+        Whitelabel whitelabel = new Whitelabel("email.com", "c");
         whitelabel.setDefault(true);
 
         Whitelabel whitelabel1 = sendGrid.onBehalfOf("testsubuser123").linkWhitelabels().create(whitelabel);
@@ -257,9 +248,7 @@ public class ApiTest {
 
     @Test
     public void createMonitor_shouldReturnMonitor() throws Exception {
-        Monitor monitor = new Monitor();
-        monitor.setEmail("sendgridjava@mailinator.com");
-        monitor.setFrequency(5000);
+        Monitor monitor = new Monitor("sendgridjava@mailinator.com", 5000);
 
         Monitor monitor1 = sendGrid.subuser("testsubuser123").monitor().create(monitor);
 
@@ -282,10 +271,7 @@ public class ApiTest {
 
     @Test
     public void updateMailSettingOnBehalfOf_shouldUpdateSetting() throws Exception {
-        MailSetting setting = new MailSetting();
-        setting.setName("forward_spam");
-        setting.setEmail("sendgridjava@mailinator.com");
-        setting.setEnabled(true);
+        MailSetting setting = new MailSetting("forward_spam", true, "sendgridjava@mailinator.com");
 
         MailSetting setting1 = sendGrid.onBehalfOf("testsubuser123").mailSetting(setting).update(setting);
 

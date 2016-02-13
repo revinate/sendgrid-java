@@ -144,8 +144,7 @@ public class SendGridHttpClientTest extends BaseSendGridTest {
     @Test
     public void post_shouldMakeRequestAndReturnResponse() throws Exception {
         String response = readFile("/responses/api-key.json");
-        ApiKey apiKey = new ApiKey();
-        apiKey.setName("1st API key");
+        ApiKey apiKey = new ApiKey("1st API key");
         apiKey.addScope("mail.send");
         String request = JsonUtils.toJson(apiKey);
 
@@ -215,8 +214,7 @@ public class SendGridHttpClientTest extends BaseSendGridTest {
     @Test
     public void put_shouldMakeRequestAndReturnResponse() throws Exception {
         String response = readFile("/responses/api-key.json");
-        ApiKey apiKey = new ApiKey();
-        apiKey.setName("1st API key");
+        ApiKey apiKey = new ApiKey("1st API key");
         apiKey.addScope("mail.send");
         String request = JsonUtils.toJson(apiKey);
 

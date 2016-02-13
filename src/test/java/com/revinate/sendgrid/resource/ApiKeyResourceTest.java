@@ -61,8 +61,7 @@ public class ApiKeyResourceTest extends BaseSendGridTest {
 
     @Test
     public void retrieve_shouldHandleMissingId() throws Exception {
-        ApiKey apiKey = new ApiKey();
-        apiKey.setName("1st API key");
+        ApiKey apiKey = new ApiKey("1st API key");
         resource = new ApiKeyResource("https://api.sendgrid.com/v3/api_keys", client, credential, apiKey);
 
         thrown.expect(InvalidRequestException.class);
@@ -75,9 +74,8 @@ public class ApiKeyResourceTest extends BaseSendGridTest {
     @SuppressWarnings("unchecked")
     public void update_shouldPutAndReturnApiKey() throws Exception {
         ApiKey response = JsonUtils.fromJson(readFile("/responses/api-key.json"), ApiKey.class);
-        ApiKey apiKey = new ApiKey();
+        ApiKey apiKey = new ApiKey(response.getName());
         apiKey.setApiKeyId(API_KEY_ID);
-        apiKey.setName(response.getName());
         apiKey.setScopes(response.getScopes());
 
         when(client.put(any(String.class), any(Class.class),
@@ -101,8 +99,7 @@ public class ApiKeyResourceTest extends BaseSendGridTest {
 
     @Test
     public void update_shouldHandleMissingId() throws Exception {
-        ApiKey apiKey = new ApiKey();
-        apiKey.setName("1st API key");
+        ApiKey apiKey = new ApiKey("1st API key");
         resource = new ApiKeyResource("https://api.sendgrid.com/v3/api_keys", client, credential, apiKey);
 
         thrown.expect(InvalidRequestException.class);
@@ -127,8 +124,7 @@ public class ApiKeyResourceTest extends BaseSendGridTest {
 
     @Test
     public void partialUpdate_shouldHandleMissingId() throws Exception {
-        ApiKey apiKey = new ApiKey();
-        apiKey.setName("1st API key");
+        ApiKey apiKey = new ApiKey("1st API key");
         Map<String, Object> requestObject = new HashMap<String, Object>();
         requestObject.put("name", "3rd API key");
         resource = new ApiKeyResource("https://api.sendgrid.com/v3/api_keys", client, credential, apiKey);
@@ -148,8 +144,7 @@ public class ApiKeyResourceTest extends BaseSendGridTest {
 
     @Test
     public void delete_shouldHandleMissingId() throws Exception {
-        ApiKey apiKey = new ApiKey();
-        apiKey.setName("1st API key");
+        ApiKey apiKey = new ApiKey("1st API key");
         resource = new ApiKeyResource("https://api.sendgrid.com/v3/api_keys", client, credential, apiKey);
 
         thrown.expect(InvalidRequestException.class);

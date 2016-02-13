@@ -81,8 +81,7 @@ public class MultipartHttpEntityBuilderTest {
 
     @Test
     public void builder_shouldNotAcceptModel() throws Exception {
-        ApiKey apiKey = new ApiKey();
-        apiKey.setName("test");
+        ApiKey apiKey = new ApiKey("test");
 
         thrown.expect(IOException.class);
         thrown.expectMessage("Content is of unsupported type");

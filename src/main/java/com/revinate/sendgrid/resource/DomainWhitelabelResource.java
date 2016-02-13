@@ -17,6 +17,7 @@ public class DomainWhitelabelResource extends EntityResource<Whitelabel> {
     public DomainWhitelabelResource(String baseUrl, SendGridHttpClient client, Credential credential, String id) {
         super(baseUrl, client, credential, Whitelabel.class, id);
     }
+
     public IpsResource ips() throws InvalidRequestException {
         return new IpsResource(getUrl(), client, credential);
     }

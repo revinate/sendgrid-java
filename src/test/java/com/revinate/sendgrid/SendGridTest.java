@@ -155,6 +155,16 @@ public class SendGridTest {
     }
 
     @Test
+    public void linkWhitelabels_shouldReturnResource() throws Exception {
+        LinkWhitelabelsResource resource = sendGrid.linkWhitelabels();
+
+        assertThat(resource, notNullValue());
+        assertThat(resource.getBaseUrl(), equalTo(BASE_URL + "/v3"));
+        assertThat(resource.getClient(), sameInstance(client));
+        assertThat(resource.getCredential(), sameInstance(sendGrid.getCredential()));
+    }
+
+    @Test
     public void mail_shouldReturnResource() throws Exception {
         MailResource resource = sendGrid.mail();
 

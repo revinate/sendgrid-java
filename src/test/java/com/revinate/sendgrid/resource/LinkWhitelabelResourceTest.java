@@ -21,7 +21,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
-public class DomainWhitelabelResourceTest extends BaseSendGridTest {
+public class LinkWhitelabelResourceTest extends BaseSendGridTest {
 
     private static final String ID = "1";
 
@@ -34,18 +34,18 @@ public class DomainWhitelabelResourceTest extends BaseSendGridTest {
     @Mock
     Credential credential;
 
-    DomainWhitelabelResource resource;
+    LinkWhitelabelResource resource;
 
     @Before
     public void setUp() throws Exception {
-        resource = new DomainWhitelabelResource("https://api.sendgrid.com/v3/whitelabel/domains", client, credential, ID);
+        resource = new LinkWhitelabelResource("https://api.sendgrid.com/v3/whitelabel/links", client, credential, ID);
     }
 
     @Test
     public void retrieve_shouldReturnWhitelabel() throws Exception {
-        Whitelabel response = JsonUtils.fromJson(readFile("/responses/domain-whitelabel.json"), Whitelabel.class);
+        Whitelabel response = JsonUtils.fromJson(readFile("/responses/link-whitelabel.json"), Whitelabel.class);
 
-        when(client.get("https://api.sendgrid.com/v3/whitelabel/domains/" + ID,
+        when(client.get("https://api.sendgrid.com/v3/whitelabel/links/" + ID,
                 Whitelabel.class, credential)).thenReturn(response);
 
         Whitelabel whitelabel = resource.retrieve();
@@ -65,14 +65,14 @@ public class DomainWhitelabelResourceTest extends BaseSendGridTest {
     public void delete_shouldDeleteWhitelabel() throws Exception {
         resource.delete();
 
-        verify(client).delete("https://api.sendgrid.com/v3/whitelabel/domains/" + ID, credential);
+        verify(client).delete("https://api.sendgrid.com/v3/whitelabel/links/" + ID, credential);
     }
 
     @Test
     public void validate_shouldReturnValidation() throws Exception {
-        WhitelabelValidation response = JsonUtils.fromJson(readFile("/responses/domain-whitelabel-validation.json"), WhitelabelValidation.class);
+        WhitelabelValidation response = JsonUtils.fromJson(readFile("/responses/link-whitelabel-validation.json"), WhitelabelValidation.class);
 
-        when(client.post("https://api.sendgrid.com/v3/whitelabel/domains/" + ID + "/validate",
+        when(client.post("https://api.sendgrid.com/v3/whitelabel/links/" + ID + "/validate",
                 WhitelabelValidation.class, credential)).thenReturn(response);
 
         WhitelabelValidation validate = resource.validate();

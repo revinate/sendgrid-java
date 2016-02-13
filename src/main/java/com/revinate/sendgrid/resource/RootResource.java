@@ -66,6 +66,18 @@ public class RootResource extends SendGridResource {
         return ipPools().entity(id);
     }
 
+    public LinkWhitelabelsResource linkWhitelabels() {
+        return new LinkWhitelabelsResource(getApiUrl(LinkWhitelabelsResource.API_VERSION), client, credential);
+    }
+
+    public LinkWhitelabelResource linkWhitelabel(Whitelabel whitelabel) {
+        return linkWhitelabels().entity(whitelabel);
+    }
+
+    public LinkWhitelabelResource linkWhitelabel(String id) {
+        return linkWhitelabels().entity(id);
+    }
+
     public MailResource mail() {
         return new MailResource(getApiUrl(MailResource.API_VERSION), client, credential);
     }

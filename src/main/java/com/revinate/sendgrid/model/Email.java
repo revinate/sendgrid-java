@@ -211,6 +211,12 @@ public class Email extends SendGridModel implements SmtpApi {
         return this;
     }
 
+    public Email setAttachment(String name, InputStream file, String contentId) {
+        setAttachment(name, file);
+        setContentId(name, contentId);
+        return this;
+    }
+
     public Email setAttachment(String name, File file) throws IOException {
         return setAttachment(name, new FileInputStream(file));
     }

@@ -190,8 +190,38 @@ public class ApiTest {
         email.addTo("sendgridjava@mailinator.com");
         email.setSubject("Test");
         email.setText("This is a test.");
+
+        Response response = sendGrid.mail().send(email);
+
+        assertThat(response, notNullValue());
+        assertThat(response.getMessage(), equalTo("success"));
+    }
+
+    @Test
+    public void sendEmail_shouldSendEmailWithAttachments() throws Exception {
+        Email email = new Email();
+        email.setFrom("sendgridjava@mailinator.com");
+        email.addTo("sendgridjava@mailinator.com");
+        email.setSubject("Test");
+        email.setText("This is a test.");
         email.setAttachment("test.txt", getClass().getResourceAsStream("/test.txt"));
         email.setAttachment("image.png", getClass().getResourceAsStream("/image.png"));
+
+        Response response = sendGrid.mail().send(email);
+
+        assertThat(response, notNullValue());
+        assertThat(response.getMessage(), equalTo("success"));
+    }
+
+    @Test
+    public void sendEmail_shouldSendHtmlEmailWithContentIds() throws Exception {
+        Email email = new Email();
+        email.setFrom("sendgridjava@mailinator.com");
+        email.addTo("sendgridjava@mailinator.com");
+        email.setSubject("Test");
+        email.setText("This is a test.");
+        email.setHtml("This is a test. <img src=\"cid:id1\"></img>");
+        email.setAttachment("image.png", getClass().getResourceAsStream("/image.png"), "id1");
 
         Response response = sendGrid.mail().send(email);
 
@@ -206,6 +236,39 @@ public class ApiTest {
         email.addSmtpApiTo("sendgridjava@mailinator.com", "SendGrid Java");
         email.setSubject("Test");
         email.setText("This is a test.");
+
+        Response response = sendGrid.mail().send(email);
+
+        assertThat(response, notNullValue());
+        assertThat(response.getMessage(), equalTo("success"));
+    }
+
+    @Test
+    public void sendEmail_shouldSendEmailWithCcAndBcc() throws Exception {
+        Email email = new Email();
+        email.setFrom("sendgridjava@mailinator.com", "SendGrid Java");
+        email.addTo("sendgridjava@mailinator.com", "SendGrid Java");
+        email.addCc("sendgridjava2@mailinator.com", "SendGrid Java Two");
+        email.addBcc("sendgridjava3@mailinator.com", "SendGrid Java Three");
+        email.setReplyTo("no-reply@mailinator.com");
+        email.setSubject("Test");
+        email.setText("This is a test.");
+
+        Response response = sendGrid.mail().send(email);
+
+        assertThat(response, notNullValue());
+        assertThat(response.getMessage(), equalTo("success"));
+    }
+
+    @Test
+    public void sendEmail_shouldSendEmailWithExtraHeaders() throws Exception {
+        Email email = new Email();
+        email.setFrom("sendgridjava@mailinator.com");
+        email.addTo("sendgridjava@mailinator.com", "SendGrid Java");
+        email.setSubject("Test");
+        email.setText("This is a test.");
+        email.setHeader("x-custom-header-1", "test1");
+        email.setHeader("x-custom-header-2", "test2");
 
         Response response = sendGrid.mail().send(email);
 

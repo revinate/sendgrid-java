@@ -29,18 +29,48 @@ public class ApiTest {
     }
 
     @Test
-    public void getResources_shouldReturnResources() throws Exception {
+    public void getAccount_shouldReturnAccount() throws Exception {
+        Account account = sendGrid.account().retrieve();
+        assertThat(account, notNullValue());
+    }
+
+    @Test
+    public void getApiKeys_shouldReturnApiKeys() throws Exception {
+        List<ApiKey> apiKeys = sendGrid.apiKeys().list();
+        assertThat(apiKeys, notNullValue());
+    }
+
+    @Test
+    public void getEventWebhookSettings_shouldReturnSettings() throws Exception {
+        EventWebhookSettings settings = sendGrid.eventWebhookSettings().retrieve();
+        assertThat(settings, notNullValue());
+    }
+
+    @Test
+    public void getIps_shouldReturnIps() throws Exception {
+        List<Ip> ips = sendGrid.ips().list();
+        assertThat(ips, notNullValue());
+    }
+
+    @Test
+    public void getIpPools_shouldReturnIpPools() throws Exception {
+        List<IpPool> ipPools = sendGrid.ipPools().list();
+        assertThat(ipPools, notNullValue());
+    }
+
+    @Test
+    public void getMailSettings_shouldReturnSettings() throws Exception {
+        List<MailSetting> settings = sendGrid.mailSettings().list();
+        assertThat(settings, notNullValue());
+    }
+
+    @Test
+    public void getSubusers_shouldReturnSubusers() throws Exception {
         List<Subuser> subusers = sendGrid.subusers().list();
         assertThat(subusers, notNullValue());
 
         Subuser subuser = sendGrid.subuser("testsubuser123").retrieve();
         assertThat(subuser, notNullValue());
-
-        List<Ip> ips = sendGrid.ips().list();
-        assertThat(ips, notNullValue());
-
-        List<IpPool> ipPools = sendGrid.ipPools().list();
-        assertThat(ipPools, notNullValue());
     }
 
     @Test
@@ -181,6 +211,43 @@ public class ApiTest {
         thrown.expect(ResourceNotFoundException.class);
 
         sendGrid.subuser("testsubuser123").monitor().retrieve();
+    }
+
+    @Test
+    public void updateMailSettingOnBehalfOf_shouldUpdateSetting() throws Exception {
+        MailSetting setting = new MailSetting();
+        setting.setName("forward_spam");
+        setting.setEmail("sendgridjava@mailinator.com");
+        setting.setEnabled(true);
+
+        MailSetting setting1 = sendGrid.onBehalfOf("testsubuser123").mailSetting(setting).update(setting);
+
+        assertThat(setting1, notNullValue());
+        assertThat(setting1.getEmail(), equalTo("sendgridjava@mailinator.com"));
+        assertThat(setting1.getEnabled(), equalTo(true));
+
+        setting.setEnabled(false);
+
+        MailSetting setting2 = sendGrid.onBehalfOf("testsubuser123").mailSetting(setting).update(setting);
+
+        assertThat(setting2, notNullValue());
+    }
+
+    @Test
+    public void updateEventWebhookSettingsOnBehalfOf_shouldUpdateSettings() throws Exception {
+        EventWebhookSettings settings = new EventWebhookSettings("http://event.webhook.receiver", true);
+
+        EventWebhookSettings settings1 = sendGrid.onBehalfOf("testsubuser123").eventWebhookSettings().update(settings);
+
+        assertThat(settings1, notNullValue());
+        assertThat(settings1.getUrl(), equalTo("http://event.webhook.receiver"));
+        assertThat(settings1.getEnabled(), equalTo(true));
+
+        EventWebhookSettings settings2 = new EventWebhookSettings("http://event.webhook.receiver", false);
+
+        EventWebhookSettings settings3 = sendGrid.onBehalfOf("testsubuser123").eventWebhookSettings().update(settings2);
+
+        assertThat(settings3, notNullValue());
     }
 
     @Test

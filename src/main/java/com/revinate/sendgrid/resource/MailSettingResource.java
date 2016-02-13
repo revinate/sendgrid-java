@@ -18,7 +18,10 @@ public class MailSettingResource extends EntityResource<MailSetting> {
 
     @Override
     public MailSetting update(MailSetting setting) throws SendGridException {
-        return client.patch(getUrl(), MailSetting.class, credential, setting, RequestType.JSON);
+        MailSetting requestObject = new MailSetting();
+        requestObject.setEmail(setting.getEmail());
+        requestObject.setEnabled(setting.getEnabled());
+        return client.patch(getUrl(), MailSetting.class, credential, requestObject, RequestType.JSON);
     }
 
     @Override

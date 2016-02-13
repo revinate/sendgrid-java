@@ -63,6 +63,7 @@ public class MailSettingResourceTest extends BaseSendGridTest {
         MailSetting setting = new MailSetting();
         setting.setName(NAME);
         setting.setEmail("test1@email.com");
+        setting.setEnabled(true);
 
         when(client.patch(any(String.class), any(Class.class),
                 any(Credential.class), any(MailSetting.class), any(RequestType.class))).thenReturn(response);
@@ -78,8 +79,8 @@ public class MailSettingResourceTest extends BaseSendGridTest {
         MailSetting setting2 = captor.getValue();
 
         assertThat(setting2, notNullValue());
-        assertThat(setting2.getName(), equalTo(setting.getName()));
         assertThat(setting2.getEmail(), equalTo(setting.getEmail()));
+        assertThat(setting2.getEnabled(), equalTo(setting.getEnabled()));
     }
 
     @Test

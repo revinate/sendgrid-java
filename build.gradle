@@ -87,8 +87,8 @@ uploadArchives {
             pom.project {
                 artifactId 'sendgrid-java'
                 packaging 'jar'
-                name 'SendGrid for Java'
-                description 'SendGrid Java helper library'
+                name 'SendGrid Java Bindings'
+                description 'SendGrid Java Bindings'
                 url 'https://github.com/revinate/sendgrid-java'
 
                 scm {

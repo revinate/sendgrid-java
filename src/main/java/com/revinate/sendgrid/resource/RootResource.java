@@ -29,6 +29,10 @@ public class RootResource extends SendGridResource {
         return apiKeys().entity(id);
     }
 
+    public EventWebhookSettingsResource eventWebhookSettings() {
+        return new EventWebhookSettingsResource(getApiUrl(EventWebhookSettingsResource.API_VERSION), client, credential);
+    }
+
     public IpsResource ips() {
         return new IpsResource(getApiUrl(IpsResource.API_VERSION), client, credential);
     }

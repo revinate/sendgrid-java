@@ -5,6 +5,8 @@ import com.revinate.sendgrid.model.Account;
 import com.revinate.sendgrid.net.SendGridHttpClient;
 import com.revinate.sendgrid.net.auth.Credential;
 
+import java.util.Map;
+
 public class AccountResource extends SingularEntityResource<Account> {
 
     public static final ApiVersion API_VERSION = ApiVersion.V3;
@@ -21,6 +23,11 @@ public class AccountResource extends SingularEntityResource<Account> {
 
     @Override
     public Account update(Account account) throws SendGridException {
+        throw unsupported();
+    }
+
+    @Override
+    public Account partialUpdate(Map<String, Object> requestObject) throws SendGridException {
         throw unsupported();
     }
 

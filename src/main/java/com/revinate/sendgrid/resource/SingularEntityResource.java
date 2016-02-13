@@ -6,6 +6,8 @@ import com.revinate.sendgrid.net.SendGridHttpClient;
 import com.revinate.sendgrid.net.SendGridHttpClient.RequestType;
 import com.revinate.sendgrid.net.auth.Credential;
 
+import java.util.Map;
+
 public abstract class SingularEntityResource<T extends SendGridModel> extends SendGridResource {
 
     protected final Class<T> entityType;
@@ -25,6 +27,10 @@ public abstract class SingularEntityResource<T extends SendGridModel> extends Se
 
     public T update(T entity) throws SendGridException {
         return client.put(getUrl(), entityType, credential, entity, RequestType.JSON);
+    }
+
+    public T partialUpdate(Map<String, Object> requestObject) throws SendGridException {
+        return client.patch(getUrl(), entityType, credential, requestObject, RequestType.JSON);
     }
 
     public void delete() throws SendGridException {

@@ -1,0 +1,33 @@
+{
+  "id": 1,
+  "user_id": 1,
+  "subdomain": "m",
+  "domain": "email.com",
+  "username": "test1",
+  "ips": [],
+  "custom_spf": false,
+  "default": true,
+  "legacy": false,
+  "automatic_security": true,
+  "valid": false,
+  "dns": {
+    "mail_cname": {
+      "valid": false,
+      "type": "cname",
+      "host": "m.email.com",
+      "data": "wl.email.com"
+    },
+    "dkim1": {
+      "valid": false,
+      "type": "cname",
+      "host": "s1._domainkey.email.com",
+      "data": "s1.domainkey.wl.email.com"
+    },
+    "dkim2": {
+      "valid": false,
+      "type": "cname",
+      "host": "s2._domainkey.email.com",
+      "data": "s2.domainkey.wl.email.com"
+    }
+  }
+}

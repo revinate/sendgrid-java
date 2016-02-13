@@ -66,6 +66,11 @@ public class SendGridHttpClient implements Closeable {
         return fromJson(responseBody, type);
     }
 
+    public <T> T post(String url, Class<T> type, Credential credential) throws SendGridException {
+        String responseBody = execute(HttpPost.METHOD_NAME, url, credential, null);
+        return fromJson(responseBody, type);
+    }
+
     public <T> T post(String url, Class<T> type, Credential credential, SendGridModel requestObject,
                       RequestType requestType) throws SendGridException {
         HttpEntity requestEntity = toEntity(requestObject, requestType, credential);

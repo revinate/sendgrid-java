@@ -26,6 +26,18 @@ public class RootResource extends SendGridResource {
         return apiKeys().entity(id);
     }
 
+    public DomainWhitelabelsResource domainWhitelabels() {
+        return new DomainWhitelabelsResource(getApiUrl(DomainWhitelabelsResource.API_VERSION), client, credential);
+    }
+
+    public DomainWhitelabelResource domainWhitelabel(Whitelabel whitelabel) {
+        return domainWhitelabels().entity(whitelabel);
+    }
+
+    public DomainWhitelabelResource domainWhitelabel(String id) {
+        return domainWhitelabels().entity(id);
+    }
+
     public EventWebhookSettingsResource eventWebhookSettings() {
         return new EventWebhookSettingsResource(getApiUrl(EventWebhookSettingsResource.API_VERSION), client, credential);
     }

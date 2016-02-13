@@ -1,0 +1,14 @@
+{
+  "id": 1,
+  "valid": false,
+  "validation_results": {
+    "domain_cname": {
+      "valid": false,
+      "reason": "Unable to lookup CNAME for \"c.email.com\"."
+    },
+    "owner_cname": {
+      "valid": false,
+      "reason": "Unable to lookup CNAME for \"123.email.com\"."
+    }
+  }
+}

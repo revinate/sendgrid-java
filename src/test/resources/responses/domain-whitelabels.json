@@ -1,0 +1,74 @@
+[
+  {
+    "id": 1,
+    "user_id": 1,
+    "subdomain": "m",
+    "domain": "email.com",
+    "username": "test1",
+    "ips": [],
+    "custom_spf": false,
+    "default": true,
+    "legacy": false,
+    "automatic_security": true,
+    "valid": false,
+    "dns": {
+      "mail_cname": {
+        "valid": false,
+        "type": "cname",
+        "host": "m.email.com",
+        "data": "wl.email.com"
+      },
+      "dkim1": {
+        "valid": false,
+        "type": "cname",
+        "host": "s1._domainkey.email.com",
+        "data": "s1.domainkey.wl.email.com"
+      },
+      "dkim2": {
+        "valid": false,
+        "type": "cname",
+        "host": "s2._domainkey.email.com",
+        "data": "s2.domainkey.wl.email.com"
+      }
+    }
+  },
+  {
+    "id": 2,
+    "user_id": 1,
+    "subdomain": "m",
+    "domain": "email2.com",
+    "username": "test1",
+    "ips": [],
+    "custom_spf": true,
+    "default": false,
+    "legacy": false,
+    "automatic_security": false,
+    "valid": false,
+    "dns": {
+      "mail_server": {
+        "valid": false,
+        "type": "mx",
+        "host": "m.email2.com",
+        "data": "mx.email2.com."
+      },
+      "domain_spf": {
+        "valid": false,
+        "type": "txt",
+        "host": "email2.com",
+        "data": "v=spf1 include:email2.com ~all"
+      },
+      "subdomain_spf": {
+        "valid": false,
+        "type": "txt",
+        "host": "m.email2.com",
+        "data": "v=spf1 include:email2.com ~all"
+      },
+      "dkim": {
+        "valid": false,
+        "type": "txt",
+        "host": "m1._domainkey.email2.com",
+        "data": "k=rsa; t=s; p=publickey"
+      }
+    }
+  }
+]

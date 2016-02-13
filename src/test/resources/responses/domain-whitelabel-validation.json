@@ -1,0 +1,18 @@
+{
+  "id": 1,
+  "valid": false,
+  "validation_resuts": {
+    "mail_cname": {
+      "valid": false,
+      "reason": "Expected your MX record to x but found y."
+    },
+    "dkim1": {
+      "valid": true,
+      "reason": null
+    },
+    "dkim2": {
+      "valid": true,
+      "reason": null
+    }
+  }
+}

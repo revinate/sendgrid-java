@@ -167,6 +167,40 @@ public class ApiTest {
     }
 
     @Test
+    public void createDomainWhitelabelOnBehalfOf_shouldReturnWhitelabel() throws Exception {
+        Whitelabel whitelabel = new Whitelabel();
+        whitelabel.setDomain("email.com");
+        whitelabel.setSubdomain("m");
+        whitelabel.setAutomaticSecurity(true);
+        whitelabel.setDefault(true);
+
+        Whitelabel whitelabel1 = sendGrid.onBehalfOf("testsubuser123").domainWhitelabels().create(whitelabel);
+
+        assertThat(whitelabel1, notNullValue());
+        assertThat(whitelabel1.getId(), notNullValue());
+        assertThat(whitelabel1.getDomain(), equalTo("email.com"));
+        assertThat(whitelabel1.getSubdomain(), equalTo("m"));
+
+        Whitelabel whitelabel2 = sendGrid.onBehalfOf("testsubuser123").domainWhitelabel(whitelabel1).retrieve();
+
+        assertThat(whitelabel2, notNullValue());
+        assertThat(whitelabel2.getId(), equalTo(whitelabel1.getId()));
+        assertThat(whitelabel2.getDomain(), equalTo("email.com"));
+        assertThat(whitelabel2.getSubdomain(), equalTo("m"));
+
+        WhitelabelValidation validation = sendGrid.onBehalfOf("testsubuser123").domainWhitelabel(whitelabel1).validate();
+
+        assertThat(validation, notNullValue());
+
+        sendGrid.onBehalfOf("testsubuser123").domainWhitelabel(whitelabel1).delete();
+
+        thrown.expect(ResourceNotFoundException.class);
+        thrown.expectMessage("Whitelabel domain not found");
+
+        sendGrid.onBehalfOf("testsubuser123").domainWhitelabel(whitelabel1).retrieve();
+    }
+
+    @Test
     public void createIpPool_shouldReturnIpPool() throws Exception {
         IpPool ipPool = new IpPool();
         ipPool.setName("testpool");

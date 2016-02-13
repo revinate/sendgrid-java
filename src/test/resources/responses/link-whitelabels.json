@@ -1,0 +1,50 @@
+[
+  {
+    "id": 1,
+    "user_id": 1,
+    "domain": "email.com",
+    "subdomain": "c",
+    "username": "test1",
+    "valid": false,
+    "default": true,
+    "legacy": false,
+    "dns": {
+      "domain_cname": {
+        "valid": false,
+        "type": "cname",
+        "host": "c.email.com",
+        "data": "email.com"
+      },
+      "owner_cname": {
+        "valid": false,
+        "type": "cname",
+        "host": "123.email.com",
+        "data": "email.com"
+      }
+    }
+  },
+  {
+    "id": 2,
+    "user_id": 1,
+    "domain": "email2.com",
+    "subdomain": "c",
+    "username": "test1",
+    "valid": false,
+    "default": false,
+    "legacy": false,
+    "dns": {
+      "domain_cname": {
+        "valid": false,
+        "type": "cname",
+        "host": "c.email2.com",
+        "data": "email2.com"
+      },
+      "owner_cname": {
+        "valid": false,
+        "type": "cname",
+        "host": "456.email2.com",
+        "data": "email2.com"
+      }
+    }
+  }
+]

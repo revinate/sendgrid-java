@@ -115,6 +115,16 @@ public class SendGridTest {
     }
 
     @Test
+    public void domainWhitelabels_shouldReturnResource() throws Exception {
+        DomainWhitelabelsResource resource = sendGrid.domainWhitelabels();
+
+        assertThat(resource, notNullValue());
+        assertThat(resource.getBaseUrl(), equalTo(BASE_URL + "/v3"));
+        assertThat(resource.getClient(), sameInstance(client));
+        assertThat(resource.getCredential(), sameInstance(sendGrid.getCredential()));
+    }
+
+    @Test
     public void eventWebhookSettings_shouldReturnResource() throws Exception {
         EventWebhookSettingsResource resource = sendGrid.eventWebhookSettings();
 

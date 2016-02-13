@@ -134,9 +134,7 @@ email.addBcc("example@email.com", "Example User");
 email.setFrom("test@email.com");
 email.setFromName("Test User");
 
-
 email.setFrom("test@email.com", "Test User");
-
 
 email.setReplyTo("no-reply@email.com");
 ```
@@ -187,7 +185,7 @@ email.setTemplateId("abc123-def456");
 
 ### Managing subusers
 
-The library makes it easy to list, create, update, and delete subusers.
+This library makes it easy to list, create, update, and delete subusers.
 
 ```java
 List<Subuser> subusers = sendGrid.subusers().list();

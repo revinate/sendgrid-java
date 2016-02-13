@@ -1,9 +1,6 @@
 package com.revinate.sendgrid.resource;
 
-import com.revinate.sendgrid.model.ApiKey;
-import com.revinate.sendgrid.model.Ip;
-import com.revinate.sendgrid.model.IpPool;
-import com.revinate.sendgrid.model.Subuser;
+import com.revinate.sendgrid.model.*;
 import com.revinate.sendgrid.net.SendGridHttpClient;
 import com.revinate.sendgrid.net.auth.Credential;
 
@@ -59,6 +56,18 @@ public class RootResource extends SendGridResource {
 
     public MailResource mail() {
         return new MailResource(getApiUrl(MailResource.API_VERSION), client, credential);
+    }
+
+    public MailSettingsResource mailSettings() {
+        return new MailSettingsResource(getApiUrl(MailSettingsResource.API_VERSION), client, credential);
+    }
+
+    public MailSettingResource mailSetting(MailSetting setting) {
+        return mailSettings().entity(setting);
+    }
+
+    public MailSettingResource mailSetting(String id) {
+        return mailSettings().entity(id);
     }
 
     public SubusersResource subusers() {

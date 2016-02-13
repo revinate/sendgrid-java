@@ -1,0 +1,64 @@
+{
+  "result": [
+    {
+      "title": "Address Whitelist",
+      "enabled": false,
+      "name": "address_whitelist",
+      "description": "Address / domains that should never have email suppressed."
+    },
+    {
+      "title": "BCC",
+      "enabled": false,
+      "name": "bcc",
+      "description": "Automatically BCC an address for every e-mail sent."
+    },
+    {
+      "title": "Bounce Purge",
+      "enabled": false,
+      "name": "bounce_purge",
+      "description": "Allows you to automatically purge bounce records from SendGrid after a specified number of days."
+    },
+    {
+      "title": "Event Notification",
+      "enabled": false,
+      "name": "event_notify",
+      "description": "Controls notifications for events, such as bounces, clicks, and opens."
+    },
+    {
+      "title": "Footer",
+      "enabled": false,
+      "name": "footer",
+      "description": "Allows you to add a custom footer to outgoing email."
+    },
+    {
+      "title": "Forward Bounce",
+      "enabled": false,
+      "name": "forward_bounce",
+      "description": "Allows you to forward bounces to a specific email address."
+    },
+    {
+      "title": "Forward Spam",
+      "enabled": false,
+      "name": "forward_spam",
+      "description": "Allows for a copy of spam reports to be forwarded to an email address."
+    },
+    {
+      "title": "Legacy Email Template",
+      "enabled": false,
+      "name": "template",
+      "description": "Allows you to customize your outgoing HTML emails."
+    },
+    {
+      "title": "Plain Content",
+      "enabled": false,
+      "name": "plain_content",
+      "description": "Convert your plain text emails to HTML."
+    },
+    {
+      "title": "Spam Checker",
+      "enabled": false,
+      "name": "spam_check",
+      "description": "Check outbound messages for spam content."
+    }
+  ]
+}

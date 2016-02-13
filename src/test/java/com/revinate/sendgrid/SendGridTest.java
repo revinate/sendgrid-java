@@ -1,6 +1,5 @@
 package com.revinate.sendgrid;
 
-import com.revinate.sendgrid.model.EventWebhookSettings;
 import com.revinate.sendgrid.net.SendGridHttpClient;
 import com.revinate.sendgrid.net.auth.ApiKeyCredential;
 import com.revinate.sendgrid.net.auth.Credential;
@@ -151,6 +150,16 @@ public class SendGridTest {
 
         assertThat(resource, notNullValue());
         assertThat(resource.getBaseUrl(), equalTo(BASE_URL + "/api"));
+        assertThat(resource.getClient(), sameInstance(client));
+        assertThat(resource.getCredential(), sameInstance(sendGrid.getCredential()));
+    }
+
+    @Test
+    public void mailSettings_shouldReturnResource() throws Exception {
+        MailSettingsResource resource = sendGrid.mailSettings();
+
+        assertThat(resource, notNullValue());
+        assertThat(resource.getBaseUrl(), equalTo(BASE_URL + "/v3"));
         assertThat(resource.getClient(), sameInstance(client));
         assertThat(resource.getCredential(), sameInstance(sendGrid.getCredential()));
     }

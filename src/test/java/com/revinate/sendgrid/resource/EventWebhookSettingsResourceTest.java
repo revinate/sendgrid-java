@@ -63,6 +63,7 @@ public class EventWebhookSettingsResourceTest extends BaseSendGridTest {
 
         resource.create(new EventWebhookSettings());
     }
+
     @Test
     @SuppressWarnings("unchecked")
     public void update_shouldPatchAndReturnSettings() throws Exception {

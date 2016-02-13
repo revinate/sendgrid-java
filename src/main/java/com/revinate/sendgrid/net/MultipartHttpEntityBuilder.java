@@ -7,6 +7,7 @@ import org.apache.http.entity.mime.MultipartEntityBuilder;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.List;
 import java.util.Map;
 
 public class MultipartHttpEntityBuilder extends HttpEntityBuilder {
@@ -43,18 +44,6 @@ public class MultipartHttpEntityBuilder extends HttpEntityBuilder {
         throw new IOException("Content is null");
     }
 
-    private MultipartEntityBuilder multipartEntityBuilder() {
-        MultipartEntityBuilder builder = MultipartEntityBuilder.create();
-
-        if (credential != null && credential instanceof UsernamePasswordCredential) {
-            UsernamePasswordCredential usernamePasswordCredential = (UsernamePasswordCredential) credential;
-            builder.addTextBody("api_user", usernamePasswordCredential.getUsername());
-            builder.addTextBody("api_key", usernamePasswordCredential.getPassword());
-        }
-
-        return builder;
-    }
-
     private HttpEntity buildMap() {
         MultipartEntityBuilder builder = multipartEntityBuilder();
         for (Map.Entry<String, Object> entry : map.entrySet()) {
@@ -66,69 +55,30 @@ public class MultipartHttpEntityBuilder extends HttpEntityBuilder {
     private HttpEntity buildEmail() {
         MultipartEntityBuilder builder = multipartEntityBuilder();
 
-        for (String to : email.getTos()) {
-            builder.addTextBody(PARAM_TO, to, TEXT_PLAIN_UTF8);
-        }
-
         // If SMTP API Header is used, To is still required. #workaround.
         if (email.getTos().isEmpty()) {
-            builder.addTextBody(PARAM_TO, email.getFrom(), TEXT_PLAIN_UTF8);
+            addTextBody(builder, PARAM_TO, email.getFrom());
         }
 
-        for (String toName : email.getToNames()) {
-            builder.addTextBody(PARAM_TONAME, toName, TEXT_PLAIN_UTF8);
+        addTextBodies(builder, PARAM_TO, email.getTos());
+        addTextBodies(builder, PARAM_TONAME, email.getToNames());
+        addTextBodies(builder, PARAM_CC, email.getCcs());
+        addTextBodies(builder, PARAM_CCNAME, email.getCcNames());
+        addTextBodies(builder, PARAM_BCC, email.getBccs());
+        addTextBodies(builder, PARAM_BCCNAME, email.getBccNames());
+        addTextBody(builder, PARAM_FROM, email.getFrom());
+        addTextBody(builder, PARAM_FROMNAME, email.getFromName());
+        addTextBody(builder, PARAM_REPLYTO, email.getReplyTo());
+        addTextBody(builder, PARAM_SUBJECT, email.getSubject());
+        addTextBody(builder, PARAM_TEXT, email.getText());
+        addTextBody(builder, PARAM_HTML, email.getHtml());
+
+        for (Map.Entry<String, InputStream> entry : email.getAttachments().entrySet()) {
+            builder.addBinaryBody(String.format(PARAM_FILES, entry.getKey()), entry.getValue());
         }
 
-        for (String cc : email.getCcs()) {
-            builder.addTextBody(PARAM_CC, cc, TEXT_PLAIN_UTF8);
-        }
-
-        for (String ccName : email.getCcNames()) {
-            builder.addTextBody(PARAM_CCNAME, ccName, TEXT_PLAIN_UTF8);
-        }
-
-        for (String bcc : email.getBccs()) {
-            builder.addTextBody(PARAM_BCC, bcc, TEXT_PLAIN_UTF8);
-        }
-
-        for (String bccName : email.getBccNames()) {
-            builder.addTextBody(PARAM_BCCNAME, bccName, TEXT_PLAIN_UTF8);
-        }
-
-        if (email.getFrom() != null && !email.getFrom().isEmpty()) {
-            builder.addTextBody(PARAM_FROM, email.getFrom(), TEXT_PLAIN_UTF8);
-        }
-
-        if (email.getFromName() != null && !email.getFromName().isEmpty()) {
-            builder.addTextBody(PARAM_FROMNAME, email.getFromName(), TEXT_PLAIN_UTF8);
-        }
-
-        if (email.getReplyTo() != null && !email.getReplyTo().isEmpty()) {
-            builder.addTextBody(PARAM_REPLYTO, email.getReplyTo(), TEXT_PLAIN_UTF8);
-        }
-
-        if (email.getSubject() != null && !email.getSubject().isEmpty()) {
-            builder.addTextBody(PARAM_SUBJECT, email.getSubject(), TEXT_PLAIN_UTF8);
-        }
-
-        if (email.getText() != null && !email.getText().isEmpty()) {
-            builder.addTextBody(PARAM_TEXT, email.getText(), TEXT_PLAIN_UTF8);
-        }
-
-        if (email.getHtml() != null && !email.getHtml().isEmpty()) {
-            builder.addTextBody(PARAM_HTML, email.getHtml(), TEXT_PLAIN_UTF8);
-        }
-
-        if (email.getAttachments().size() > 0) {
-            for (Map.Entry<String, InputStream> entry : email.getAttachments().entrySet()) {
-                builder.addBinaryBody(String.format(PARAM_FILES, entry.getKey()), entry.getValue());
-            }
-        }
-
-        if (email.getContentIds().size() > 0) {
-            for (Map.Entry<String, String> entry : email.getContentIds().entrySet()) {
-                builder.addTextBody(String.format(PARAM_CONTENTS, entry.getKey()), entry.getValue());
-            }
+        for (Map.Entry<String, String> entry : email.getContentIds().entrySet()) {
+            builder.addTextBody(String.format(PARAM_CONTENTS, entry.getKey()), entry.getValue());
         }
 
         String headers = email.toHeaders();
@@ -142,5 +92,29 @@ public class MultipartHttpEntityBuilder extends HttpEntityBuilder {
         }
 
         return builder.build();
+    }
+
+    private MultipartEntityBuilder multipartEntityBuilder() {
+        MultipartEntityBuilder builder = MultipartEntityBuilder.create();
+
+        if (credential != null && credential instanceof UsernamePasswordCredential) {
+            UsernamePasswordCredential usernamePasswordCredential = (UsernamePasswordCredential) credential;
+            builder.addTextBody("api_user", usernamePasswordCredential.getUsername());
+            builder.addTextBody("api_key", usernamePasswordCredential.getPassword());
+        }
+
+        return builder;
+    }
+
+    private void addTextBodies(MultipartEntityBuilder builder, String name, List<String> texts) {
+        for (String text : texts) {
+            addTextBody(builder, name, text);
+        }
+    }
+
+    private void addTextBody(MultipartEntityBuilder builder, String name, String text) {
+        if (text != null && !text.isEmpty()) {
+            builder.addTextBody(name, text, TEXT_PLAIN_UTF8);
+        }
     }
 }

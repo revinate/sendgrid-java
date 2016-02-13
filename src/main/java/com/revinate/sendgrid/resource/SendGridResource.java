@@ -15,7 +15,7 @@ public abstract class SendGridResource {
         V2A("apiv2"),
         V3("v3");
 
-        private String urlSegment;
+        private final String urlSegment;
 
         ApiVersion(String urlSegment) {
             this.urlSegment = urlSegment;

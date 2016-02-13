@@ -221,7 +221,7 @@ public class Email extends SendGridModel implements SmtpApi {
         return setAttachment(name, new FileInputStream(file));
     }
 
-    public Email setAttachment(String name, String file) throws IOException {
+    public Email setAttachment(String name, String file) {
         return setAttachment(name, new ByteArrayInputStream(file.getBytes()));
     }
 

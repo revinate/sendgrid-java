@@ -1,7 +1,6 @@
 package com.revinate.sendgrid.net;
 
 import org.apache.http.HttpResponse;
-import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpResponseException;
 import org.junit.Before;
 import org.junit.Rule;

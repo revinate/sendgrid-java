@@ -10,7 +10,7 @@ import java.io.IOException;
 
 public class StringResponseHandler implements ResponseHandler<String> {
 
-    private HttpEntityReader reader;
+    private final HttpEntityReader reader;
 
     public StringResponseHandler() {
         this(new HttpEntityReader());

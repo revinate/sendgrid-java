@@ -136,6 +136,7 @@ public class SendGridHttpClientTest extends BaseSendGridTest {
         thrown.expect(InvalidRequestException.class);
         thrown.expectMessage(errorMessage);
         thrown.expect(hasProperty("errors", iterableWithSize(1)));
+        thrown.expect(hasProperty("statusCode", equalTo(400)));
 
         client.get("http://sendgrid", ApiKey.class, new ApiKeyCredential("token"));
     }

@@ -24,8 +24,7 @@ import org.mockito.Mock;
 import java.util.Arrays;
 import java.util.Collection;
 
-import static org.hamcrest.Matchers.hasProperty;
-import static org.hamcrest.Matchers.iterableWithSize;
+import static org.hamcrest.Matchers.*;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.when;
 import static org.mockito.MockitoAnnotations.initMocks;
@@ -79,6 +78,7 @@ public class SendGridHttpClientExceptionTest extends BaseSendGridTest {
         thrown.expect(expectedType);
         thrown.expectMessage(errorMessage);
         thrown.expect(hasProperty("errors", iterableWithSize(1)));
+        thrown.expect(hasProperty("statusCode", equalTo(statusCode)));
 
         client.get("http://sendgrid", ApiKey.class, new ApiKeyCredential("token"));
     }

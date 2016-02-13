@@ -173,6 +173,7 @@ public class SendGridHttpClient implements Closeable {
 
     private SendGridException handleResponseException(HttpResponseException e) {
         String responseBody = e.getMessage();
+        int statusCode = e.getStatusCode();
         String message;
         List<ApiError> errors = new ArrayList<ApiError>();
         try {
@@ -192,15 +193,15 @@ public class SendGridHttpClient implements Closeable {
             }
         }
 
-        switch (e.getStatusCode()) {
+        switch (statusCode) {
             case 400:
-                return new InvalidRequestException(message, errors);
+                return new InvalidRequestException(message, errors, statusCode);
             case 401:
-                return new AuthenticationException(message, errors);
+                return new AuthenticationException(message, errors, statusCode);
             case 404:
-                return new ResourceNotFoundException(message, errors);
+                return new ResourceNotFoundException(message, errors, statusCode);
             default:
-                return new ApiException(message, errors);
+                return new ApiException(message, errors, statusCode);
         }
     }
 }

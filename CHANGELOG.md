@@ -1,7 +1,7 @@
 # Change Log
 All notable changes to this project will be documented in this file.
 
-## [3.0.0] - 2016-2-14
+## [3.0.1] - 2016-2-13
 ### Added
 - SendGrid API V3 support, including subuser management, IP management, API key
 management, whitelabeling, mail settings, and webhook settings.

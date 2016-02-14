@@ -1,13 +1,12 @@
 # SendGrid Java Bindings
 
-This library allows you to easily interact with the SendGrid web APIs from Java
-code. Its features include email sending, subuser management, IP management, API
-key management, domain and link whitelabeling, mail settings, and webhook settings.
-
-Visit [https://sendgrid.com](https://sendgrid.com) to create a SendGrid account.
-
 [![BuildStatus](https://travis-ci.org/revinate/sendgrid-java.svg?branch=master)](https://travis-ci.org/revinate/sendgrid-java)
 [![BuildStatus](https://maven-badges.herokuapp.com/maven-central/com.revinate/sendgrid-java/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.revinate/sendgrid-java)
+
+This library allows Java developers to easily send emails through SendGrid and
+programmatically manage their SendGrid accounts.
+
+Visit [https://sendgrid.com](https://sendgrid.com) to create a SendGrid account.
 
 ## Requirements
 
@@ -67,31 +66,107 @@ public class SendGridExample {
 
 ### Initializing the library
 
-To use this library, create a new SendGrid object with your username/password or
-your API key:
+To use this library, first create a new `SendGrid` object with your SendGrid API key:
 
 ```java
 SendGrid sendGrid = SendGrid.create("API_KEY").build();
 ```
 
+If you don't have an API key, you can use your SendGrid username and password instead.
+You'll see how to create an API key using this library later in this document.
+
 ```java
 SendGrid sendGrid = SendGrid.create("USERNAME", "PASSWORD").build();
 ```
 
-You can optionally specify the size of the HTTP connection pool used to connect
-to the SendGrid API:
+Behid the scenes, this library connects to the SendGrid APIs via HTTP. You can
+optionally specify the size of the HTTP connection pool:
 
 ```java
 SendGrid sendGrid = SendGrid.create("API_KEY").setMaxConnections(100).build();
 ```
 
-Alternatively, you can supply your own Apache `CloseableHttpClient`. This is useful,
+Alternatively, you can supply your own HttpComponents `CloseableHttpClient`. This is useful,
 for example, if you want to specify a proxy server:
 
 ```java
 HttpHost proxy = new HttpHost("server", 8000);
 CloseableHttpClient client = HttpClients.custom().setProxy(proxy).setUserAgent(SendGrid.USER_AGENT).build();
 SendGrid sendGrid = SendGrid.create("API_KEY").setHttpClient(client).build();
+```
+
+### Using the library
+
+The `SendGrid` object has a number of methods, each corresponding to a resource
+you can interact with. Examples of resources are API keys, subusers, and IPs.
+Methods on a resource correspond to the operations you can perform on that resource.
+Common operations include:
+
+- `list` - retrieve all entities under this resource in your account
+- `create` - add a new entity under this resource to your account
+
+For example:
+
+```java
+List<ApiKey> apiKeys = sendGrid.apiKeys().list();
+ApiKey apiKey = new ApiKey("My API Key");
+ApiKey result = sendGrid.apiKeys().create(apiKey);
+```
+
+Some resources have subresources nested under them. Resources that correspond to
+a collection of entities, such as the API keys resource, each have a subresource
+that corresponds to a single entity in the collection. These collection-type
+resources have an `entity` method that returns the subresource. The `entity` method
+takes a single argument, which can be either the entity identifier or the entity itself.
+For example:
+
+```java
+sendGrid.apiKeys().entity("api.key.id");
+```
+
+The `SendGrid` object also has some convenience methods that return some subresources
+directly, for example:
+
+```java
+sendGrid.apiKey("api.key.id");
+```
+
+Common operations for resources that correspond to single entities include:
+
+- `retrieve` - retrieve the entity
+- `update` - update the entity
+- `partialUpdate` - update some fields of the entity
+- `delete` - delete the entity from your account
+
+For example:
+
+```java
+ApiKey apiKey = sendGrid.apiKey("api.key.id").retrieve();
+sendGrid.apiKey(apiKey).delete();
+```
+
+Not every resource support all of the above operations. And some resources support
+additional operations or have additional subresources. More detailed examples of
+performing operations on each resource supported by this library can be found
+later in this document.
+
+### Acting on behalf of subusers
+
+If the library was initialized with the credentials of a parent SendGrid account,
+it's possible to use the same `SendGrid` object to perform operations on behalf of any
+of the subusers under the parent account. This is useful, for example, if you would
+like to create some API keys for a newly created subuser. For certain API operations,
+such as adding an IP to a subuser's IP pool, it is necessary to use the parent account
+credentials to initialize the library and invoke the operations on behalf of the subuser.
+
+To act on behalf of a subuser, call `onBehalfOf("SUBUSERNAME")` on the `SendGrid`
+object before invoking the action. For example:
+
+```java
+ApiKey apiKey = new ApiKey("Subuser API Key");
+ApiKey result = sendGrid.onBehalfOf("subuser1").apiKeys().create(apiKey);
+List<ApiKey> apiKeys = sendGrid.onBehalfOf("subuser1").apiKeys().list();
+sendGrid.onBehalfOf("subuser1").apiKey(result).delete();
 ```
 
 ### Sending email
@@ -169,108 +244,146 @@ email.setAttachment("image.png", new File("./image.png"), "ID_IN_HTML");
 email.setHtml("<html><body><img src=\"cid:ID_IN_HTML\"></img></body></html>")
 ```
 
-#### [SMTP API](http://sendgrid.com/docs/API_Reference/SMTP_API/index.html)
+##### Custom SMTP headers
 
-The email object implements the SMTP API interface and supports all the SMTP
+```java
+email.setHeader("x-custom-header-1", "example");
+```
+
+#### [SendGrid SMTP API](http://sendgrid.com/docs/API_Reference/SMTP_API/index.html)
+
+The `Email` object implements the SendGrid SMTP API interface and supports all the SMTP
 API operations. For the full list of supported operations, refer to the
-[SMTP API Java Bindings](https://github.com/revinate/sendgrid-smtpapi-java) project.
+[SendGrid SMTP API Java Bindings](https://github.com/revinate/sendgrid-smtpapi-java) project.
 
 ##### Template ID
 
-The template filter can be configured using the following convenience method:
+The template filter can be configured with a template ID using the following convenience method:
 
 ```java
 email.setTemplateId("abc123-def456");
 ```
 
-### Managing subusers
-
-This library makes it easy to list, create, update, and delete subusers.
-
-```java
-List<Subuser> subusers = sendGrid.subusers().list();
-
-Subuser subuser = new Subuser("test", "test@mail.com", "secretpassword");
-subuser.addIp("127.0.0.1");
-sendGrid.subusers().create(subuser);
-
-sendGrid.subuser("test").delete();
-```
-
 ### Managing API keys
 
 ```java
+// retrieve existing API keys
 List<ApiKey> apiKeys = sendGrid.apiKeys().list();
 
-ApiKey apiKey = new ApiKey("testapikey");
-apiKey.addScope("mail.send");
+// retrieve a single API key
+ApiKey existing = sendGrid.apiKey("api.key.id").retrieve();
 
+// create new API key, the result contains the API key value
+ApiKey apiKey = new ApiKey("Mail API Key");
+apiKey.addScope("mail.send");
 ApiKey result = sendGrid.apiKeys().create(apiKey);
 
+// update API key
+result.addScope("stats.read");
+sendGrid.apiKey(result).update(result);
+
+// partially update API key
+Map<String, String> request = Collections.singletonMap("name", "Mail and Stats API Key");
+sendGrid.apiKey(result).partialUpdate(request);
+
+// delete API key
 sendGrid.apiKey(result).delete();
 ```
 
-### Managing IP addresses and IP pools
+### Managing subusers
 
 ```java
-List<Ip> ips = sendGrid.ips().list();
+// retrieve existing subusers
+List<Subuser> subusers = sendGrid.subusers().list();
 
-List<IpPool> ipPools = sendGrid.ipPools().list();
+// create new subuser
+Subuser subuser = new Subuser("subuser1", "subuser1@email.com", "secretpassword");
+subuser.addIp("127.0.0.1");
+sendGrid.subusers().create(subuser);
 
-sendGrid.ipPool("transactional").ips().create(ips.get(0));
+// create subuser monitor
+Monitor monitor = new Monitor("monitor@email.com", 5000);
+sendGrid.subuser("subuser1").monitor().create(monitor);
+
+// delete subuser monitor
+sendGrid.subuser("subuser1").monitor().delete();
+
+// delete subuser
+sendGrid.subuser("subuser1").delete();
 ```
 
-### Domain and link whitelabeling
+### Managing IPs and IP pools
 
 ```java
+// retrieve existing IPs
+List<Ip> ips = sendGrid.ips().list();
+Ip ip = ips.get(0);
+
+// retrieve existing IP pools under the subuser
+List<IpPool> pools = sendGrid.onBehalfOf("subuser1").ipPools().list();
+
+// create new IP pool for subuser
+IpPool pool = new IpPool("transactional");
+sendGrid.onBehalfOf("subuser1").ipPools().create(pool);
+
+// add IP to IP pool
+sendGrid.onBehalfOf("subuser1").ipPool(pool).ips().create(ip);
+
+// remove IP from IP pool
+sendGrid.onBehalfOf("subuser1").ipPool(pool).ip(ip).delete();
+
+// delete IP pool
+sendGrid.onBehalfOf("subuser1").ipPool(pool).delete();
+```
+
+### Managing domain whitelabels
+
+```java
+// create new domain whitelabel
 Whitelabel whitelabel = new Whitelabel("email.com", "em");
 whitelabel.setAutomaticSecurity(true);
 whitelabel.setDefault(true);
-
 Whitelabel result = sendGrid.domainWhitelabels().create(whitelabel);
 
+// validate domain whitelabel
 WhitelabelValidation validation = sendGrid.domainWhitelabel(result).validate();
 ```
 
-### Mail and webhook settings
+### Managing link whitelabels
 
 ```java
-Monitor monitor = new Monitor("monitor@email.com", 5000);
+// create new link whitelabel
+Whitelabel whitelabel = new Whitelabel("email.com", "click");
+whitelabel.setDefault(true);
+Whitelabel result = sendGrid.linkWhitelabels().create(whitelabel);
 
-sendGrid.subuser("subuser1").monitor().create(monitor);
+// validate link whitelabel
+WhitelabelValidation validation = sendGrid.linkWhitelabel(result).validate();
+```
 
+### Managing mail settings
+
+```java
+// retrieve all mail settings
+List<MailSetting> settings = sendGrid.mailSettings().list();
+
+// update spam forwarding setting
 MailSetting setting = new MailSetting("forward_spam", true, "spam@email.com");
-
 sendGrid.mailSetting(setting).update(setting);
+```
 
+### Managing event webhook settings
+
+```java
 EventWebhookSettings settings = new EventWebhookSettings("http://event.webhook.receiver", true);
-
 sendGrid.eventWebhookSettings().update(settings);
 ```
 
-### Account info and reputation
+### Retrieving account reputation
 
 ```java
-Account account = sendGrid.account().retrieve();
-```
-
-### Acting on behalf of subusers
-
-If the library was initialized with the credentials for a parent SendGrid account,
-it's possible to use the same SendGrid object to perform actions on behalf of any
-of the subusers under the parent account. This is useful, for example, if you would
-like to create some API keys for a newly created subuser. For certain API operations,
-such as managing the IP pools for subusers, using parent user credentials but acting
-on behalf of the subuser is necessary.
-
-```java
-List<ApiKey> apiKeys = sendGrid.onBehalfOf("subuser1").apiKeys().list();
-
-ApiKey result = sendGrid.onBehalfOf("subuser1").apiKeys().create(apiKey);
-
-sendGrid.onBehalfOf("subuser1").apiKey(result).delete();
-
-IpPool ipPool = sendGrid.onBehalfOf("subuser1").ipPool("transactional").retrieve();
+Account parentAccount = sendGrid.account().retrieve();
+Account subuserAccount = sendGrid.onBehalfOf("subuser1").account().retrieve();
 ```
 
 ## Testing
@@ -293,4 +406,4 @@ live account.
 
 ## License
 
-Licensed under the MIT License.
+This library is under the MIT License.

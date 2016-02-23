@@ -79,7 +79,7 @@ You'll see how to create an API key using this library later in this document.
 SendGrid sendGrid = SendGrid.create("USERNAME", "PASSWORD").build();
 ```
 
-Behid the scenes, this library connects to the SendGrid APIs via HTTP. You can
+Behind the scenes, this library connects to the SendGrid APIs via HTTP. You can
 optionally specify the size of the HTTP connection pool:
 
 ```java

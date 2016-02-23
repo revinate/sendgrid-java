@@ -1,5 +1,7 @@
 package com.revinate.sendgrid.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 public class EventWebhookSettings extends SendGridModel {
 
     private String url;
@@ -19,19 +21,9 @@ public class EventWebhookSettings extends SendGridModel {
         // no args constructor for Jackson
     }
 
-    public EventWebhookSettings(String url, Boolean enable) {
+    public EventWebhookSettings(String url, Boolean allEnabled) {
         this.url = url;
-        enabled = enable;
-        bounce = enable;
-        click = enable;
-        deferred = enable;
-        dropped = enable;
-        groupResubscribe = enable;
-        groupUnsubscribe = enable;
-        open = enable;
-        processed = enable;
-        spamReport = enable;
-        unsubscribe = enable;
+        setAllEnabled(allEnabled);
     }
 
     public String getUrl() {
@@ -128,5 +120,50 @@ public class EventWebhookSettings extends SendGridModel {
 
     public void setUnsubscribe(Boolean unsubscribe) {
         this.unsubscribe = unsubscribe;
+    }
+
+    @JsonIgnore
+    public Boolean getAllEnabled() {
+        return enabled
+                && bounce
+                && click
+                && deferred
+                && dropped
+                && groupResubscribe
+                && groupUnsubscribe
+                && open
+                && processed
+                && spamReport
+                && unsubscribe;
+    }
+
+    @JsonIgnore
+    public Boolean getAllDisabled() {
+        return !(enabled
+                || bounce
+                || click
+                || deferred
+                || dropped
+                || groupResubscribe
+                || groupUnsubscribe
+                || open
+                || processed
+                || spamReport
+                || unsubscribe);
+    }
+
+    @JsonIgnore
+    public void setAllEnabled(boolean allEnabled) {
+        enabled = allEnabled;
+        bounce = allEnabled;
+        click = allEnabled;
+        deferred = allEnabled;
+        dropped = allEnabled;
+        groupResubscribe = allEnabled;
+        groupUnsubscribe = allEnabled;
+        open = allEnabled;
+        processed = allEnabled;
+        spamReport = allEnabled;
+        unsubscribe = allEnabled;
     }
 }

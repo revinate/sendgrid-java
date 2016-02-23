@@ -9,12 +9,14 @@ import com.revinate.sendgrid.net.auth.Credential;
 import com.revinate.sendgrid.util.JsonUtils;
 import org.apache.http.Header;
 import org.apache.http.HttpEntity;
+import org.apache.http.NameValuePair;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpResponseException;
 import org.apache.http.client.ResponseHandler;
 import org.apache.http.client.methods.*;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
+import org.apache.http.message.BasicNameValuePair;
 
 import java.io.Closeable;
 import java.io.IOException;
@@ -62,63 +64,76 @@ public class SendGridHttpClient implements Closeable {
     }
 
     public <T> T get(String url, Class<T> type, Credential credential) throws SendGridException {
-        String responseBody = execute(HttpGet.METHOD_NAME, url, credential, null);
+        String responseBody = execute(HttpGet.METHOD_NAME, url, credential, null, null);
+        return fromJson(responseBody, type);
+    }
+
+    public <T> T get(String url, Class<T> type, Credential credential,
+                     Map<String, Object> requestParameters) throws SendGridException {
+        List<NameValuePair> parameters = toParameters(requestParameters);
+        String responseBody = execute(HttpGet.METHOD_NAME, url, credential, null, parameters);
         return fromJson(responseBody, type);
     }
 
     public <T> T post(String url, Class<T> type, Credential credential) throws SendGridException {
-        String responseBody = execute(HttpPost.METHOD_NAME, url, credential, null);
+        String responseBody = execute(HttpPost.METHOD_NAME, url, credential, null, null);
         return fromJson(responseBody, type);
     }
 
     public <T> T post(String url, Class<T> type, Credential credential, SendGridModel requestObject,
                       RequestType requestType) throws SendGridException {
         HttpEntity requestEntity = toEntity(requestObject, requestType, credential);
-        String responseBody = execute(HttpPost.METHOD_NAME, url, credential, requestEntity);
+        String responseBody = execute(HttpPost.METHOD_NAME, url, credential, requestEntity, null);
         return fromJson(responseBody, type);
     }
 
     public <T> T put(String url, Class<T> type, Credential credential, SendGridModel requestObject,
                      RequestType requestType) throws SendGridException {
         HttpEntity requestEntity = toEntity(requestObject, requestType, credential);
-        String responseBody = execute(HttpPut.METHOD_NAME, url, credential, requestEntity);
+        String responseBody = execute(HttpPut.METHOD_NAME, url, credential, requestEntity, null);
         return fromJson(responseBody, type);
     }
 
     public <T> T put(String url, Class<T> type, Credential credential, List<String> requestObject,
                      RequestType requestType) throws SendGridException {
         HttpEntity requestEntity = toEntity(requestObject, requestType, credential);
-        String responseBody = execute(HttpPut.METHOD_NAME, url, credential, requestEntity);
+        String responseBody = execute(HttpPut.METHOD_NAME, url, credential, requestEntity, null);
         return fromJson(responseBody, type);
     }
 
     public <T> T patch(String url, Class<T> type, Credential credential, SendGridModel requestObject,
                        RequestType requestType) throws SendGridException {
         HttpEntity requestEntity = toEntity(requestObject, requestType, credential);
-        String responseBody = execute(HttpPatch.METHOD_NAME, url, credential, requestEntity);
+        String responseBody = execute(HttpPatch.METHOD_NAME, url, credential, requestEntity, null);
         return fromJson(responseBody, type);
     }
 
     public <T> T patch(String url, Class<T> type, Credential credential, Map<String, Object> requestObject,
                        RequestType requestType) throws SendGridException {
         HttpEntity requestEntity = toEntity(requestObject, requestType, credential);
-        String responseBody = execute(HttpPatch.METHOD_NAME, url, credential, requestEntity);
+        String responseBody = execute(HttpPatch.METHOD_NAME, url, credential, requestEntity, null);
         return fromJson(responseBody, type);
     }
 
     public void patch(String url, Credential credential, Map<String, Object> requestObject,
                       RequestType requestType) throws SendGridException {
         HttpEntity requestEntity = toEntity(requestObject, requestType, credential);
-        execute(HttpPatch.METHOD_NAME, url, credential, requestEntity);
+        execute(HttpPatch.METHOD_NAME, url, credential, requestEntity, null);
     }
 
     public void delete(String url, Credential credential) throws SendGridException {
-        execute(HttpDelete.METHOD_NAME, url, credential, null);
+        execute(HttpDelete.METHOD_NAME, url, credential, null, null);
     }
 
     private String execute(String method, String url, Credential credential,
-                           HttpEntity entity) throws SendGridException {
+                           HttpEntity entity, List<NameValuePair> parameters) throws SendGridException {
         RequestBuilder builder = RequestBuilder.create(method).setUri(url).setEntity(entity);
+
+        if (parameters != null) {
+            for (NameValuePair parameter : parameters) {
+                builder.addParameter(parameter);
+            }
+        }
 
         for (Header header : credential.toHttpHeaders()) {
             builder.setHeader(header);
@@ -147,6 +162,14 @@ public class SendGridHttpClient implements Closeable {
         } catch (IOException e) {
             throw new ApiConnectionException("Error while mapping response", e);
         }
+    }
+
+    private List<NameValuePair> toParameters(Map<String, Object> requestParameters) {
+        List<NameValuePair> parameters = new ArrayList<NameValuePair>();
+        for (Map.Entry<String, Object> parameter : requestParameters.entrySet()) {
+            parameters.add(new BasicNameValuePair(parameter.getKey(), String.valueOf(parameter.getValue())));
+        }
+        return parameters;
     }
 
     private HttpEntity toEntity(SendGridModel requestObject, RequestType requestType,

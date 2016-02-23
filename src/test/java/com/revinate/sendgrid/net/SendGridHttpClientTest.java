@@ -85,6 +85,34 @@ public class SendGridHttpClientTest extends BaseSendGridTest {
     }
 
     @Test
+    public void getWithParameters_shouldMakeRequestAndReturnResponse() throws Exception {
+        String response = readFile("/responses/api-key.json");
+
+        when(httpClient.execute(any(HttpUriRequest.class), any(StringResponseHandler.class)))
+                .thenReturn(response);
+
+        Map<String, Object> parameters = new HashMap<String, Object>();
+        parameters.put("limit", 10);
+        ApiKey apiKey = client.get("http://sendgrid", ApiKey.class, new ApiKeyCredential("token"), parameters);
+
+        assertThat(apiKey, notNullValue());
+        assertThat(apiKey.getName(), equalTo("1st API key"));
+        assertThat(apiKey.getApiKeyId(), equalTo("sdaspfgada5hahsrs5hSHF"));
+
+        ArgumentCaptor<HttpUriRequest> captor = ArgumentCaptor.forClass(HttpUriRequest.class);
+        verify(httpClient).execute(captor.capture(), eq(handler));
+
+        HttpUriRequest httpRequest = captor.getValue();
+
+        assertThat(httpRequest, notNullValue());
+        assertThat(httpRequest.getMethod(), equalTo("GET"));
+        assertThat(httpRequest.getURI(), hasToString("http://sendgrid?limit=10"));
+        assertThat(httpRequest.getAllHeaders(), hasItemInArray(
+                hasProperty("name", equalTo("Authorization"))
+        ));
+    }
+
+    @Test
     public void get_shouldWrapClientProtocolException() throws Exception {
         when(httpClient.execute(any(HttpUriRequest.class), any(StringResponseHandler.class)))
                 .thenThrow(new ClientProtocolException("Unit test"));

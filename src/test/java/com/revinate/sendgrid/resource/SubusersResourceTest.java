@@ -15,7 +15,9 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.assertThat;
@@ -62,6 +64,22 @@ public class SubusersResourceTest extends BaseSendGridTest {
                 .thenReturn(response);
 
         List<Subuser> subusers = resource.list();
+
+        assertThat(subusers, sameInstance(response.getData()));
+    }
+
+    @Test
+    public void listWithParameters_shouldReturnSubusers() throws Exception {
+        SubuserCollection response = JsonUtils.fromJson(readFile("/responses/subusers.json"),
+                SubuserCollection.class);
+
+        Map<String, Object> parameters = new HashMap<String, Object>();
+        parameters.put("limit", 10);
+
+        when(client.get("https://api.sendgrid.com/v3/subusers", SubuserCollection.class, credential, parameters))
+                .thenReturn(response);
+
+        List<Subuser> subusers = resource.list(parameters);
 
         assertThat(subusers, sameInstance(response.getData()));
     }

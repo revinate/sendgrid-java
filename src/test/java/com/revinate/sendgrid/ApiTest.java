@@ -7,7 +7,9 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.assertThat;
@@ -71,6 +73,16 @@ public class ApiTest {
 
         Subuser subuser = sendGrid.subuser("testsubuser123").retrieve();
         assertThat(subuser, notNullValue());
+    }
+
+    @Test
+    public void getSubusersWithLimit_shouldReturnSubusers() throws Exception {
+        Map<String, Object> parameters = new HashMap<String, Object>();
+        parameters.put("limit", 2);
+
+        List<Subuser> subusers = sendGrid.subusers().list(parameters);
+        assertThat(subusers, notNullValue());
+        assertThat(subusers, hasSize(2));
     }
 
     @Test

@@ -9,6 +9,7 @@ import com.revinate.sendgrid.net.SendGridHttpClient.RequestType;
 import com.revinate.sendgrid.net.auth.Credential;
 
 import java.util.List;
+import java.util.Map;
 
 public abstract class CollectionResource<T extends SendGridModel & SendGridEntity, U extends SendGridCollection<T>> extends SendGridResource {
 
@@ -23,6 +24,10 @@ public abstract class CollectionResource<T extends SendGridModel & SendGridEntit
 
     public List<T> list() throws SendGridException {
         return client.get(getUrl(), collectionType, credential).getData();
+    }
+
+    public List<T> list(Map<String, Object> requestParameters) throws SendGridException {
+        return client.get(getUrl(), collectionType, credential, requestParameters).getData();
     }
 
     public T create(T entity) throws SendGridException {

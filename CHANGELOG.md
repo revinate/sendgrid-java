@@ -1,6 +1,10 @@
 # Change Log
 All notable changes to this project will be documented in this file.
 
+## [3.0.2] - 2016-2-22
+### Added
+- Support for query parameters when listing resources.
+
 ## [3.0.1] - 2016-2-13
 ### Added
 - SendGrid API V3 support, including subuser management, IP management, API key

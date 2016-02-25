@@ -22,7 +22,7 @@ allprojects {
 }
 
 group = 'com.revinate'
-version = '3.0.2'
+version = '3.0.3'
 ext.packaging = 'jar'
 
 if (!hasProperty("sonatypeUsername")) {

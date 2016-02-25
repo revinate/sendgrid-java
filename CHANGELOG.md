@@ -1,6 +1,11 @@
 # Change Log
 All notable changes to this project will be documented in this file.
 
+## [3.0.3] - 2016-2-25
+### Changed
+- New user agent string
+- Rearranged exception hierarchy
+
 ## [3.0.2] - 2016-2-22
 ### Added
 - Support for query parameters when listing resources.

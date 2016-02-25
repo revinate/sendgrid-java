@@ -4,7 +4,7 @@ import com.revinate.sendgrid.model.ApiError;
 
 import java.util.List;
 
-public class InvalidRequestException extends ApiException {
+public class InvalidRequestException extends SendGridException {
 
     public InvalidRequestException(String message) {
         super(message);

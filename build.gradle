@@ -12,6 +12,7 @@
  */
 
 apply plugin: 'java'
+apply plugin: 'jacoco'
 apply plugin: 'maven'
 apply plugin: 'signing'
 
@@ -50,6 +51,12 @@ dependencies {
 
 repositories {
     mavenCentral()
+}
+
+jacocoTestReport {
+    reports {
+        xml.enabled true
+    }
 }
 
 allprojects {

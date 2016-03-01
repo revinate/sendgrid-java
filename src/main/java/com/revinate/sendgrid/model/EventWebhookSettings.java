@@ -9,6 +9,7 @@ public class EventWebhookSettings extends SendGridModel {
     private Boolean bounce;
     private Boolean click;
     private Boolean deferred;
+    private Boolean delivered;
     private Boolean dropped;
     private Boolean groupResubscribe;
     private Boolean groupUnsubscribe;
@@ -64,6 +65,14 @@ public class EventWebhookSettings extends SendGridModel {
 
     public void setDeferred(Boolean deferred) {
         this.deferred = deferred;
+    }
+
+    public Boolean getDelivered() {
+        return delivered;
+    }
+
+    public void setDelivered(Boolean delivered) {
+        this.delivered = delivered;
     }
 
     public Boolean getDropped() {
@@ -128,6 +137,7 @@ public class EventWebhookSettings extends SendGridModel {
                 && bounce
                 && click
                 && deferred
+                && delivered
                 && dropped
                 && groupResubscribe
                 && groupUnsubscribe
@@ -143,6 +153,7 @@ public class EventWebhookSettings extends SendGridModel {
                 || bounce
                 || click
                 || deferred
+                || delivered
                 || dropped
                 || groupResubscribe
                 || groupUnsubscribe
@@ -158,6 +169,7 @@ public class EventWebhookSettings extends SendGridModel {
         bounce = allEnabled;
         click = allEnabled;
         deferred = allEnabled;
+        delivered = allEnabled;
         dropped = allEnabled;
         groupResubscribe = allEnabled;
         groupUnsubscribe = allEnabled;

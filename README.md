@@ -23,7 +23,7 @@ Add this dependency to your project's POM:
 <dependency>
   <groupId>com.revinate</groupId>
   <artifactId>sendgrid-java</artifactId>
-  <version>3.0.3</version>
+  <version>3.0.4</version>
 </dependency>
 ```
 
@@ -32,7 +32,7 @@ Add this dependency to your project's POM:
 Add this dependency to your project's build script:
 
 ```groovy
-compile 'com.revinate:sendgrid-java:3.0.3'
+compile 'com.revinate:sendgrid-java:3.0.4'
 ```
 
 ## Usage

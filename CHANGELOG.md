@@ -1,6 +1,10 @@
 # Change Log
 All notable changes to this project will be documented in this file.
 
+## [3.0.4] - 2016-3-1
+### Fixed
+- "delivered" field omitted from event webhook model.
+
 ## [3.0.3] - 2016-2-25
 ### Changed
 - New user agent string

@@ -2,6 +2,7 @@
 
 [![BuildStatus](https://travis-ci.org/revinate/sendgrid-java.svg?branch=master)](https://travis-ci.org/revinate/sendgrid-java)
 [![BuildStatus](https://maven-badges.herokuapp.com/maven-central/com.revinate/sendgrid-java/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.revinate/sendgrid-java)
+[![codecov.io](https://codecov.io/github/revinate/sendgrid-java/coverage.svg?branch=master)](https://codecov.io/github/revinate/sendgrid-java?branch=master)
 
 This library allows Java developers to easily send emails through SendGrid and
 programmatically manage their SendGrid accounts.

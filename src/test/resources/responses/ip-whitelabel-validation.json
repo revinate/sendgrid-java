@@ -1,0 +1,10 @@
+{
+  "id": 1,
+  "valid": true,
+  "validation_results": {
+    "a_record": {
+      "valid": true,
+      "reason": null
+    }
+  }
+}

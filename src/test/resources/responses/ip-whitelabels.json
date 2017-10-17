@@ -1,0 +1,52 @@
+[
+  {
+    "id": 1,
+    "ip": "192.168.1.1",
+    "rdns": "o1.email.example.com",
+    "users": [
+      {
+        "username": "john@example.com",
+        "user_id": 7
+      },
+      {
+        "username": "jane@example.com",
+        "user_id": 8
+      }
+    ],
+    "subdomain": "email",
+    "domain": "example.com",
+    "valid": true,
+    "legacy": false,
+    "a_record": {
+      "valid": true,
+      "type": "a",
+      "host": "o1.email.example.com",
+      "data": "192.168.1.1"
+    }
+  },
+  {
+    "id": 2,
+    "ip": "192.168.1.2",
+    "rdns": "o2.email.example.com",
+    "users": [
+      {
+        "username": "john@example.com",
+        "user_id": 7
+      },
+      {
+        "username": "jane@example2.com",
+        "user_id": 9
+      }
+    ],
+    "subdomain": "email",
+    "domain": "example.com",
+    "valid": true,
+    "legacy": false,
+    "a_record": {
+      "valid": true,
+      "type": "a",
+      "host": "o2.email.example.com",
+      "data": "192.168.1.2"
+    }
+  }
+]

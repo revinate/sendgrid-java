@@ -1,0 +1,21 @@
+{
+  "id": 1,
+  "ip": "1.1.1.1",
+  "rdns": "o1.email.example.com",
+  "users": [
+    {
+      "username": "test1@example.com",
+      "user_id": 1
+    }
+  ],
+  "subdomain": "test",
+  "domain": "test.com",
+  "valid": false,
+  "legacy": false,
+  "a_record": {
+    "valid": true,
+    "type": "a",
+    "host": "o1.email.test.com",
+    "data": "1.1.1.1"
+  }
+}

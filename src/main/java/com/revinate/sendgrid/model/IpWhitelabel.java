@@ -29,14 +29,6 @@ public class IpWhitelabel extends SendGridModel implements SendGridEntity {
         return id.toString();
     }
 
-    public DnsRecord getARecord() {
-        return aRecord;
-    }
-
-    public void setARecord(DnsRecord aRecord) {
-        this.aRecord = aRecord;
-    }
-
     public Integer getId() {
         return id;
     }
@@ -91,6 +83,14 @@ public class IpWhitelabel extends SendGridModel implements SendGridEntity {
 
     public void setLegacy(Boolean legacy) {
         this.legacy = legacy;
+    }
+
+    public DnsRecord getaRecord() {
+        return aRecord;
+    }
+
+    public void setaRecord(DnsRecord aRecord) {
+        this.aRecord = aRecord;
     }
 
     public List<User> getUsers() {
